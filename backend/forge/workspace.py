@@ -436,6 +436,13 @@ def patch_for(root: Path, base: str) -> bytes:
         # This exact mkdtemp directory is outside the task's write authority.
         shutil.rmtree(staging)
 
+class IntegrationConflict(ValueError):
+    """A deterministic pre-apply rejection: no patch/commit side effect began."""
+    def __init__(self, detail):
+        super().__init__('成果合并冲突，原补丁已保留')
+        self.detail = detail[:1600]
+
+
 def integrate(run_id: str, task_key: str, base: str) -> str:
     root = run_root(run_id)
     dest, source = root / 'integration', task_root(run_id, task_key)
@@ -451,7 +458,7 @@ def integrate(run_id: str, task_key: str, base: str) -> str:
         marker.write_text(existing.splitlines()[0]); return existing.splitlines()[0]
     if patch:
         checked = git(dest, 'apply', '--check', '--index', input_bytes=patch, check=False)
-        if checked.returncode: raise ValueError('并行变更发生冲突，已保留patch，请人工处理')
+        if checked.returncode: raise IntegrationConflict(checked.stderr.decode('utf-8', errors='replace'))
         git(dest, 'apply', '--index', input_bytes=patch)
     git(dest, 'commit', '--allow-empty', '-m', message)
     commit = git(dest, 'rev-parse', 'HEAD').stdout.decode().strip()

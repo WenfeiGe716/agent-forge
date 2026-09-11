@@ -1,7 +1,7 @@
 import asyncio,copy,io,json,zipfile
 import pytest
 from sqlalchemy import select
-from forge import engine,providers,skills,engagement
+from forge import autonomy,engine,providers,skills,engagement
 from forge.providers import Reply
 from forge.db import session,Run,Task,Skill,SkillRevision,Outbox,DecisionRequest,Event,Meeting
 from forge.local_runtime import LocalRuntime
@@ -93,15 +93,18 @@ def test_exact_directed_resolution_and_permission(client,configured):
 
 @pytest.mark.asyncio
 async def test_question_answer_resume_without_repeat_and_replay(client,configured,monkeypatch):
-    a=byrole(configured,'planner');body=run_body(configured,entry_agent_id=a['id'],collaboration_flow=True)
+    a=byrole(configured,'planner');body=run_body(configured,entry_agent_id=a['id'])
     rid=client.post('/api/runs',json=body).json()['id'];engine.prepare_run({'run_id':rid});calls=[]
+    task_key=autonomy.autonomy_tick({'run_id':rid})['runnable'][0]['key']
     async def complete(conn,model,messages,definitions,key,timeout):
         calls.append(copy.deepcopy(messages))
         if len(calls)==1:return Reply('需要确认兼容策略',[{'id':'ask','name':'request_decision','arguments':{'question':'采用兼容还是严格校验？','context':'影响旧调用方','options':[{'id':'compat','label':'保持兼容'},{'id':'strict','label':'严格拒绝'}],'allow_text':True}}],10,5)
         assert any('保持兼容' in m.get('content','') for m in messages)
-        return Reply('收到选择，组织小组',[{'id':'finish','name':'finish','arguments':{'summary':'按兼容策略执行','participants':body['agent_ids'],'agenda':'按用户决定修复并验证兼容性'}}],10,5)
+        return Reply('收到选择，记录约束',[{'id':'finish','name':'finish','arguments':{
+            'summary':'已记录用户选择的兼容策略，本次确认步骤结束。','outcome':'done',
+            'notes':'保持兼容，不改变函数签名；尚未实施或宣称完成修复。'}}],10,5)
     monkeypatch.setattr(providers,'complete',complete)
-    first=await engine.turn({'run_id':rid,'key':'intake','index':0});assert first['blocked_on'] and not first['done']
+    first=await engine.turn({'run_id':rid,'key':task_key,'index':0});assert first['blocked_on'] and not first['done']
     req=client.get('/api/runs/'+rid+'/collaboration').json()['decisions'][0]
     assert client.post(f'/api/runs/{rid}/questions/{req["id"]}/answer',json={'digest':'0'*64,'choice_id':'compat'}).status_code==409
     invalid=client.post(f'/api/runs/{rid}/questions/{req["id"]}/answer',json={'digest':req['digest'],'choice_id':'bad'});assert invalid.status_code==422
@@ -110,13 +113,15 @@ async def test_question_answer_resume_without_repeat_and_replay(client,configure
     assert client.post(f'/api/runs/{rid}/questions/{req["id"]}/answer',json=answer).status_code==200
     assert client.post(f'/api/runs/{rid}/questions/{req["id"]}/answer',json={**answer,'choice_id':'strict'}).status_code==409
     # Re-read of the persisted old activity/turn does not call model again.
-    replay=await engine.turn({'run_id':rid,'key':'intake','index':0});assert replay==first and len(calls)==1
-    second=await engine.turn({'run_id':rid,'key':'intake','index':1});assert second['done'] and len(calls)==2
-    graph=engagement.open_meeting({'run_id':rid});assert graph['participants']==body['agent_ids']
-    overview=client.get('/api/runs/'+rid+'/collaboration').json();assert len(overview['meetings'])==1
+    replay=await engine.turn({'run_id':rid,'key':task_key,'index':0});assert replay==first and len(calls)==1
+    resumed=autonomy.autonomy_tick({'run_id':rid,'answered':[req['id']]})
+    assert resumed['runnable']==[{'key':task_key,'agent_id':a['id']}]
+    second=await engine.turn({'run_id':rid,'key':task_key,'index':1});assert second['done'] and len(calls)==2
+    overview=client.get('/api/runs/'+rid+'/collaboration').json();assert overview['meetings']==[]
+    assert client.get('/api/runs/'+rid).json()['status']!='completed'
     trace=client.get('/api/runs/'+rid+'/trace').json()['items'];assert any(e['kind']=='human.decision.included' for e in trace)
     assert len([e for e in trace if e['kind']=='human.decision.requested'])==1
-    public=client.get('/api/runs/'+rid+'/sessions/intake').json();assert all(x['role'] in ('tool','assistant') for x in public['items'])
+    public=client.get('/api/runs/'+rid+'/sessions/'+task_key).json();assert all(x['role'] in ('tool','assistant') for x in public['items'])
     assert 'anthropic_native' not in json.dumps(public)
 
 @pytest.mark.asyncio
@@ -155,7 +160,8 @@ def test_instruction_trace_permissions_and_pagination(client,configured):
 def test_pending_question_closes_without_fake_answer(client,configured,state,expected):
     rid=client.post('/api/runs',json=run_body(configured)).json()['id']
     engine.prepare_run({'run_id':rid})
-    q=engagement.request_decision(rid,'plan','stop-test',{'question':'确认依赖范围？','context':'待确认','options':[],'allow_text':True})
+    task_key=autonomy.autonomy_tick({'run_id':rid})['runnable'][0]['key']
+    q=engagement.request_decision(rid,task_key,'stop-test',{'question':'确认依赖范围？','context':'待确认','options':[],'allow_text':True})
     engine.set_stage({'run_id':rid,'status':state})
     saved=client.get('/api/runs/'+rid+'/collaboration').json()['decisions'][0]
     assert saved['status']==expected and not saved['answer']

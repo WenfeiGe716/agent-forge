@@ -6,6 +6,15 @@ const nodes=v=>Array.isArray(v)?v.flatMap(nodes):v&&typeof v==='object'?[v,...no
 const text=v=>Array.isArray(v)?v.map(text).join(''):v&&typeof v==='object'?text(v.props?.children):v==null||typeof v==='boolean'?'':String(v);
 const button=(tree,label)=>{const found=nodes(tree).find(n=>n.type==='button'&&text(n)===label);assert.ok(found,'button '+label);return found;};
 const base={id:'run-a',title:'交付一个真实项目',request:'写需求、实现代码并测试',status:'completed',project_id:'p',calls:25,input_tokens:500,output_tokens:200,updated_at:'2026-09-10T10:00:00Z',artifact_digest:'f'.repeat(64),snapshot:{planner_id:'lead',agents:{lead:{name:'协调员'},dev:{name:'研发成员'}}},report:{checks:{verification:'passed',commands:[{command:'python3 -m unittest discover -s tests -v',exit_code:0,output:'Ran 4 tests\nOK',timed_out:false,truncated:false}]},review:{verdict:'pass',summary:'独立审查没有发现问题。'}},tasks:[{id:'t',key:'implement',kind:'develop',agent_id:'dev',title:'实现与测试',status:'integrated',spec:{},result:{summary:'已完成实现并测试'}}]};
+
+test('long title and complete request stay accessible in an initially closed disclosure',()=>{
+ const run={...base,title:'很长的项目标题'.repeat(50),request:'验收要求\n'.repeat(1000)};
+ const tree=harness(run).render(),title=nodes(tree).find(n=>n.type==='h1');
+ assert.equal(title.props.title,run.title);
+ const disclosure=nodes(tree).find(n=>n.props?.className==='task-heading-context');
+ assert.equal(disclosure.type,'details');assert.ok(!disclosure.props.open);
+ assert.ok(text(disclosure).includes(run.request));assert.ok(text(disclosure).includes(run.title));
+});
 function harness(run=base,{handler}={}){
  let cursor=0;const slots=[],effects=[],cleanups=[],calls=[];
  const React={useState(init){const i=cursor++;if(!(i in slots))slots[i]=typeof init==='function'?init():init;return[slots[i],v=>slots[i]=typeof v==='function'?v(slots[i]):v];},useRef(init){const i=cursor++;return slots[i]||(slots[i]={current:init});},useEffect(fn,deps){const i=cursor++;if(!(i in slots)||deps.some((v,j)=>v!==slots[i][j])){cleanups[i]?.();slots[i]=deps;effects.push(()=>cleanups[i]=fn());}}};
@@ -20,6 +29,7 @@ function harness(run=base,{handler}={}){
   if(id==='./UI')return{Badge:p=>jsx('span',{children:p.state}),Empty:component('empty'),Modal:component('dialog')};
   if(id==='./Icons')return new Proxy({},{get:(_,key)=>component('icon-'+String(key))});
   if(id==='./RunRecovery')return{__esModule:true,default:component('recovery'),runRecoverySeed:r=>({parent_run_id:r.id})};
+  if(id==='./RunIssues'){const issues={};vm.runInNewContext(compile('components/RunIssues.tsx'),{exports:issues,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return issues;}
   if(id==='./TaskApprovals')return{__esModule:true,default:component('approval')};
   if(id==='./ExecutionCenter')return{__esModule:true,default:component('execution-requests')};
   if(id==='./Collaboration')return{Question:component('question')};
@@ -112,4 +122,13 @@ test('autonomous tasks have collaboration stages and no fabricated fixed test or
 
 test('autonomous ready or waiting member outcomes do not mark the run completed',()=>{
  for(const outcome of ['waiting','ready','blocked']){const run={...base,execution_strategy:'autonomous',status:outcome==='blocked'?'needs_attention':'running',artifact_digest:'',report:{},tasks:[{...base.tasks[0],kind:'autonomous',result:{outcome,summary:'成员回执'}}]};const p=helpers.runPresentation(run);assert.doesNotMatch(p.title,/任务已完成/);assert.ok(!p.steps.every(s=>s.state==='done'));if(outcome==='blocked')assert.match(p.title,/尚未完成/);}
+});
+
+test('the public run mode alone identifies autonomy and wins over stale legacy graph labels',()=>{
+ const run={...base,mode:'autonomous',status:'running',artifact_digest:'',report:{},snapshot:{...base.snapshot,orchestration:{mode:'discussion'}}};
+ assert.equal(helpers.isAutonomous(run),true);assert.equal(helpers.isDiscussion(run),false);assert.equal(helpers.runPresentation(run).autonomous,true);assert.match(helpers.runPresentation(run).title,/自主协作/);assert.doesNotMatch(helpers.verificationSummary(run).checkLabel,/只读讨论/);
+});
+
+test('team tool aliases describe actual events without defining or limiting runtime tool availability',()=>{
+ assert.equal(helpers.taskToolLabel('inspect_team'),'查看团队能力目录');assert.equal(helpers.taskToolLabel('read_work_result'),'读取团队已集成成果');assert.equal(helpers.taskToolLabel('custom_live_tool'),'custom_live_tool');assert.equal(helpers.taskToolLabel(undefined),'');
 });

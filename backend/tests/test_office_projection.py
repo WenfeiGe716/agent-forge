@@ -1,7 +1,9 @@
 import json
+import pytest
 from sqlalchemy import select,func
 from fastapi.testclient import TestClient
 from forge.api import app
+from forge import autonomy,engine
 from forge.db import session,Run,Task,Event,Agent,emit,now
 from conftest import run_body
 
@@ -16,12 +18,29 @@ def member(client,aid):
     return next(p for p in r.json()['presence'] if p['agent_id']==aid)
 
 
-def set_task(rid,aid,state='running',key='code'):
+def set_task(rid,aid,state='running'):
+    """Create a real autonomous assignment; only its event/state is simulated."""
+    engine.prepare_run({'run_id':rid})
+    initial=autonomy.autonomy_tick({'run_id':rid})['runnable'][0]
+    key=initial['key']
+    if initial['agent_id']!=aid:
+        assigned=autonomy.assign_work(rid,key,'office-fixture-'+aid,{
+            'recipient_id':aid,'title':'Work on source','instruction':'Inspect and update the required source',
+            'acceptance':'Actual changes and evidence are recorded'})
+        with session() as s:
+            run=s.get(Run,rid);task=s.get(Task,rid+':'+key)
+            task.result=engine.finish_result(run,task,run.snapshot['agents'][task.agent_id],
+                {'summary':'Waiting for assigned work','outcome':'waiting'})
+            task.status='done'
+        engine.integrate_task({'run_id':rid,'key':key})
+        ready=autonomy.autonomy_tick({'run_id':rid})['runnable']
+        assert ready==[{'key':assigned['task_key'],'agent_id':aid}]
+        key=assigned['task_key']
     with session() as s:
         r=s.get(Run,rid);r.status='running'
-        t=Task(id=rid+':'+key,run_id=rid,key=key,kind='development',agent_id=aid,title='Code',spec={},status=state)
-        s.add(t);s.flush()
+        t=s.get(Task,rid+':'+key);assert t.kind=='autonomous';t.status=state
         emit(s,rid,'tool.started',{'agent_id':aid,'task_key':key,'tool':'write_file'})
+    return key
 
 
 def test_office_requires_login(client):
@@ -35,26 +54,47 @@ def test_empty_team_has_complete_idle_projection(client):
     assert data['events']==[]
 
 
-def test_queued_agents_reserved_not_idle(client,configured):
-    create_run(client,configured)
-    assert all(p['busy'] and p['phase']=='waiting' for p in client.get('/api/office/state').json()['presence'])
+def test_queued_leader_reserved_while_unassigned_pool_members_stay_idle(client,configured):
+    rid=create_run(client,configured)
+    leader=client.get('/api/runs/'+rid).json()['entry_agent_id']
+    for p in client.get('/api/office/state').json()['presence']:
+        if p['agent_id']==leader: assert p['busy'] and p['phase']=='waiting'
+        else: assert not p['busy'] and p['phase']=='idle' and p['run_count']==0
 
 
 def test_tool_event_controls_phase_and_evidence(client,configured):
-    rid=create_run(client,configured);aid=configured['agents'][1]['id'];set_task(rid,aid)
+    rid=create_run(client,configured);aid=configured['agents'][1]['id'];key=set_task(rid,aid)
     p=member(client,aid);assert p['phase']=='writing' and p['tool']=='write_file' and len(p['evidence_ids'])==1
-    with session() as s:emit(s,rid,'tool.completed',{'agent_id':aid,'task_key':'code','tool':'write_file'})
+    with session() as s:emit(s,rid,'tool.completed',{'agent_id':aid,'task_key':key,'tool':'write_file'})
     assert member(client,aid)['phase']=='thinking'
 
 
-def test_finished_subtask_remains_reserved_until_run_released(client,configured):
-    rid=create_run(client,configured);aid=configured['agents'][1]['id'];set_task(rid,aid)
-    with session() as s:s.get(Task,rid+':code').status='done'
-    p=member(client,aid);assert p['busy'] and p['phase']=='waiting'
+def test_finished_member_released_but_unresolved_waiting_owner_remains_reserved(client,configured):
+    rid=create_run(client,configured);aid=configured['agents'][1]['id'];key=set_task(rid,aid)
+    with session() as s:
+        task=s.get(Task,rid+':'+key);task.status='done';task.result={'outcome':'done','summary':'Finished own assignment'}
+    p=member(client,aid);assert not p['busy'] and p['phase']=='idle'
+    leader=client.get('/api/runs/'+rid).json()['entry_agent_id']
+    owner=member(client,leader);assert owner['busy'] and owner['phase']=='waiting'
+
+
+@pytest.mark.parametrize('status', ['conflicted', 'superseded'])
+def test_preserved_conflict_activation_releases_member_but_other_run_still_counts(client, configured, status):
+    rid=create_run(client,configured);aid=configured['agents'][1]['id'];key=set_task(rid,aid)
+    with session() as s:
+        task=s.get(Task,rid+':'+key)
+        task.status=status
+        task.result={'outcome':'waiting','summary':'Original preserved work, now handled by coordinator'}
+    assert not member(client,aid)['busy']
+    other=create_run(client,configured,title='Different real work')
+    set_task(other,aid)
+    presence=member(client,aid)
+    assert presence['busy'] and presence['run_id']==other and presence['run_count']==1
 
 
 def test_pause_approval_attention_never_idle(client,configured):
     rid=create_run(client,configured);aid=configured['agents'][0]['id']
+    set_task(rid,aid)
     for status,phase in [('paused','paused'),('awaiting_approval','approval'),('awaiting_acceptance','approval'),('needs_attention','attention')]:
         with session() as s:s.get(Run,rid).status=status
         p=member(client,aid);assert p['phase']==phase and p['busy']
@@ -76,7 +116,7 @@ def test_other_run_holds_agent_even_when_selected_run_finished(client,configured
 
 def test_active_tool_takes_precedence_over_other_paused_run(client,configured):
     first=create_run(client,configured,title='Paused');second=create_run(client,configured,title='Active')
-    aid=configured['agents'][1]['id'];set_task(second,aid)
+    aid=configured['agents'][1]['id'];set_task(first,aid);set_task(second,aid)
     with session() as s:s.get(Run,first).status='paused'
     p=member(client,aid);assert p['phase']=='writing' and p['run_count']==2
 
@@ -107,6 +147,7 @@ def test_event_pagination_is_explicit(client,configured):
 
 def test_hidden_project_only_returns_coarse_reservation(client,configured):
     rid=create_run(client,configured);aid=configured['agents'][1]['id'];set_task(rid,aid)
+    leader=client.get('/api/runs/'+rid).json()['entry_agent_id']
     with session() as s:emit(s,rid,'agent.message',{'from_agent_id':aid,'body':'PRIVATE-BODY'})
     u=client.post('/api/users',json={'username':'viewer','password':'viewer-long-password-123','role':'viewer'});assert u.status_code==201,u.text
     with TestClient(app,headers={'X-Forge-Request':'1'}) as viewer:
@@ -114,7 +155,10 @@ def test_hidden_project_only_returns_coarse_reservation(client,configured):
         data=viewer.get('/api/office/state?after=0').json();text=json.dumps(data)
         assert rid not in text and 'PRIVATE-BODY' not in text
         assert data['events']==[]
-        for p in data['presence']:assert p['phase']=='reserved' and p['busy'] and p['run_id'] is None and p['run_count']==0
+        for p in data['presence']:
+            assert p['run_id'] is None and p['run_count']==0 and not p['evidence_ids'] and p['task_key'] is None
+            if p['agent_id'] in {leader,aid}: assert p['phase']=='reserved' and p['busy']
+            else: assert p['phase']=='idle' and not p['busy']
         assert viewer.put('/api/office/settings',json={'idle_enabled':False}).status_code==403
 
 

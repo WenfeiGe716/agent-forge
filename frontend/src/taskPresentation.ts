@@ -1,8 +1,10 @@
 import {Run,Task} from './types';
 
 export type TaskTab='progress'|'actions'|'results'|'activity';
-export function isAutonomous(run:Run){return run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';}
-export function isDiscussion(run:Run){return run.report?.mode==='discussion'||run.snapshot?.orchestration?.mode==='discussion';}
+/** Display aliases only; unknown runtime tools remain visible under their real names. */
+export function taskToolLabel(value:unknown){const name=typeof value==='string'?value:'';return ({inspect_team:'查看团队能力目录',read_work_result:'读取团队已集成成果'} as Record<string,string>)[name]||name;}
+export function isAutonomous(run:Run){return run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';}
+export function isDiscussion(run:Run){return !isAutonomous(run)&&(run.report?.mode==='discussion'||run.snapshot?.orchestration?.mode==='discussion');}
 export function primaryTab(run:Run):TaskTab{return ['awaiting_approval','awaiting_decision'].includes(run.status)?'actions':run.artifact_digest?'results':'progress';}
 export function taskStage(task:Task,discussion=false){
  if(discussion)return task.kind==='intake'?0:task.kind==='action_plan'?2:1;
@@ -41,6 +43,9 @@ export function runPresentation(run:Run){
   awaiting_acceptance:['成果已就绪，等待你的验收','核对交付文件、成员结论和实际验证依据，再决定是否接受。','results','检查交付成果'],
   needs_attention:['任务已停止 · 尚未完成','保留已经产生的工作与停止原因，不把用尽额度、等待或成员回复当作成功。','progress','查看原因与处理'],
  });
+ const issue=tasks.map(t=>t.result?.issue_summary).find(i=>i?.status==='open'||i?.status==='escalated');
+ if(issue&&run.status==='running')copy.running=['负责人正在处理执行问题',issue.summary||'检查当前成果，在已有权限内组织修复与验证。','progress','查看问题与修复进度'];
+ if(issue&&run.status==='needs_attention')copy.needs_attention=['自动处理已停止，需要你的协助',issue.escalation_reason||issue.summary||'查看问题、已尝试的处理和需要你决定的事项。','progress','查看具体问题'];
  const [title,description,target,action]=copy[run.status]||['正在同步任务状态','暂时无法识别该状态，请刷新或查看执行记录。','activity','查看执行记录'];
  return {title,description,target,action,attention,blocked,discussion,autonomous,focus,
   steps:labels.map((label,i)=>({label,state:run.status==='completed'?'done':i===index?(blocked?'blocked':attention?'waiting':'current'):i<index?'past':'upcoming'})),

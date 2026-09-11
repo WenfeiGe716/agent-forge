@@ -56,6 +56,8 @@ def freeze_run(s, project, agents: list[Agent], overrides: dict, parent: str | N
     autonomous = execution_strategy == 'autonomous'
     if autonomous and orchestration: raise ValueError('团队自治不接受固定编排流程')
     leader = autonomous_leader(agents, entry_agent_id) if autonomous else None
+    from .member_execution_policy import freeze_policies
+    execution_policies = freeze_policies(s, project, agents)
     for agent in agents:
         c = deepcopy(agent.config)
         if not c.get('enabled', True): raise ValueError(f'{c["name"]} 已停用')
@@ -77,7 +79,8 @@ def freeze_run(s, project, agents: list[Agent], overrides: dict, parent: str | N
             if ancestor in selected_configs:
                 ancestor=selected_configs[ancestor].get('reports_to')
             else:
-                leader=s.get(Agent,ancestor); ancestor=leader.config.get('reports_to') if leader else None
+                ancestor_agent=s.get(Agent,ancestor)
+                ancestor=ancestor_agent.config.get('reports_to') if ancestor_agent else None
         bound_skills=skills.freeze_bindings(s,c.get('skills',[]))
         if c.get('role_template_ref'):
             from .role_templates import validate_reference
@@ -88,7 +91,8 @@ def freeze_run(s, project, agents: list[Agent], overrides: dict, parent: str | N
                             'office_position':deepcopy(c.get('office_position')),'design_ref':deepcopy(c.get('design_ref')),
                             'role_template_ref':deepcopy(c.get('role_template_ref')),
                             'department':c.get('department',''),'communication':c.get('communication',{'scope':'run'}),
-                            'reporting_chain':chain,'skills':bound_skills}
+                            'reporting_chain':chain,'skills':bound_skills,
+                            'execution_policy':execution_policies[agent.id]}
     planners = [a for a in frozen.values() if a['role'] == 'planner']
     developers = [a for a in frozen.values() if a['role'] in ('developer', 'tester')]
     reviewers = [a for a in frozen.values() if a['role'] == 'reviewer']

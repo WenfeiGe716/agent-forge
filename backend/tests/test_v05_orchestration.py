@@ -5,7 +5,7 @@ from sqlalchemy import select
 import pytest
 from conftest import run_body
 from forge import engine,providers
-from forge.db import session,Run,Task,Step,Event
+from forge.db import session,Run,Task,Step,Event,Project,Agent
 from forge.providers import Reply
 from forge.workflow_core import DevelopmentFlow
 from forge.local_runtime import LocalRuntime
@@ -18,6 +18,23 @@ def graph(cfg,**kw):
 def draft(cfg,g):return run_body(cfg,agent_ids=g['participants'] if g['mode']=='discussion' else [a['id'] for a in cfg['agents']],orchestration=g)
 def clean(row):return {k:v for k,v in row.items() if k not in ['id','version','created_at','owner_id','base_commit']}
 
+def autonomous_draft(cfg,g,**changes):
+    ids=g['participants'] if g['mode']=='discussion' else [a['id'] for a in cfg['agents']]
+    return run_body(cfg,agent_ids=ids,entry_agent_id=ids[0],**changes)
+
+def internal_legacy_run(client,cfg,g,**changes):
+    """Isolated legacy engine fixture; never enables public fixed-flow creation."""
+    body=autonomous_draft(cfg,g,**changes)
+    made=client.post('/api/runs',json=body)
+    assert made.status_code==202,made.text
+    assert made.json()['execution_strategy']=='autonomous'
+    from forge.snapshots import freeze_run
+    with session() as s:
+        run=s.get(Run,made.json()['id'])
+        run.snapshot=freeze_run(s,s.get(Project,run.project_id),[s.get(Agent,aid) for aid in body['agent_ids']],
+            body.get('runtime',{}),None,OrchestrationInput.model_validate(g).model_dump(),execution_strategy='workflow')
+    return made
+
 def test_template_crud_and_version_conflict(client,configured):
     g=graph(configured)
     x=client.post('/api/orchestrations',json={'name':'讨论模板','graph':g});assert x.status_code==201,x.text
@@ -27,35 +44,55 @@ def test_template_crud_and_version_conflict(client,configured):
     assert x.json()['version']==2
     assert client.put('/api/orchestrations/'+t['id'],json={'name':'stale','graph':g,'expected_version':1}).status_code==409
 
-def test_template_snapshot_and_stale_launch(client,configured):
+def test_templates_remain_editable_but_new_fixed_launch_is_retired(client,configured):
     g=graph(configured);t=client.post('/api/orchestrations',json={'name':'stable','graph':g}).json()
     body=run_body(configured,agent_ids=g['participants'],template_id=t['id'],template_version=1)
-    made=client.post('/api/runs',json=body);assert made.status_code==202,made.text
+    assert client.post('/api/runs',json=body).status_code==422
     client.put('/api/orchestrations/'+t['id'],json={'name':'new','graph':{**g,'rounds':5},'expected_version':1}).raise_for_status()
-    d=client.get('/api/runs/'+made.json()['id']).json();assert 'rounds' not in d['snapshot']['orchestration'];assert d['snapshot']['orchestration']['stop_when']=='goal_satisfied';assert d['snapshot']['orchestration']['legacy_stop_migrated']
-    assert d['snapshot']['orchestration_template']['version']==1
-    assert client.post('/api/runs',json=body).status_code==409
+    saved=next(row for row in client.get('/api/orchestrations').json() if row['id']==t['id'])
+    assert saved['version']==2 and saved['name']=='new'
+    assert 'rounds' not in saved['graph'] and saved['graph']['stop_when']=='goal_satisfied'
+    assert saved['graph']['legacy_stop_migrated']
+    assert client.post('/api/runs',json=body).status_code==422
+    assert client.post('/api/runs',json={**body,'template_version':2}).status_code==422
+    with session() as s: assert not list(s.scalars(select(Run)))
 
 @pytest.mark.parametrize('patch',[{'rounds':0},{'rounds':13},{'rounds':1,'min_rounds':2},{'participants':[]},{'participants':['unknown','other']},{'strategy':'random'}])
 def test_invalid_graph_rejected(client,configured,patch):
-    g=graph(configured,**patch);res=client.post('/api/runs',json=draft(configured,g));assert res.status_code in (422,400),res.text
+    g=graph(configured,**patch)
+    if patch.get('participants')==['unknown','other']:
+        res=client.post('/api/runs',json=autonomous_draft(configured,g))
+        assert res.status_code==422 and '不存在' in res.json()['detail']
+    else:
+        with pytest.raises(ValueError): OrchestrationInput.model_validate(g)
 
-def test_discussion_subset_no_fixed_roles(client,configured):
-    g=graph(configured);res=client.post('/api/runs',json=draft(configured,g));assert res.status_code==202,res.text
+def test_autonomous_subset_no_fixed_roles_or_mandatory_discussion(client,configured):
+    g=graph(configured);res=client.post('/api/runs',json=autonomous_draft(configured,g));assert res.status_code==202,res.text
     snap=client.get('/api/runs/'+res.json()['id']).json()['snapshot'];assert set(snap['agents'])==set(g['participants'])
+    assert snap['execution_strategy']=='autonomous' and snap['orchestration'] is None and not snap['collaboration_flow']
 
-def test_development_roles_still_required(client,configured):
-    g=graph(configured,mode='development');res=client.post('/api/runs',json={**draft(configured,g),'agent_ids':g['participants']});assert res.status_code==422
+def test_fixed_development_graph_is_retired_not_a_role_requirement(client,configured):
+    g=graph(configured,mode='development')
+    res=client.post('/api/runs',json={**draft(configured,g),'agent_ids':g['participants']})
+    assert res.status_code==422 and '固定编排' in res.text
 
 def test_disabled_agent_model_and_archived_project(client,configured):
     g=graph(configured);a=next(a for a in configured['agents'] if a['id']==g['participants'][0]);body=clean(a)
+    request=autonomous_draft(configured,g)
+    assert client.post('/api/runs/preview-config',json=request).status_code==200
     client.put('/api/agents/'+a['id'],json={**body,'enabled':False}).raise_for_status()
-    assert client.post('/api/runs',json=draft(configured,g)).status_code==422
+    rejected=client.post('/api/runs',json=request)
+    assert rejected.status_code==422 and '停用' in rejected.json()['detail']
     client.put('/api/agents/'+a['id'],json={**body,'enabled':True}).raise_for_status()
     m=next(m for m in client.get('/api/models').json() if m['id']==a['model_profile_id']);mb=clean(m)
-    client.put('/api/models/'+m['id'],json={**mb,'enabled':False}).raise_for_status();assert client.post('/api/runs',json=draft(configured,g)).status_code==422
+    client.put('/api/models/'+m['id'],json={**mb,'enabled':False}).raise_for_status()
+    rejected=client.post('/api/runs',json=request)
+    assert rejected.status_code==422 and '模型' in rejected.json()['detail'] and '停用' in rejected.json()['detail']
     client.put('/api/models/'+m['id'],json={**mb,'enabled':True}).raise_for_status()
-    p=configured['project'];client.put('/api/projects/'+p['id'],json={**clean(p),'archived':True}).raise_for_status();assert client.post('/api/runs',json=draft(configured,g)).status_code==422
+    p=configured['project'];client.put('/api/projects/'+p['id'],json={**clean(p),'archived':True}).raise_for_status()
+    rejected=client.post('/api/runs',json=request)
+    assert rejected.status_code==422 and '归档' in rejected.json()['detail']
+    with session() as s: assert not list(s.scalars(select(Run)))
 
 def test_reporting_hierarchy_cycle_and_reception(client,configured):
     a,b=configured['agents'][:2]
@@ -67,8 +104,8 @@ def test_reporting_hierarchy_cycle_and_reception(client,configured):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('strategy',['sequential','parallel'])
-async def test_multiround_real_flow_context_and_artifact(client,configured,monkeypatch,strategy):
-    g=graph(configured,strategy=strategy,rounds=3);made=client.post('/api/runs',json=draft(configured,g));assert made.status_code==202,made.text
+async def test_internal_legacy_multiround_flow_context_and_artifact(client,configured,monkeypatch,strategy):
+    g=graph(configured,strategy=strategy,rounds=3);made=internal_legacy_run(client,configured,g)
     rid=made.json()['id'];seen=[]
     async def complete(conn,model,messages,tools,key,timeout):
         import json
@@ -97,8 +134,8 @@ async def test_multiround_real_flow_context_and_artifact(client,configured,monke
     assert configured['source'].joinpath('calc.py').read_text().endswith('a - b\n')
 
 @pytest.mark.asyncio
-async def test_goal_stop_ignores_legacy_round_minimum_and_ready(client,configured,monkeypatch):
-    g=graph(configured,rounds=6,min_rounds=2,stop_when='unanimous_ready');r=client.post('/api/runs',json=draft(configured,g)).json();rid=r['id']
+async def test_internal_legacy_goal_stop_ignores_round_minimum_and_ready(client,configured,monkeypatch):
+    g=graph(configured,rounds=6,min_rounds=2,stop_when='unanimous_ready');r=internal_legacy_run(client,configured,g).json();rid=r['id']
     async def complete(conn,model,messages,*args):
         import json
         spec=json.loads(messages[1]['content'])['task']
@@ -109,12 +146,12 @@ async def test_goal_stop_ignores_legacy_round_minimum_and_ready(client,configure
     result=await flow.discuss(g);assert result['rounds_completed']==1;assert result['stop_reason']=='goal_satisfied';assert len(result['turns'])==2
     assert client.get('/api/runs/'+rid).json()['calls']==3
     # A separately configured hard limit must stop the discussion too.
-    other=client.post('/api/runs',json={**draft(configured,g),'runtime':{'max_model_calls':1}}).json()['id'];out=await DevelopmentFlow(LocalRuntime(other,asyncio.Semaphore(2))).run(other)
+    other=internal_legacy_run(client,configured,g,runtime={'max_model_calls':1}).json()['id'];out=await DevelopmentFlow(LocalRuntime(other,asyncio.Semaphore(2))).run(other)
     assert out['status']=='needs_attention';assert client.get('/api/runs/'+other).json()['calls']==1
 
 @pytest.mark.asyncio
-async def test_discussion_write_tool_denied(client,configured,monkeypatch):
-    g=graph(configured);rid=client.post('/api/runs',json=draft(configured,g)).json()['id'];engine.prepare_run({'run_id':rid});engine.prepare_discussion({'run_id':rid,'round':1,'order':0})
+async def test_internal_legacy_discussion_write_tool_denied(client,configured,monkeypatch):
+    g=graph(configured);rid=internal_legacy_run(client,configured,g).json()['id'];engine.prepare_run({'run_id':rid});engine.prepare_discussion({'run_id':rid,'round':1,'order':0})
     async def bad(*args):return Reply('fixture write attempt',[{'id':'bad','name':'write_file','arguments':{'path':'calc.py','content':'malicious'}}],1,1)
     monkeypatch.setattr(providers,'complete',bad)
     out=await engine.turn({'run_id':rid,'key':'discussion_1_0','index':0});assert not out['done']
@@ -129,9 +166,9 @@ def test_viewer_cannot_modify_templates(client,configured):
     assert client.post('/api/orchestrations',json={'name':'denied','graph':graph(configured)}).status_code==403
 
 @pytest.mark.asyncio
-async def test_parallel_messages_wait_for_next_round(client,configured,monkeypatch):
+async def test_internal_legacy_parallel_messages_wait_for_next_round(client,configured,monkeypatch):
     from forge.collaboration import send_message,pending_messages
-    g=graph(configured,strategy='parallel');rid=client.post('/api/runs',json=draft(configured,g)).json()['id']
+    g=graph(configured,strategy='parallel');rid=internal_legacy_run(client,configured,g).json()['id']
     engine.prepare_run({'run_id':rid})
     for order in (0,1):engine.prepare_discussion({'run_id':rid,'round':1,'order':order})
     recipient=g['participants'][1]

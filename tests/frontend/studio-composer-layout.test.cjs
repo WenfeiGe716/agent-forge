@@ -91,7 +91,7 @@ test('desktop composer fits all real fields while narrow overflow can be scrolle
 test('compact recipient prompts retain full intent and long selections retain descriptive titles',options,()=>{
  for(const m of measurements){
   const recipient=m.controls.find(c=>c.label==='指令收件人');
-  if(!m.longLabels){assert.equal(recipient.selectedText,m.mode==='append'?'选择收件人':'选择负责人');assert.equal(recipient.title,m.mode==='append'?'选择任务内收件人':'选择团队内负责人 / 下一步确认');}
+  if(!m.longLabels){assert.equal(recipient.selectedText,m.mode==='append'?'选择收件人':'选择负责人');assert.equal(recipient.title,m.mode==='append'?'选择任务内收件人':'选择团队内负责人');}
   for(const control of m.controls.filter(c=>c.selectedText)){
    assert.ok(control.title,`${label(m)}: ${control.label} must retain a full title`);
    if(m.longLabels&&['任务项目','指令收件人'].includes(control.label))assert.equal(control.title,control.selectedText);

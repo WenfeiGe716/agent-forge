@@ -24,11 +24,11 @@ def native_enabled(monkeypatch):
 
 
 @pytest.fixture
-def local_run(client, configured, native_enabled):
+def local_run(client, configured, native_enabled, request):
     # Existing shared fixtures deliberately remain container based.
     with session() as s:
         from forge.db import Project
-        p = s.get(Project, configured['project']['id']); p.config = {**p.config, 'execution_mode': 'local', 'permission_profile': 'ask'}
+        p = s.get(Project, configured['project']['id']); p.config = {**p.config, 'execution_mode': 'local', 'permission_profile': getattr(request, 'param', 'ask')}
     rid = client.post('/api/runs', json=run_body(configured)).json()['id']
     engine.prepare_run({'run_id': rid})
     aid = next(a['id'] for a in configured['agents'] if a['role'] == 'developer')
@@ -38,6 +38,19 @@ def local_run(client, configured, native_enabled):
 
 def actual_mac():
     if sys.platform != 'darwin' or not Path(native.SANDBOX).is_file(): pytest.skip('Real Seatbelt probes require macOS')
+
+
+@pytest.mark.asyncio
+async def test_real_node_os_and_original_test_runner_work_without_network(tmp_path, native_enabled):
+    actual_mac()
+    import shutil
+    node = shutil.which('node', path=native.clean_environment(tmp_path)['PATH'])
+    if not node: pytest.skip('Node is not installed')
+    (tmp_path / 'core.test.cjs').write_text("const test=require('node:test'),assert=require('node:assert/strict');test('real OS module',()=>assert.equal(require('node:os').type(),'Darwin'));\n")
+    result = await native.spawn(tmp_path.resolve(), shlex.quote(node) + ' --test core.test.cjs', {'command_timeout_s': 10})
+    assert result['exit_code'] == 0, result
+    assert '# pass 1' in result['output']
+    assert '# fail 0' in result['output']
 
 
 @pytest.mark.asyncio
@@ -197,10 +210,9 @@ def test_legacy_snapshot_missing_mode_stays_container(client, configured):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('local_run', ['auto'], indirect=True)
 async def test_auto_unknown_review_waits_for_human_and_does_not_execute(client, local_run, monkeypatch):
     rid, aid, root = local_run
-    with session() as s:
-        run = s.get(Run, rid); snap = json.loads(json.dumps(run.snapshot)); snap['project']['permission_profile'] = 'auto'; run.snapshot = snap
     from forge import execution_auto_review
     calls = []
     async def review(*args): calls.append(args); return {'decision': 'ask_user', 'reason': 'Cannot determine safely', 'digest': args[3]}

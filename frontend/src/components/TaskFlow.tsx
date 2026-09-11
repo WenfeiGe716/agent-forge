@@ -3,7 +3,7 @@ import type {ForgeEvent,Run,Task} from '../types';
 import {buildTaskFlow,FlowNode,flowMember,flowStatus,flowText,taskOutputEvidence} from '../taskFlowModel';
 
 type Props={run:Run;onTask:(task:Task)=>void;events?:ForgeEvent[]};
-const finished=(task:Task|undefined)=>!!task&&['done','integrated'].includes(task.status);
+const finished=(task:Task|undefined)=>!!task&&['done','integrated','conflicted','superseded'].includes(task.status);
 const dependencyIntegrated=(node:FlowNode|undefined)=>node?.task?.status==='integrated';
 
 function StageCard({task,run,onTask}:{task:Task;run:Run;onTask:(task:Task)=>void}){
@@ -22,7 +22,7 @@ function BranchCard({node,run,onTask,nodes}:{node:FlowNode;run:Run;onTask:(task:
 }
 
 export default function TaskFlow({run,onTask}:Props){
- const autonomous=run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous',flow=buildTaskFlow(run),columns=flow.depth+(flow.unresolved.size?1:0),style={'--flow-columns':Math.max(1,columns)} as CSSProperties;
+ const autonomous=run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous',flow=buildTaskFlow(run),columns=flow.depth+(flow.unresolved.size?1:0),style={'--flow-columns':Math.max(1,columns)} as CSSProperties;
  const stopped=['paused','needs_attention','cancelled'].includes(run.status);
  return <section className="task-flow" aria-label="真实任务依赖与成员进度">
   <header className="flow-heading"><div><span>协作画布</span><h2>成员分工与协作路径</h2></div><div className="flow-counts"><span><b>{flow.stats.running}</b>执行中</span><span><b>{flow.stats.waiting}</b>待决定</span><span><b>{flow.stats.submitted} / {flow.stats.created}</b>阶段已提交</span></div></header>

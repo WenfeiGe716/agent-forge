@@ -1,9 +1,13 @@
 import {Json,Run} from '../types';
 
 const stages:Record<string,string>={intake:'接收需求',plan:'制定计划',action_plan:'整理行动计划',discussion:'团队讨论',develop:'执行任务',verify:'项目验证',review:'独立审查'};
+export function pendingIntegrationSubmissions(run:Run){
+ return (run.tasks||[]).filter(task=>task.status==='done'&&Array.isArray(task.result?.deliverables)&&task.result.deliverables.length).map(task=>({key:task.key,member:run.snapshot?.agents?.[task.agent_id]?.name||task.agent_id,files:task.result.deliverables.filter((path:unknown)=>typeof path==='string')}));
+}
 export function summarizeRunFailure(run:Run){
  const error=run.error||'',task=run.tasks?.find(t=>['needs_attention','failed'].includes(t.status));
  const base={stage:stages[task?.kind||'']||'运行处理',member:task?.agent_id?run.snapshot?.agents?.[task.agent_id]?.name||task.agent_id:'',title:'任务已停止，需要检查后重新发起',reason:'执行未能完成。已有记录保留，当前任务不会自行继续。',next:'先查看阶段记录、工具结果和已有产物，再调整需求或配置，重新确认后发起新运行。'};
+ if(/并行变更.*冲突|merge conflict|patch.*(?:does not apply|already exists)/i.test(error))return {...base,member:'',stage:'成果合并',title:'成果合并冲突，任务已停止',reason:'成员提交的文件与当前集成版本发生冲突。系统保留了补丁，没有覆盖已有文件；这不是模型连接错误，也不是等待审批。',next:'先查看成员提交与冲突文件，核对所选项目的约束是否符合本次目标。不要反复修改模型或直接重复整次任务；确认已有成果和剩余工作后再发起。'};
  if(/validation errors? for Plan\b/.test(error))return {...base,stage:'制定计划',title:'计划格式不符合要求，任务已停止',reason:'模型返回的计划缺少必要字段或使用了错误字段名，系统没有接受这份计划。这不是等待你批准，也不需要你手工修改那段报错。',next:'当前版本会把格式问题反馈给模型，在原有步数内要求修正。此历史运行不会自动恢复；请先检查已有记录，再使用最新配置重新发起。'};
  if(/未确认完成|不自动重放|uncertain/i.test(error))return {...base,title:'上一步执行结果不确定，已停止保护现场',reason:'系统无法确认某个步骤是否已完成，自动重试可能重复修改文件或执行命令。',next:'先核对执行记录、文件与外部系统结果，确认哪些工作已完成；在新需求中明确剩余工作后再重新发起。'};
  if(/最大执行步数|最大模型调用|调用.*上限|返工上限|预算/.test(error))return {...base,title:'已达到执行限制，任务尚未完成',reason:'本次运行已用完步数、调用或返工额度，不能继续自动执行。',next:'检查已完成的工作和未解决的问题，缩小下一次任务范围；确需调整额度时，先编辑运行配置，再确认发起新运行。'};
@@ -19,7 +23,7 @@ export function summarizeRunFailure(run:Run){
 // bindings, approval decisions, commands, or execution results into a new run.
 export function runRecoverySeed(run:Run):Json{
  const snapshot=run.snapshot||{},design=snapshot.design||{};
- const seed:Json={execution_strategy:'autonomous',run_project_checks:false,project_id:run.project_id,title:run.title.slice(0,172)+' · 重新发起',request:run.request,agent_ids:Object.keys(snapshot.agents||{}),parent_run_id:run.id,collaboration_flow:true,entry_agent_id:snapshot.entry_agent_id||null};
+ const seed:Json={execution_strategy:'autonomous',run_project_checks:false,project_id:run.project_id,title:run.title.slice(0,172)+' · 重新发起',request:run.request,agent_ids:Object.keys(snapshot.agents||{}),parent_run_id:run.id,collaboration_flow:false,entry_agent_id:snapshot.entry_agent_id||null};
  if(design.organization_team){const ref=design.organization_team.layout_ref||{};seed.office_team_id=design.organization_team.id;seed.office_layout_ref={id:ref.id,version:ref.version,digest:ref.digest};}
  return seed;
 }
@@ -27,5 +31,6 @@ export function runRecoverySeed(run:Run):Json{
 export default function RunRecovery({run,writer,onNewTask,onInspect,onConfigure}:{run:Run;writer:boolean;onNewTask:(seed:Json)=>void;onInspect?:()=>void;onConfigure?:()=>void}){
  if(run.status!=='needs_attention')return null;
  const info=summarizeRunFailure(run);
- return <section className="run-recovery" role="status" aria-label="任务停止原因与处理"><header><span>任务已停止 · 不是待审批</span><h3>{info.title}</h3></header><p className="run-recovery-stage">停在：{info.stage}{info.member?' · '+info.member:''}</p><p>{info.reason}</p><h4>接下来怎么做</h4><p>{info.next}</p><div className="inline-actions">{writer&&<button className="button primary" onClick={()=>onNewTask(runRecoverySeed(run))}>使用最新配置重新发起</button>}{onInspect&&<button className="button secondary" onClick={onInspect}>查看执行记录与已有产物</button>}{onConfigure&&<button className="button secondary" onClick={onConfigure}>检查成员与模型配置</button>}</div><p className="microcopy">会先打开确认表单并检查执行条件，不会立即调用模型。旧任务和快照保持不变；新任务可能再次执行原需求，请核对已有产物并修改为剩余工作。</p>{run.error&&<details><summary>技术详情（排查时使用）</summary><pre>{run.error}</pre></details>}</section>;
+ const pending=info.stage==='成果合并'?pendingIntegrationSubmissions(run):[];
+ return <section className="run-recovery" role="status" aria-label="任务停止原因与处理"><header><span>任务已停止 · 不是待审批</span><h3>{info.title}</h3></header><p className="run-recovery-stage">停在：{info.stage}{info.member?' · '+info.member:''}</p><p>{info.reason}</p>{!!pending.length&&<details open className="run-recovery-submissions"><summary>尚未集成的成员提交</summary><p className="microcopy">以下是待合并提交中的文件，不代表每个文件都存在冲突。</p>{pending.map(item=><article key={item.key}><b>{item.member}</b><ul>{item.files.map((file:string)=><li key={file}><code>{file}</code></li>)}</ul></article>)}</details>}<h4>接下来怎么做</h4><p>{info.next}</p><div className="inline-actions">{writer&&<button className="button primary" onClick={()=>onNewTask(runRecoverySeed(run))}>使用最新配置重新发起</button>}{onInspect&&<button className="button secondary" onClick={onInspect}>查看执行记录与已有产物</button>}{onConfigure&&info.stage!=='成果合并'&&<button className="button secondary" onClick={onConfigure}>检查成员与模型配置</button>}</div><p className="microcopy">会先打开确认表单并检查执行条件，不会立即调用模型。旧任务和快照保持不变；新任务可能再次执行原需求，请核对已有产物并修改为剩余工作。</p>{run.error&&<details><summary>技术详情（排查时使用）</summary><pre>{run.error}</pre></details>}</section>;
 }

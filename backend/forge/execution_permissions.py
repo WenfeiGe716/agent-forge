@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .db import Base, Run, Task, DecisionRequest, session, emit, now
 from .schema import Strict, HumanAnswer
 from . import engagement, local_executor
+from .member_execution_policy import execution_project
 
 CONSTRAINTS = {'policy_version': 1, 'child_processes': False, 'path_scope': 'exact_files', 'network_scope': 'outbound_ip_only',
     'message': '本次临时权限禁止派生子进程；需子进程的操作会失败关闭。不会改变项目权限或自动开启完全访问。'}
@@ -68,7 +69,7 @@ def authorize(s, run_id, key):
     if not run or not task or run.status in ('completed', 'cancelled', 'needs_attention'):
         raise ValueError('运行已结束或当前执行任务不存在')
     if run.snapshot['project'].get('execution_mode', 'container') != 'local': raise ValueError('此申请仅用于本机执行，不改变容器权限')
-    if run.snapshot['project'].get('permission_profile', 'ask') == 'full': raise ValueError('已明确选择完全访问的运行不使用临时权限；不得宣称单次隔离许可')
+    if execution_project(run, task.agent_id)['permission_profile'] == 'full': raise ValueError('已明确选择完全访问的成员不使用临时权限；不得宣称单次隔离许可')
     agent = run.snapshot['agents'].get(task.agent_id)
     if not agent or 'run_command' not in agent['tools'] or task.kind not in ('develop', 'autonomous'): raise ValueError('成员没有该任务的命令执行权限')
     return run, task
@@ -122,7 +123,7 @@ async def request_permission(run_id, key, operation, arguments):
         emit(s, run_id, 'execution.permission.requested', {'permission_id': row.id, 'task_key': key, 'agent_id': task.agent_id,
              'digest': digest, 'command': data.command, 'network': data.network, 'paths': paths, 'request_id': decision.id})
         emit(s, run_id, 'human.decision.requested', {'request_id': decision.id, 'task_key': key, 'agent_id': task.agent_id, 'digest': decision.digest, **question})
-        auto = run.snapshot['project'].get('permission_profile', 'ask') == 'auto'
+        auto = execution_project(run, task.agent_id)['permission_profile'] == 'auto'
         agent_id = task.agent_id
     if auto:
         from .execution_auto_review import assess_request

@@ -2,6 +2,8 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const ts=require('../../frontend/vendor/typescript.cjs');
 const source=fs.readFileSync(require.resolve('../../frontend/src/components/EmployeeTaskPanel.tsx'),'utf8');
 const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+const recoveryCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/components/RunRecovery.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+const issuesCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/components/RunIssues.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
 const nodes=v=>Array.isArray(v)?v.flatMap(nodes):v&&typeof v==='object'?[v,...nodes(v.props?.children)]:[];
 const text=v=>Array.isArray(v)?v.map(text).join(''):v&&typeof v==='object'?text(v.props?.children):v==null||typeof v==='boolean'?'':String(v);
 const button=(tree,label)=>{const b=nodes(tree).find(n=>n.type==='button'&&text(n)===label);assert.ok(b,label);return b;};
@@ -18,7 +20,10 @@ function harness({handler,preview=false,runPatch={},propPatch={}}={}){
   if(id==='./Icons')return new Proxy({},{get:(_,key)=>props=>jsx('icon-'+String(key),props)});
   if(id==='./TaskApprovals')return{__esModule:true,default:props=>jsx('approvals',props)};
   if(id==='./ExecutionCenter')return{__esModule:true,default:props=>jsx('permissions',props)};
-  if(id==='./Collaboration')return{Question:props=>jsx('question',props)};
+ if(id==='./Collaboration')return{Question:props=>jsx('question',props)};
+  if(id==='./RunRecovery'){const recovery={};vm.runInNewContext(recoveryCode,{exports:recovery,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return recovery;}
+  if(id==='./RunIssues'){const issues={};vm.runInNewContext(issuesCode,{exports:issues,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return issues;}
+  if(id.endsWith('.css'))return{};
   throw Error(id);
  }});
  let props={agent:{id:'a',name:'需求师'},runs:[{...run,...runPatch}],detail:null,projects:[],writer:true,admin:true,preview,onOpenRun:id=>opened.push(id),onNavigate(){},onRefresh(){},...propPatch};
@@ -52,6 +57,10 @@ test('the frozen plan owner can review inside the employee panel',async()=>{
 
 test('autonomous acceptance belongs to the explicit coordinator regardless of fixed review role',async()=>{
  const h=harness({runPatch:{execution_strategy:'autonomous',status:'awaiting_acceptance',snapshot:{...run.snapshot,entry_agent_id:'a'},report:{mode:'autonomous'}}});h.render();let tree=await h.settle();nodes(tree).find(n=>n.props?.className==='employee-approval-alert').props.onClick();tree=h.render();assert.equal(nodes(tree).filter(n=>n.type==='approvals').length,1);assert.equal(nodes(tree).find(n=>n.type==='approvals').props.run.snapshot.entry_agent_id,'a');
+});
+
+test('mode-only autonomous acceptance is also assigned to its coordinator',async()=>{
+ const h=harness({runPatch:{mode:'autonomous',status:'awaiting_acceptance',snapshot:{...run.snapshot,entry_agent_id:'a'}}});h.render();let tree=await h.settle();nodes(tree).find(n=>n.props?.className==='employee-approval-alert').props.onClick();tree=h.render();assert.equal(nodes(tree).filter(n=>n.type==='approvals').length,1);
 });
 
 test('autonomous waiting is visible as the actual employee stage outcome, not a human approval',async()=>{
@@ -92,4 +101,70 @@ test('controlled employee task selection reports the chosen task and follows exp
 
 test('3D employee and composer approval entry points stay in the employee inspector',()=>{
  const studio=fs.readFileSync(require.resolve('../../frontend/src/components/StudioWorkspace.tsx'),'utf8');assert.match(studio,/<EmployeeTaskPanel /);assert.match(studio,/className="approval-link" onClick=\{openApprovals\}/);assert.match(studio,/const pick=.*setTab\('tasks'\)/);
+});
+
+test('newly created run remains selected before list refresh and validates actual membership',async()=>{
+ const selected=[],fresh={...run,id:'new-run',title:'本次新任务',status:'running'};
+ const h=harness({propPatch:{initialRunId:'new-run',onRunChange:id=>selected.push(id)},handler:url=>url.endsWith('/collaboration')?{run_id:'new-run',decisions:[]}:url.includes('/trace?')?{items:[]}:fresh});
+ let tree=h.render();assert.equal(nodes(tree).find(n=>n.type==='select').props.value,'new-run');
+ tree=await h.settle();assert.match(text(tree),/本次新任务/);assert.ok(h.calls.every(c=>c.url.includes('/new-run')));assert.deepEqual(selected,['new-run']);
+ const forbidden=harness({propPatch:{runs:[],initialRunId:'new-run',onRunChange(){}},handler:url=>url.endsWith('/collaboration')?{run_id:'new-run',decisions:[]}:url.includes('/trace?')?{items:[]}:{...fresh,snapshot:{agents:{b:{}}}}});
+ forbidden.render();const rejected=await forbidden.settle();assert.match(text(rejected),/不在这个任务的冻结成员范围/);assert.doesNotMatch(text(rejected),/本次新任务/);
+});
+
+test('long employee titles and original requirements remain in an explicit full-content disclosure',async()=>{
+ const title='长标题_/'.repeat(100),request='原始需求完整内容。'.repeat(500),h=harness({runPatch:{title,request},propPatch:{projects:[{id:'p',name:'很长的项目名称'.repeat(50)}]}});
+ h.render();const tree=await h.settle(),titleNode=nodes(tree).find(n=>n.props?.className==='employee-task-title');
+ assert.equal(text(titleNode),title);assert.equal(titleNode.props.title,title);
+ const disclosure=nodes(tree).find(n=>n.props?.className==='employee-request-details');assert.equal(disclosure.props.open,undefined);assert.ok(text(disclosure).includes(request));
+ assert.ok(nodes(disclosure).some(n=>n.props?.className==='employee-long-content'&&n.props.tabIndex===0));
+});
+
+test('many employee stages are progressively shown with pending work first and filter resets its display window',async()=>{
+ const tasks=Array.from({length:40},(_,i)=>({...run.tasks[0],id:'task-'+i,title:'工作 '+i,status:i===39?'running':'integrated'}));
+ const h=harness({runPatch:{tasks}});h.render();let tree=await h.settle();
+ const cards=()=>nodes(tree).filter(n=>String(n.props?.className||'').startsWith('employee-work-card '));
+ assert.equal(cards().length,12);assert.match(text(cards()[0]),/工作 39/);
+ button(tree,'再显示 12 项分工').props.onClick();tree=h.render();assert.equal(cards().length,24);
+ nodes(tree).find(n=>n.props?.['aria-label']==='筛选员工分工').props.onChange({target:{value:'submitted'}});tree=h.render();assert.equal(cards().length,12);assert.ok(cards().every(n=>!text(n).includes('工作 39')));
+ nodes(tree).find(n=>n.props?.['aria-label']==='筛选员工分工').props.onChange({target:{value:'active'}});tree=h.render();assert.equal(cards().length,1);assert.match(text(cards()[0]),/工作 39/);
+});
+
+test('long communication starts collapsed but keeps the full body, original evidence, and bounded read surface',async()=>{
+ const body='完整通信消息。'.repeat(700),event={id:31,kind:'agent.message',run_id:'run-a',created_at:'2026-09-11',data:{from_agent_id:'b',to_agent_id:'a',body,evidence:'receipt-id'}};
+ const h=harness({handler:url=>url.endsWith('/collaboration')?{run_id:'run-a',decisions:[]}:url.includes('/trace?')?{items:[event],has_more:true}:run});
+ h.render();let tree=await h.settle();button(tree,'通信').props.onClick();tree=h.render();
+ const record=nodes(tree).find(n=>n.props?.className==='is-incoming');assert.equal(record.props.open,undefined);
+ const content=nodes(record).find(n=>n.props?.['aria-label']==='完整通信内容');assert.ok(text(content).includes(body));assert.match(text(content),/receipt-id/);assert.equal(content.props.tabIndex,0);
+ assert.ok(nodes(tree).some(n=>n.props?.['aria-label']==='员工通信列表'&&n.props.tabIndex===0));assert.match(text(tree),/查看更多本任务通信/);
+});
+
+test('real stop reason remains visible with exact technical detail and opens only this run',async()=>{
+ const error='并行变更发生冲突，已保留patch: docs/requirements.md',h=harness({runPatch:{status:'needs_attention',error}});
+ h.render();const tree=await h.settle();assert.match(text(tree),/成果合并冲突，任务已停止/);assert.ok(text(tree).includes(error));
+ button(tree,'查看原因与处理').props.onClick();assert.deepEqual(h.opened,['run-a']);
+});
+test('structured issues show actual origin and coordinator progress without inferring the blamed employee',async()=>{
+ const issue={task_key:'nova-work',kind:'integration_conflict',source_agent_id:'b',source_agent_name:'Nova',status:'open',summary:'文件已由同伴修改',files:['src/game.js'],attempts:1,max_attempts:3};
+ const h=harness({runPatch:{status:'running',error:'历史通用错误',snapshot:{...run.snapshot,entry_agent_id:'a'},tasks:[{...run.tasks[0],result:{issue_summary:issue}}]}});h.render();const tree=await h.settle();assert.match(text(tree),/负责人正在尝试解决/);assert.match(text(tree),/Nova/);assert.match(text(tree),/src\/game.js/);assert.ok(!nodes(tree).some(n=>n.props?.className==='employee-run-error'));button(tree,'查看本任务问题与执行记录').props.onClick();assert.deepEqual(h.opened,['run-a']);assert.ok(h.calls.every(c=>c.method==='GET'));
+});
+
+test('conflicted and superseded activations count as submitted without success icons or pending-work placement',async()=>{
+ const tasks=['conflicted','superseded','running','integrated'].map((status,index)=>({...run.tasks[0],id:'status-'+index,title:status+'分工',kind:'autonomous',status,result:{}}));
+ const h=harness({runPatch:{status:'running',tasks}});h.render();let tree=await h.settle();
+ const metrics=nodes(tree).find(n=>n.props?.className==='employee-task-metrics');assert.equal(text(nodes(metrics).find(n=>n.type==='strong')),'3 / 4');
+ const conflict=nodes(tree).find(n=>n.props?.className==='employee-work-card conflicted'),superseded=nodes(tree).find(n=>n.props?.className==='employee-work-card superseded');
+ assert.match(text(conflict),/已提交 · 冲突待修复/);assert.match(text(superseded),/由修复工作替代/);
+ for(const card of [conflict,superseded])assert.ok(!nodes(card).some(n=>n.type==='icon-CheckCircle2'||n.type==='icon-Activity'));
+ assert.ok(nodes(nodes(tree).find(n=>n.props?.className==='employee-work-card integrated')).some(n=>n.type==='icon-CheckCircle2'));
+ assert.match(text(nodes(tree).find(n=>String(n.props?.className||'').startsWith('employee-work-card '))),/running分工/);
+ nodes(tree).find(n=>n.props?.['aria-label']==='筛选员工分工').props.onChange({target:{value:'active'}});tree=h.render();assert.deepEqual(nodes(tree).filter(n=>String(n.props?.className||'').startsWith('employee-work-card ')).map(n=>n.props.className),['employee-work-card running']);
+ nodes(tree).find(n=>n.props?.['aria-label']==='筛选员工分工').props.onChange({target:{value:'submitted'}});tree=h.render();assert.deepEqual(nodes(tree).filter(n=>String(n.props?.className||'').startsWith('employee-work-card ')).map(n=>n.props.className),['employee-work-card conflicted','employee-work-card superseded','employee-work-card integrated']);
+});
+
+test('superseded or conflicted old outcomes do not remain labelled blocked or waiting for messages',async()=>{
+ for(const status of ['superseded','conflicted'])for(const outcome of ['blocked','waiting']){
+  const h=harness({runPatch:{status:'running',tasks:[{...run.tasks[0],kind:'autonomous',status,result:{outcome,summary:'原始阶段记录'}}]}});h.render();const tree=await h.settle(),card=nodes(tree).find(n=>n.props?.className==='employee-work-card '+status);
+  assert.doesNotMatch(text(nodes(card).find(n=>n.type==='summary')),/已报告阻塞 · 未完成|等待成员消息/);assert.match(text(card),/原始阶段记录/);assert.match(text(card),new RegExp(outcome));
+ }
 });

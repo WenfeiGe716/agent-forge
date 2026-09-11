@@ -9,6 +9,8 @@ from . import skills,engagement
 
 def register(app):
     from .api import current_user,admin,developer,run_access,event_out
+    from .member_execution_policy import register as register_execution_policies
+    register_execution_policies(app)
 
     @app.get('/api/skills')
     def list_skills(user=Depends(current_user)):

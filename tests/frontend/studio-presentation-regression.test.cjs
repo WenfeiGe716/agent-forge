@@ -87,7 +87,7 @@ test('employee metrics count actual selected-run stages, scoped communication re
   assert.equal(url,'/runs/run-a');return current;
  }});
  h.render();let tree=await h.settle();const metrics=classNode(tree,'employee-task-metrics',employee);assert.ok(metrics);
- assert.deepEqual(Array.from(metrics.props.children,node=>employee.text(node)),['1 / 2个人阶段已提交','2通信记录','1待处理事项']);
+ assert.deepEqual(Array.from(metrics.props.children,node=>employee.text(node)),['1 / 2阶段已提交','2通信记录','1待处理']);
  assert.doesNotMatch(employee.text(tree),/他人的已交付阶段|其他任务通信不得出现/);
  metrics.props.children[1].props.onClick();tree=h.render();assert.match(employee.text(tree),/当前任务通信/);assert.doesNotMatch(employee.text(tree),/其他任务通信不得出现/);
  classNode(tree,'employee-task-metrics',employee).props.children[2].props.onClick();tree=h.render();
@@ -100,6 +100,6 @@ test('the personal pending metric includes plan approval only for the frozen res
  for(const planner of ['a','b']){
   const h=employee.harness({runPatch:{status:'awaiting_approval',snapshot:{...employee.run.snapshot,planner_id:planner}}});h.render();const tree=await h.settle();
   const pending=classNode(tree,'employee-task-metrics',employee).props.children[2];
-  assert.equal(employee.text(pending),(planner==='a'?'1':'0')+'待处理事项');assert.ok(h.calls.every(call=>call.method==='GET'));
+  assert.equal(employee.text(pending),(planner==='a'?'1':'0')+'待处理');assert.ok(h.calls.every(call=>call.method==='GET'));
  }
 });

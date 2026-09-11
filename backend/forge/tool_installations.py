@@ -62,7 +62,8 @@ def output(row):
     from .workspace import task_root
     with session() as s:
         run = s.get(Run, row.run_id)
-        project = run.snapshot['project'] if run else {}
+        from .member_execution_policy import execution_project
+        project = execution_project(run, row.agent_id) if run else {}
     result.update({'cwd': str(task_root(row.run_id, row.task_key)), 'execution_mode': project.get('execution_mode', 'container'),
                    'permission_profile': project.get('permission_profile', 'ask'), 'scope': 'one run/task/agent only'})
     return result
@@ -75,6 +76,8 @@ def authorized_task(s, run_id, key):
     agent = run.snapshot['agents'].get(task.agent_id)
     if not agent or 'run_command' not in agent['tools'] or task.kind not in ('develop', 'autonomous'):
         raise ValueError('只有已获命令权限的执行任务可申请或使用离线工具；讨论和只读角色不可扩权')
+    from .member_execution_policy import execution_project
+    execution_project(run, task.agent_id)
     return run, task
 
 

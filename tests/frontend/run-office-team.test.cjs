@@ -67,14 +67,20 @@ test('Studio creates an office-team seed and limits recipients to that team',asy
  let tree=h.render();studio.field(tree,'需求办公团队').props.onChange({target:{value:'a-team'}});tree=h.render();
  const options=studio.nodes(studio.field(tree,'指令收件人')).filter(n=>n.type==='option'&&n.props.value).map(n=>n.props.value);assert.deepEqual(Array.from(options),['ap','ad','ar']);
  studio.field(tree,'指令收件人').props.onChange({target:{value:'ap'}});studio.field(tree,'任务需求').props.onChange({target:{value:'完成需求'}});tree=h.render();studio.field(tree,'创建任务').props.onClick();await new Promise(r=>setImmediate(r));
- assert.equal(seeds.length,1);assert.equal(seeds[0].office_team_id,'a-team');assert.deepEqual(Array.from(seeds[0].agent_ids),['ap','ad','ar']);assert.deepEqual(JSON.parse(JSON.stringify(seeds[0].office_layout_ref)),organization.ref);
+ assert.equal(seeds.length,1);assert.equal(seeds[0].execution_strategy,'autonomous');assert.equal(seeds[0].collaboration_flow,false);assert.equal(seeds[0].office_team_id,'a-team');assert.deepEqual(Array.from(seeds[0].agent_ids),['ap','ad','ar']);assert.deepEqual(JSON.parse(JSON.stringify(seeds[0].office_layout_ref)),organization.ref);
  studio.field(tree,'需求办公团队').props.onChange({target:{value:'b-team'}});assert.equal(studio.field(h.render(),'指令收件人').props.value,'');
+});
+
+test('the composer acceptance shortcut recognizes mode-only autonomy and selects its coordinator',()=>{
+ const detail={id:'autonomous-run',mode:'autonomous',status:'awaiting_acceptance',snapshot:{entry_agent_id:'ad',planner_id:'ap',reviewer_id:'ar',agents:{ad:{name:'AD'},ap:{name:'AP'},ar:{name:'AR'}}}};
+ const h=studio.harness('StudioWorkspace',{agents,organization,detail,selectedRun:detail.id,projects:[project]});let tree=h.render();studio.button(tree,'需要确认').props.onClick();tree=h.render();
+ const panel=studio.nodes(tree).find(n=>n.props?.initialTab==='approval'&&n.props?.agent);assert.ok(panel);assert.equal(panel.props.agent.id,'ad');assert.equal(panel.props.initialRunId,detail.id);
 });
 
 test('Studio manual mode does not imply all organization members',async()=>{
  const seeds=[],h=studio.harness('StudioWorkspace',{organization,agents,projects:[project],onCreateTask:seed=>seeds.push(seed)});let tree=h.render();
  studio.field(tree,'任务需求').props.onChange({target:{value:'手动选成员的需求'}});tree=h.render();studio.field(tree,'创建任务').props.onClick();await new Promise(r=>setImmediate(r));
- assert.deepEqual(Array.from(seeds[0].agent_ids),[]);assert.equal(seeds[0].office_team_id,null);
+ assert.equal(seeds.length,0);assert.match(studio.text(h.render()),/请选择负责这条需求的成员/);
 });
 
 test('Studio stopped task gives a clear visible route to the reason and recovery actions',()=>{
@@ -101,7 +107,7 @@ test('new tasks do not load or apply a recovered orchestration template',async()
 
 test('single-member autonomy uses that member regardless of role and derives an optional task title',async()=>{
  const h=run({initial:{agent_ids:['ad'],request:'形成市场需求文档'}});h.render();const tree=await h.settle();await tree.props.onSubmit();const body=h.calls.find(c=>c.url==='/runs').body;
- assert.equal(body.execution_strategy,'autonomous');assert.equal(body.entry_agent_id,'ad');assert.equal(body.title,'形成市场需求文档');assert.equal(body.run_project_checks,false);assert.equal(body.collaboration_flow,true);
+ assert.equal(body.execution_strategy,'autonomous');assert.equal(body.entry_agent_id,'ad');assert.equal(body.title,'形成市场需求文档');assert.equal(body.run_project_checks,false);assert.equal(body.collaboration_flow,false);
  assert.ok(!h.calls.some(c=>['/orchestrations','/design/assets'].includes(c.url)));assert.doesNotMatch(forms.text(tree),/恰好一名|一名独立审查|任务编排方式|团队模板版本/);
 });
 
@@ -126,7 +132,7 @@ test('preflight configuration navigation carries a recoverable draft including e
  assert.equal(navigation[0],'projects');assert.equal(navigation[2]?.request,'修配置后必须保留的需求');assert.equal(navigation[2]?.office_team_id,'a-team');assert.deepEqual(Array.from(navigation[2]?.agent_ids||[]),['ap','ad','ar']);
 });
 
-test('App Studio create-task callback mounts the real dialog with organization and provider context',()=>{
+test('App Studio optional repair callback mounts the real dialog and preserves its explicit scope',()=>{
  let cursor=0;const slots=[],exports={},jsx=(type,props)=>({type,props:props||{}}),fixture={organization,providers,models,agents,projects:[project],user:{id:'user',username:'用户',role:'admin'}};
  let source=fs.readFileSync(path.resolve(__dirname,'../../frontend/src/App.tsx'),'utf8');
  for(const [type,key]of[['OrganizationLayout|null','organization'],['User|null','user'],['Provider[]','providers'],['Model[]','models'],['Agent[]','agents'],['Project[]','projects']])source=source.replace('useState<'+type+'>('+(type.endsWith('[]')?'[]':'null')+')','useState<'+type+'>(fixture.'+key+')');
@@ -135,12 +141,13 @@ test('App Studio create-task callback mounts the real dialog with organization a
  const requireMock=name=>{if(name==='react')return React;if(name==='react/jsx-runtime')return{jsx,jsxs:jsx};if(name==='./desktop')return{desktopBridge:()=>undefined};if(name==='./types')return{terminal:[],roles:{},states:{},agentTitle:a=>a.name};if(name==='./api')return{api(){throw Error('unexpected API call');},APIError:Error,jsonText:JSON.stringify};return new Proxy({__esModule:true,default:name.split('/').at(-1)},{get:(obj,key)=>key in obj?obj[key]:String(key)});};
  vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText,{exports,fixture,require:requireMock,console});
  const render=()=>{cursor=0;return exports.default();};let tree=render();const workspace=forms.nodes(tree).find(n=>n.type==='StudioWorkspace');assert.ok(workspace);assert.ok(!forms.nodes(tree).some(n=>n.type==='button'&&forms.text(n)==='多Agent编排'));
- workspace.props.onCreateTask({request:'新需求',office_team_id:'a-team',office_layout_ref:organization.ref,agent_ids:['ap','ad','ar']});tree=render();
+ workspace.props.onConfigureTask({request:'新需求',office_team_id:'a-team',office_layout_ref:organization.ref,agent_ids:['ap','ad','ar']});tree=render();
  assert.ok(forms.nodes(tree).some(n=>n.type==='Modal'&&n.props.title==='发起任务'));
  const form=forms.nodes(tree).find(n=>n.type==='RunForm');assert.ok(form);assert.equal(form.props.organization,organization);assert.equal(form.props.providers,providers);assert.equal(form.props.initial.office_team_id,'a-team');
  const draft={request:'去修模型的需求',office_team_id:'a-team',office_layout_ref:organization.ref,agent_ids:['ap','ad','ar']};
  form.props.onNavigate('models',{model_profile_id:'m',provider_id:'provider'},draft);tree=render();
  assert.ok(forms.nodes(tree).some(n=>n.type==='ModelForm'&&n.props.initial?.id==='m'),'opens the exact model configuration');
- const returnButton=forms.nodes(tree).find(n=>n.type==='button'&&forms.text(n)==='返回未提交的需求');assert.ok(returnButton);returnButton.props.onClick();tree=render();
+ const configModal=forms.nodes(tree).find(n=>n.type==='Modal');assert.ok(configModal);configModal.props.onClose();tree=render();
+ const returnButton=forms.nodes(tree).find(n=>n.type==='button'&&forms.text(n)==='继续草稿');assert.ok(returnButton);returnButton.props.onClick();tree=render();
  assert.equal(forms.nodes(tree).find(n=>n.type==='RunForm').props.initial.request,draft.request);
 });

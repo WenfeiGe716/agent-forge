@@ -14,6 +14,7 @@ OFFICE_DEFAULTS = {
 FINISHED = {'completed', 'cancelled'}
 WORK_PHASES = {'agent.started': 'thinking', 'model.completed': 'thinking', 'model.fallback': 'thinking'}
 TOOL_PHASES = {'read_file': 'reading', 'list_files': 'reading', 'search_files': 'reading',
+               'read_work_result': 'reading', 'read_work_issue': 'reading',
                'write_file': 'writing', 'apply_patch': 'writing', 'run_command': 'testing',
                'send_message': 'communicating'}
 LABELS = {'idle':'空闲', 'waiting':'等待分派', 'approval':'等待审批', 'paused':'已暂停',
@@ -99,8 +100,8 @@ def office_snapshot(s,user,after=None,limit=200):
         members=set(run.snapshot.get('agents',{}))
         if run.snapshot.get('execution_strategy') == 'autonomous' and run.status not in FINISHED:
             run_tasks = [t for t in tasks if t.run_id == run.id and t.kind == 'autonomous']
-            members = {t.agent_id for t in run_tasks if t.status not in ('done', 'integrated')
-                or (t.result.get('outcome') == 'waiting' and not t.spec.get('resumed_by'))}
+            members = {t.agent_id for t in run_tasks if t.status not in ('done', 'integrated', 'conflicted', 'superseded')
+                or (t.status in ('done', 'integrated') and t.result.get('outcome') == 'waiting' and not t.spec.get('resumed_by'))}
             if run.status in ('queued', 'awaiting_acceptance'):
                 members.add(run.snapshot['entry_agent_id'])
             for meeting in s.scalars(select(Meeting).where(Meeting.run_id == run.id, Meeting.status == 'active')):

@@ -78,6 +78,38 @@ def test_autonomous_uses_only_a_configured_unique_pool_reporting_leader(client, 
     assert set(response.json()['agents']) == set(ids)
 
 
+@pytest.mark.parametrize('explicit_pool_leader', [False, True])
+def test_outside_reporting_ancestor_cannot_replace_autonomous_leader(client, configured, ready_environment, explicit_pool_leader):
+    """Organization ancestors remain evidence, never task-pool authorities."""
+    member = next(a for a in configured['agents'] if a['role'] == 'developer')
+    peer = next(a for a in configured['agents'] if a['role'] == 'tester')
+    outsider = next(a for a in configured['agents'] if a['role'] == 'planner')
+    ids = [member['id'], peer['id']] if explicit_pool_leader else [member['id']]
+    with session() as s:
+        row = s.get(Agent, member['id'])
+        row.config = {**row.config, 'reports_to': outsider['id']}
+    body = autonomous_body(configured, ids, **({'entry_agent_id': member['id']} if explicit_pool_leader else {}))
+    before = counts()
+    preview = client.post('/api/runs/preview-config', json=body)
+    assert preview.status_code == 200, preview.text
+    snapshot = preview.json()
+    assert snapshot['entry_agent_id'] == snapshot['planner_id'] == snapshot['reviewer_id'] == member['id']
+    assert set(snapshot['agents']) == set(ids)
+    assert snapshot['agents'][member['id']]['reporting_chain'] == [outsider['id']]
+    assert outsider['id'] not in snapshot['agents']
+    preflight = client.post('/api/execution/preflight', json=body)
+    assert preflight.status_code == 200, preflight.text
+    assert preflight.json()['ready'] and preflight.json()['snapshot_valid']
+    assert counts() == before
+    created = client.post('/api/runs', json=body)
+    assert created.status_code == 202, created.text
+    assert created.json()['entry_agent_id'] == member['id']
+    with session() as s:
+        frozen = s.get(Run, created.json()['id']).snapshot
+        assert frozen['entry_agent_id'] == member['id']
+        assert set(frozen['agents']) == set(ids)
+
+
 def test_autonomous_pool_leader_and_directed_recipients_cannot_escape_selection(client, configured):
     chosen = next(a for a in configured['agents'] if a['role'] == 'developer')
     outsider = next(a for a in configured['agents'] if a['role'] == 'planner')

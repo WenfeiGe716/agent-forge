@@ -383,14 +383,18 @@ def test_runtime_accepts_schema_defaults_without_mutating_published_content(clie
     workflow_config = {'graph': {'mode': 'discussion', 'participants': [a['id'] for a in configured['agents']]}}
     workflow = create(client, 'workflow', workflow_config)
     assert confirm(client, workflow).status_code == 200
-    response = preview(client, configured, routing_ref={'id': route['id'], 'version': 1},
-                       workflow_ref={'id': workflow['id'], 'version': 1})
+    response = preview(client, configured, routing_ref={'id': route['id'], 'version': 1})
     assert response.status_code == 200, response.text
     snapshot = response.json()
     assert snapshot['runtime']['max_model_calls'] == 100
-    assert snapshot['orchestration']['strategy'] == 'sequential'
+    assert snapshot['execution_strategy'] == 'autonomous' and snapshot['orchestration'] is None
     assert snapshot['design']['routing']['config'] == sparse
-    assert snapshot['design']['workflow']['config'] == workflow_config
+    # Historical workflow assets remain versioned data, not new-run authority.
+    rejected = preview(client, configured, routing_ref={'id': route['id'], 'version': 1},
+                       workflow_ref={'id': workflow['id'], 'version': 1})
+    assert rejected.status_code == 422
+    assert client.get('/api/design/assets/' + route['id']).json()['config'] == sparse
+    assert client.get('/api/design/assets/' + workflow['id']).json()['config'] == workflow_config
 
 
 @pytest.mark.parametrize('violation', ['task_override', 'fallback', 'max_parallel', 'max_model_calls'])

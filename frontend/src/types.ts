@@ -23,5 +23,5 @@ export type Run={id:string;project_id:string;title:string;request:string;status:
 export type ForgeEvent={id:number;kind:string;run_id:string;created_at:string;data:Json};
 export const roles:Record<string,string>={planner:'负责人',developer:'开发工程师',tester:'测试工程师',reviewer:'代码审查'};
 export const agentTitle=(agent:Pick<Agent,'job_title'|'role'>)=>agent.job_title||roles[agent.role]||agent.role;
-export const states:Record<string,string>={intake:'定向接收与澄清',awaiting_decision:'待回答问题',waiting_decision:'等待决策',discussing:'目标协作',queued:'排队中',planning:'制定计划',awaiting_approval:'待批准计划',running:'执行中',verifying:'项目验收',reviewing:'独立审查',reworking:'修复问题',paused:'已暂停',awaiting_acceptance:'待人工验收',completed:'已完成',cancelled:'已取消',needs_attention:'已停止 · 查看原因',pending:'待执行',done:'已交付',integrated:'已集成',failed:'未通过',unverified:'未验证'};
+export const states:Record<string,string>={intake:'定向接收与澄清',awaiting_decision:'待回答问题',waiting_decision:'等待决策',discussing:'目标协作',queued:'排队中',planning:'制定计划',awaiting_approval:'待批准计划',running:'执行中',verifying:'项目验收',reviewing:'独立审查',reworking:'修复问题',paused:'已暂停',awaiting_acceptance:'待人工验收',completed:'已完成',cancelled:'已取消',needs_attention:'已停止 · 查看原因',pending:'待执行',done:'已交付',conflicted:'已提交 · 冲突待修复',superseded:'已由修复工作替代',integrated:'已集成',failed:'未通过',unverified:'未验证'};
 export const terminal=['completed','cancelled','needs_attention'];

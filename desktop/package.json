@@ -1,7 +1,7 @@
 {
   "name": "agent-forge-desktop",
   "productName": "Agent Forge",
-  "version": "0.15.9",
+  "version": "0.17.0",
   "private": true,
   "description": "Agent Forge macOS desktop client",
   "main": "main.cjs",

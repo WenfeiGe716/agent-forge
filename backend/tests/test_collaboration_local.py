@@ -3,6 +3,7 @@ import json
 import pytest
 from sqlalchemy import select
 from forge import engine
+from forge.autonomy import autonomy_tick
 from forge.collaboration import send_message,pending_messages,mark_included
 from forge.db import session,Run,Task,AgentMessage,Event,ActivityJournal
 from forge.schema import TOOLS_BY_ROLE
@@ -12,13 +13,15 @@ from conftest import run_body
 def prepare(client,configured):
     r=client.post('/api/runs',json=run_body(configured));assert r.status_code==202,r.text
     rid=r.json()['id'];engine.prepare_run({'run_id':rid})
+    initial=autonomy_tick({'run_id':rid})['runnable'][0]['key']
     run=engine.load(rid);recipient=next(a['id'] for a in run.snapshot['agents'].values() if a['role']=='developer')
-    return rid,recipient
+    return rid,recipient,initial
 
 def test_message_persisted_idempotent_and_event_once(client,configured):
-    rid,to=prepare(client,configured)
-    a=send_message(rid,'plan','operation-1',to,'交接内容');b=send_message(rid,'plan','operation-1',to,'交接内容')
+    rid,to,key=prepare(client,configured)
+    a=send_message(rid,key,'operation-1',to,'交接内容');b=send_message(rid,key,'operation-1',to,'交接内容')
     assert a['message_id']==b['message_id']
+    assert a['wake_task_key']==b['wake_task_key'] and a['wake_task_key']
     with session() as s:
         assert len(list(s.scalars(select(AgentMessage))))==1
         assert len(list(s.scalars(select(Event).where(Event.kind=='agent.message'))))==1
@@ -26,38 +29,39 @@ def test_message_persisted_idempotent_and_event_once(client,configured):
 
 @pytest.mark.parametrize('body',['','x'*3001])
 def test_message_length_limits(client,configured,body):
-    rid,to=prepare(client,configured)
-    with pytest.raises(ValueError):send_message(rid,'plan','invalid',to,body)
+    rid,to,key=prepare(client,configured)
+    with pytest.raises(ValueError):send_message(rid,key,'invalid',to,body)
 
 def test_message_self_and_nonmember_denied(client,configured):
-    rid,to=prepare(client,configured);run=engine.load(rid)
+    rid,to,key=prepare(client,configured);run=engine.load(rid)
     for target in [run.snapshot['planner_id'],'not-a-member']:
-        with pytest.raises(ValueError):send_message(rid,'plan','forbidden-'+target,target,'test')
+        with pytest.raises(ValueError):send_message(rid,key,'forbidden-'+target,target,'test')
 
 def test_message_identity_reuse_cannot_change_payload(client,configured):
-    rid,to=prepare(client,configured);send_message(rid,'plan','same',to,'original')
-    with pytest.raises(ValueError):send_message(rid,'plan','same',to,'changed')
+    rid,to,key=prepare(client,configured);send_message(rid,key,'same',to,'original')
+    with pytest.raises(ValueError):send_message(rid,key,'same',to,'changed')
 
 def test_message_global_limit_enforced(client,configured):
-    rid,to=prepare(client,configured)
+    rid,to,key=prepare(client,configured)
     with session() as s:
         run=s.get(Run,rid);snapshot=json.loads(json.dumps(run.snapshot));snapshot['runtime']['max_agent_messages']=1;run.snapshot=snapshot
-    send_message(rid,'plan','one',to,'one')
-    with pytest.raises(ValueError):send_message(rid,'plan','two',to,'two')
+    send_message(rid,key,'one',to,'one')
+    with pytest.raises(ValueError):send_message(rid,key,'two',to,'two')
 
 def test_message_terminal_run_denied(client,configured):
-    rid,to=prepare(client,configured);engine.set_stage({'run_id':rid,'status':'completed'})
-    with pytest.raises(ValueError):send_message(rid,'plan','late',to,'late')
+    rid,to,key=prepare(client,configured);engine.set_stage({'run_id':rid,'status':'completed'})
+    with pytest.raises(ValueError):send_message(rid,key,'late',to,'late')
 
 def test_message_inbox_scoped_to_run_and_recipient(client,configured):
-    rid,to=prepare(client,configured);other,_=prepare(client,configured)
-    send_message(rid,'plan','one',to,'private-to-this-run')
+    rid,to,key=prepare(client,configured);other,_,_=prepare(client,configured)
+    send_message(rid,key,'one',to,'private-to-this-run')
     assert not pending_messages(other,to)
     assert not pending_messages(rid,engine.load(rid).snapshot['reviewer_id'])
 
 def test_delivery_records_inclusion_not_fake_reply(client,configured):
-    rid,to=prepare(client,configured);send_message(rid,'plan','one',to,'hello');items=pending_messages(rid,to)
-    mark_included(rid,to,'fix',items);assert pending_messages(rid,to)==[]
+    rid,to,key=prepare(client,configured)
+    sent=send_message(rid,key,'one',to,'hello');items=pending_messages(rid,to)
+    mark_included(rid,to,sent['wake_task_key'],items);assert pending_messages(rid,to)==[]
     with session() as s:
         rows=list(s.scalars(select(Event).where(Event.kind=='agent.message.delivered')));assert len(rows)==1
         assert rows[0].data['message_id']==items[0]['message_id']
@@ -67,7 +71,7 @@ def test_each_role_has_bounded_message_tool(role):assert 'send_message' in TOOLS
 
 @pytest.mark.asyncio
 async def test_local_journal_reuses_completed_activity(client,configured,monkeypatch):
-    rid,to=prepare(client,configured);calls=[]
+    rid,to,key=prepare(client,configured);calls=[]
     def fake(data):calls.append(data);return {'key':data['key']}
     monkeypatch.setattr(engine,'prepare_task',fake)
     args={'run_id':rid,'key':'once'}
@@ -77,7 +81,7 @@ async def test_local_journal_reuses_completed_activity(client,configured,monkeyp
 
 @pytest.mark.asyncio
 async def test_local_journal_never_replays_unknown_result(client,configured,monkeypatch):
-    rid,to=prepare(client,configured);calls=[]
+    rid,to,key=prepare(client,configured);calls=[]
     def failed(data):calls.append(data);raise RuntimeError('uncertain')
     monkeypatch.setattr(engine,'prepare_task',failed)
     args={'run_id':rid,'key':'uncertain'}
@@ -87,12 +91,12 @@ async def test_local_journal_never_replays_unknown_result(client,configured,monk
 
 @pytest.mark.asyncio
 async def test_local_runtime_rejects_unregistered_activity(client,configured):
-    rid,to=prepare(client,configured)
+    rid,to,key=prepare(client,configured)
     with pytest.raises(ValueError):await LocalRuntime(rid,asyncio.Semaphore(1)).execute_activity('shell_on_host',{'run_id':rid},30)
 
 @pytest.mark.asyncio
 async def test_local_global_activity_semaphore(client,configured,monkeypatch):
-    rid,to=prepare(client,configured);active=0;maximum=0
+    rid,to,key=prepare(client,configured);active=0;maximum=0
     async def fake(data):
         nonlocal active,maximum
         active+=1;maximum=max(maximum,active);await asyncio.sleep(.04);active-=1;return {'key':data['key']}

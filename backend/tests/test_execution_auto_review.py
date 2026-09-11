@@ -10,18 +10,18 @@ from forge.execution_auto_review import assess_request, manual_reason
 from conftest import run_body
 
 
-def prepare(client, configured):
+def prepare(client, configured, profile='auto'):
+    # Configure before freezing: changing a project afterward must not mutate a
+    # member's immutable runtime permission policy.
+    with session() as s:
+        project = s.get(Project, configured['project']['id'])
+        project.config = {**project.config, 'execution_mode': 'local', 'permission_profile': profile}
     response = client.post('/api/runs', json=run_body(configured))
     assert response.status_code == 202, response.text
     rid = response.json()['id']
     engine.prepare_run({'run_id': rid})
     aid = next(a['id'] for a in configured['agents'] if a['role'] == 'developer')
     engine.create_task(rid, 'work', 'develop', aid, 'Implement', {})
-    with session() as s:
-        run = s.get(Run, rid)
-        snapshot = copy.deepcopy(run.snapshot)
-        snapshot['project'].update(execution_mode='local', permission_profile='auto')
-        run.snapshot = snapshot
     return rid, aid
 
 
@@ -97,6 +97,5 @@ async def test_human_policy_and_requesting_reviewer_never_call_model(client, con
     with session() as s:
         run=s.get(Run,rid); snap=copy.deepcopy(run.snapshot); snap['reviewer_id']=aid; run.snapshot=snap
     assert (await assess_request(rid, 'work', aid, 'a'*64, REQUEST))['decision']=='ask_user'
-    with session() as s:
-        run=s.get(Run,rid); snap=copy.deepcopy(run.snapshot); snap['project']['permission_profile']='ask'; run.snapshot=snap
+    rid, aid = prepare(client, configured, profile='ask')
     assert (await assess_request(rid, 'work', aid, 'b'*64, REQUEST))['decision']=='ask_user'

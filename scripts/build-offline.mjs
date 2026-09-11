@@ -23,7 +23,7 @@ for(const p of emittedFiles){const relative=path.relative(source,p).replace(/\.t
  const target=path.join(out,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,code);if(result.sourceMapText)fs.writeFileSync(target+'.map',result.sourceMapText);
 }
 if(diagnostics.length){console.error(diagnostics);process.exit(1);}
-const combinedCSS=['styles.css','studio.css','design.css','provider-center.css','role-templates.css','execution.css','organization-inventory.css','agent-directory.css','task-workspace.css','task-approvals.css','employee-task.css','task-flow.css'].map(name=>fs.readFileSync(path.join(source,name),'utf8')).join('\n');
+const combinedCSS=['styles.css','studio.css','design.css','provider-center.css','role-templates.css','execution.css','organization-inventory.css','agent-directory.css','task-workspace.css','task-approvals.css','employee-task.css','task-flow.css','run-board.css','employee-task-density.css','workspace-density.css','team-execution-permissions.css'].map(name=>fs.readFileSync(path.join(source,name),'utf8')).join('\n');
 fs.writeFileSync(path.join(out,'styles.css'),combinedCSS);
 fs.mkdirSync(path.join(out,'vendor'),{recursive:true});
 for(const name of ['react-runtime.js','react.js','react-dom-client.js','jsx-runtime.js','THIRD_PARTY_NOTICES.md'])fs.copyFileSync(path.join(root,'frontend/vendor',name),path.join(out,'vendor',name));

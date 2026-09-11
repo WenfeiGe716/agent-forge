@@ -139,7 +139,7 @@ export function RunForm({projects,agents,models=[],providers=[],organization,ini
  const availableAgents=agents.filter(a=>!officeTeam||officeMembers.includes(a.id)),entryAgents=availableAgents.filter(a=>a.enabled!==false&&selected.includes(a.id));
  const currentProject=projects.find(p=>p.id===project),executionMode=currentProject?.execution_mode||'container',permissionProfile=currentProject?.permission_profile||'ask';
  function useOfficeTeam(value:string){const ids=officeTeams.find(t=>t.id===value)?.member_ids||[],members=agents.filter(a=>ids.includes(a.id)&&a.enabled!==false).map(a=>a.id);setOfficeTeam(value);setOfficeRef(value?organization?.ref||null:null);setSelected(members);if(!members.includes(entry))setEntry('');setPreview(null);}
- const draft=()=>({execution_strategy:'autonomous',run_project_checks:runProjectChecks,collaboration_flow:true,project_id:project,title,request,agent_ids:[...selected],entry_agent_id:entry||null,_runtime_text:runtime,parent_run_id:initial?.parent_run_id||null,office_team_id:officeTeam||null,office_layout_ref:officeTeam?officeRef:null});
+ const draft=()=>({execution_strategy:'autonomous',run_project_checks:runProjectChecks,collaboration_flow:false,project_id:project,title,request,agent_ids:[...selected],entry_agent_id:entry||null,_runtime_text:runtime,parent_run_id:initial?.parent_run_id||null,office_team_id:officeTeam||null,office_layout_ref:officeTeam?officeRef:null});
  const body=()=>{
   if(officeTeam&&officeStale)throw new Error('办公布局已更新，请重新选择办公团队并确认成员；原范围不会自动替换。');
   if(officeTeam&&!officeTeams.some(t=>t.id===officeTeam))throw new Error('原办公团队已不存在，请重新选择团队或明确改为手动选成员。');

@@ -37,6 +37,13 @@ test('Design Center opens with configuration tabs rather than a philosophy banne
  assert.ok(h.calls.every(c=>c.method==='GET'));
 });
 
+test('every public design tab excludes fixed workflow creation while retaining organization configuration',async()=>{
+ const h=harness();let tree=await h.loaded();const nav=nodes(tree).find(n=>n.props['aria-label']==='设计中心分类');
+ const tabs=nodes(nav).filter(n=>n.type==='button'&&!n.props['aria-label']);assert.equal(tabs.length,5);assert.ok(!tabs.some(n=>text(n).includes('工作流')));
+ for(const tab of tabs){tab.props.onClick();tree=h.render();assert.ok(!nodes(tree).some(n=>n.type==='button'&&/新建工作流|使用此编排/.test(text(n))));}
+ assert.ok(h.calls.every(c=>c.method==='GET'));
+});
+
 test('organization entry keeps floor inventory and every edit/create action without repeated introductory prose',async()=>{
  const h=harness({initialTab:'office'}),tree=await h.loaded();
  for(const label of ['编辑当前楼层与团队','新增楼层／部门','新建独立布局方案'])assert.ok(button(tree,label));

@@ -3,14 +3,14 @@ import type {ForgeEvent,Json,Run,Task} from './types';
 export const flowText=(value:unknown,fallback='')=>typeof value==='string'?value:fallback;
 const rows=(value:unknown):Json[]=>Array.isArray(value)?value.filter(item=>item&&typeof item==='object'&&!Array.isArray(item)):[];
 const strings=(value:unknown)=>Array.isArray(value)?value.filter((item):item is string=>typeof item==='string'):[];
-const complete=(task:Task|undefined)=>!!task&&['done','integrated'].includes(task.status);
+const complete=(task:Task|undefined)=>!!task&&['done','integrated','conflicted','superseded'].includes(task.status);
 export type FlowNode={key:string;title:string;agentId:string;dependencies:string[];acceptance:string;description:string;task?:Task;level:number|null};
 export type FlowGroup={key:string;title:string;description:string;tasks:Task[]};
 export const flowMember=(run:Run,id:string)=>flowText(run.snapshot?.agents?.[id]?.name,id?'成员 '+id.slice(0,8):'未指定成员');
 export function flowStatus(task:Task|undefined,run:Run){
  if(!task)return '计划项 · 尚未创建执行阶段';
  if(task.kind==='autonomous'&&['done','integrated'].includes(task.status)){const outcome=task.result?.outcome;if(outcome==='waiting')return '已让出执行 · 等待成员消息';if(outcome==='ready')return '已提交候选交付';if(outcome==='blocked')return '已报告阻塞 · 未完成';}
- return ({pending:run.status==='awaiting_approval'?'待计划批准':'尚未开始',queued:'已排队',running:'执行中',waiting_decision:'等待人工决定',done:'已提交',integrated:'已集成',failed:'未通过',needs_attention:'需处理',unverified:'未验证',cancelled:'已取消'} as Record<string,string>)[task.status]||'状态：'+task.status;
+ return ({pending:run.status==='awaiting_approval'?'待计划批准':'尚未开始',queued:'已排队',running:'执行中',waiting_decision:'等待人工决定',done:'已提交',conflicted:'已提交 · 合并冲突',superseded:'已由修复工作替代',integrated:'已集成',failed:'未通过',needs_attention:'需处理',unverified:'未验证',cancelled:'已取消'} as Record<string,string>)[task.status]||'状态：'+task.status;
 }
 function order(task:Task){const match=task.key.match(/_(\d+)(?:_(\d+))?$/);return (Number(task.spec?.order??match?.[2]??0));}
 function round(task:Task,prefix:string,field='round'){const value=task.spec?.[field];if(Number.isInteger(value)&&value>=0)return value;const match=task.key.match(new RegExp('^'+prefix+'_(\\d+)(?:_\\d+)?$'));return match?Number(match[1]):null;}

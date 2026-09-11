@@ -103,7 +103,12 @@ def test_no_arbitrary_package_version_url_or_command(client, configured, overrid
 
 def test_read_only_task_cannot_request_installation(client, configured):
     rid, _ = prepared(client, configured)
-    with pytest.raises(ValueError, match='只读角色不可扩权'): request(rid, key='plan')
+    from forge.autonomy import autonomy_tick
+    initial = next(item for item in autonomy_tick({'run_id': rid, 'tick': 0})['runnable'])
+    with session() as s:
+        run = s.get(Run, rid)
+        assert 'run_command' not in run.snapshot['agents'][initial['agent_id']]['tools']
+    with pytest.raises(ValueError, match='只读角色不可扩权'): request(rid, key=initial['key'])
     with session() as s:
         task = s.get(Task, rid + ':documents'); task.kind = 'discussion'
     with pytest.raises(ValueError, match='只读角色不可扩权'): request(rid)

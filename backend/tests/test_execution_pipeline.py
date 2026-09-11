@@ -15,10 +15,15 @@ from forge.db import session,Run,Task,Step,Provider,Event
 from conftest import run_body
 
 
-def test_activity_pipeline_with_scripted_model_and_real_fixture_tests(client,configured,monkeypatch):
+def test_internal_legacy_activity_pipeline_with_scripted_model_and_real_fixture_tests(client,configured,monkeypatch):
     created=client.post('/api/runs',json=run_body(configured)).json()
     rid=created['id']
     setup=engine.prepare_run({'run_id':rid})
+    # The public API creates only autonomous runs. Explicitly construct the old
+    # internal activity fixture to retain coverage of the remaining legacy code;
+    # this is not a supported new-run workflow or autonomous end-to-end test.
+    legacy_owner=created['entry_agent_id']
+    engine.create_task(rid,'plan','plan',legacy_owner,'Internal legacy plan fixture',{})
     developer=next(a['id'] for a in configured['agents'] if a['role']=='developer')
     observed_providers=set()
     counter=0
@@ -130,9 +135,18 @@ def test_no_test_commands_is_unverified_not_passed(client,configured):
     assert result['verification']=='unverified' and not result['commands']
 
 
-def test_live_provider_revocation_overrides_frozen_config(client,configured):
+def test_live_provider_revocation_overrides_frozen_config(client,configured,monkeypatch):
     rid=client.post('/api/runs',json=run_body(configured)).json()['id']
     engine.prepare_run({'run_id':rid})
+    from forge.autonomy import autonomy_tick
+    key=autonomy_tick({'run_id':rid})['runnable'][0]['key']
+    calls=[]
+    async def forbidden(*args,**kwargs):
+        calls.append(True)
+        raise AssertionError('Revoked provider must never receive model inference')
+    monkeypatch.setattr(engine.providers,'complete',forbidden)
     with session() as s:
         for p in s.query(Provider):p.enabled=False
-    with pytest.raises(ValueError,match='停用'):asyncio.run(engine.turn({'run_id':rid,'key':'plan','index':0}))
+    with pytest.raises(ValueError,match='停用'):asyncio.run(engine.turn({'run_id':rid,'key':key,'index':0}))
+    assert not calls
+    with session() as s: assert s.get(Run,rid).calls == 0

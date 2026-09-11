@@ -30,6 +30,7 @@ BASE_POLICY = '''(version 1)
 (allow process-info* (target same-sandbox))
 (allow sysctl-read (sysctl-name-prefix "hw.")
   (sysctl-name "kern.argmax") (sysctl-name "kern.ostype") (sysctl-name "kern.osrelease")
+  (sysctl-name "kern.hostname")
   (sysctl-name "kern.osversion") (sysctl-name "kern.osproductversion") (sysctl-name "kern.version")
   (sysctl-name "kern.maxfilesperproc") (sysctl-name "kern.maxproc") (sysctl-name "kern.usrstack64")
   (sysctl-name "sysctl.proc_cputype") (sysctl-name "vm.loadavg"))
@@ -195,7 +196,8 @@ async def execute(run_id, task_key, operation, command, runtime, *, paths=(), ne
         task = s.get(Task, run_id + ':' + task_key)
         if not task or run.status in ('completed', 'cancelled', 'needs_attention') or task.status in ('done', 'cancelled', 'needs_attention'):
             raise ValueError('命令不能执行：运行或任务已结束，或任务不存在')
-        profile = run.snapshot['project'].get('permission_profile', 'ask')
+        from .member_execution_policy import execution_project
+        profile = execution_project(run, task.agent_id)['permission_profile']
         if profile not in ('ask', 'auto', 'full'): raise ValueError('冻结权限策略无效')
         if profile != 'full' and (grants or network) and not permission_id: raise ValueError('联网和越界路径需要精确审批许可')
         if permission_id:

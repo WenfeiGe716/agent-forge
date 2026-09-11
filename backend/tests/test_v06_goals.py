@@ -1,4 +1,6 @@
-"""Actual goal gate + persistence tests; scripted responses are not model quality tests."""
+"""Legacy internal goal gate + persistence tests, not public new-run workflows.
+Scripted responses are not model quality tests; all safety evidence checks stay real.
+"""
 import asyncio
 import copy
 import hashlib
@@ -12,13 +14,13 @@ from forge.local_runtime import LocalRuntime
 from forge.workflow_core import DevelopmentFlow
 from forge.schema import OrchestrationInput
 from forge.providers import Reply
-from test_v05_orchestration import graph, draft, goal_reply
+from test_v05_orchestration import graph, internal_legacy_run, goal_reply
 
 
 def make_run(client,cfg,criteria=None,**patch):
     g=OrchestrationInput.model_validate(graph(cfg,**patch)).model_dump()
     if criteria is not None:g['criteria']=criteria
-    r=client.post('/api/runs',json=draft(cfg,g));assert r.status_code==202,r.text
+    r=internal_legacy_run(client,cfg,g)
     rid=r.json()['id'];engine.prepare_run({'run_id':rid})
     for order in range(2):
         engine.prepare_discussion({'run_id':rid,'round':1,'order':order})
@@ -127,8 +129,8 @@ def test_legacy_round_config_is_explicitly_migrated_not_a_stop_rule():
 
 @pytest.mark.asyncio
 async def test_budget_exhaustion_preserves_partial_not_success(client,configured,monkeypatch):
-    g=graph(configured);body=draft(configured,g);body['runtime']={'max_model_calls':2}
-    rid=client.post('/api/runs',json=body).json()['id']
+    g=graph(configured)
+    rid=internal_legacy_run(client,configured,g,runtime={'max_model_calls':2}).json()['id']
     async def complete(*args):return Reply('script',[{'id':'finish','name':'finish','arguments':{'summary':'我觉得已经完成','notes':'这里只是脚本','ready':True,'open_issues':[]}}],1,1)
     monkeypatch.setattr(providers,'complete',complete)
     out=await DevelopmentFlow(LocalRuntime(rid,asyncio.Semaphore(2))).run(rid)
@@ -141,7 +143,7 @@ async def test_budget_exhaustion_preserves_partial_not_success(client,configured
 
 @pytest.mark.asyncio
 async def test_checkpoint_missing_items_are_input_to_next_cycle(client,configured,monkeypatch):
-    g=graph(configured);rid=client.post('/api/runs',json=draft(configured,g)).json()['id'];seen=[]
+    g=graph(configured);rid=internal_legacy_run(client,configured,g).json()['id'];seen=[]
     async def complete(conn,model,messages,*args):
         spec=json.loads(messages[1]['content'])['task']
         if 'transcript_digest' in spec:return goal_reply(spec,spec['cycle']>=2)

@@ -57,7 +57,7 @@ export default function TaskApprovals({run,writer,onRefresh}:Props){
   }finally{if(gate.current===ticket&&!accepted)ticket.locked=false;}
  }
  if(!phase)return null;
- const plan=phase==='plan',discussion=run.report?.mode==='discussion',autonomous=run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';
+ const plan=phase==='plan',discussion=run.report?.mode==='discussion',autonomous=run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';
  const agents=run.snapshot?.agents||{};
  const member=(id:unknown)=>text(agents[text(id)]?.name)|| (text(id)?`成员 ${text(id).slice(0,8)}`:'未记录负责人');
  const responsible=plan?member(run.snapshot?.planner_id):autonomous||discussion?member(run.snapshot?.entry_agent_id||run.snapshot?.planner_id):member(run.snapshot?.reviewer_id);

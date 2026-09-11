@@ -81,7 +81,8 @@ async def assess_request(run_id: str, task_key: str, agent_id: str, digest: str,
         run=s.get(Run,run_id); task=s.get(Task,run_id+':'+task_key)
         if not run or not task or task.agent_id!=agent_id or run.status in ('completed','cancelled','needs_attention'):
             return {**result,'reason':'任务不再允许审批'}
-        if run.snapshot['project'].get('permission_profile','ask')!='auto':
+        from .member_execution_policy import execution_project
+        if execution_project(run, agent_id)['permission_profile']!='auto':
             return {**result,'reason':'本次运行未启用帮我批准'}
         old=s.get(Step,sid)
         if old:

@@ -26,7 +26,7 @@ test('stuck collaboration shows cause and safe new-run action without asking the
  const button=nodes(tree).find(n=>n.type==='button'&&text(n).includes('使用最新配置重新发起'));
  assert.ok(button,'visible recovery action');assert.equal(seeds.length,0);
  button.props.onClick();assert.equal(seeds[0].parent_run_id,run.id);
- assert.equal(seeds[0].entry_agent_id,'lead');assert.equal(seeds[0].collaboration_flow,true);
+ assert.equal(seeds[0].entry_agent_id,'lead');assert.equal(seeds[0].collaboration_flow,false);
  assert.deepEqual(Array.from(seeds[0].agent_ids),['lead','dev']);
  assert.equal('runtime' in seeds[0],false);assert.equal('model_parameters' in seeds[0],false);
  assert.ok(!nodes(tree).some(n=>n.type==='button'&&text(n)==='发送给选定成员'),'ended run cannot accept follow-up instructions');
@@ -55,7 +55,7 @@ test('recovery seed only copies intent and explicit members, not frozen secrets,
  assert.deepEqual(Object.keys(seed).sort(),['execution_strategy','run_project_checks','agent_ids','collaboration_flow','entry_agent_id','parent_run_id','project_id','request','title'].sort());
  assert.equal(seed.execution_strategy,'autonomous');assert.equal(seed.run_project_checks,false);
  assert.deepEqual(Array.from(seed.agent_ids),['lead','dev']);
- assert.equal(seed.parent_run_id,original.id);assert.equal(seed.entry_agent_id,'lead');assert.equal(seed.collaboration_flow,true);
+ assert.equal(seed.parent_run_id,original.id);assert.equal(seed.entry_agent_id,'lead');assert.equal(seed.collaboration_flow,false);
  assert.doesNotMatch(JSON.stringify(seed),new RegExp(forbidden));
  seed.agent_ids.push('another');assert.deepEqual(original,before,'helper and later form edits must not mutate the historical run');
 });
@@ -71,7 +71,7 @@ test('a new autonomous recovery does not inherit fixed design or model-routing o
 test('a prior discussion keeps its original request and snapshot but opens a new autonomous confirmation',()=>{
  const original=withSnapshot({collaboration_flow:false,entry_agent_id:'dev',orchestration:plain(discussion)});
  const seed=recovery().runRecoverySeed(original);
- assert.equal(seed.collaboration_flow,true);assert.equal(seed.entry_agent_id,'dev');assert.equal(seed.execution_strategy,'autonomous');
+ assert.equal(seed.collaboration_flow,false);assert.equal(seed.entry_agent_id,'dev');assert.equal(seed.execution_strategy,'autonomous');
  assert.equal(seed.orchestration,undefined);assert.equal(seed.request,original.request);
  assert.deepEqual(original.snapshot.orchestration,discussion);
 });
@@ -116,4 +116,17 @@ test('unknown failure stays a generic explanation and viewers cannot invoke reco
  assert.equal(calls,0);
  assert.equal(Component({run:{...original,status:'running'},writer:true,onNewTask(){calls++}}),null);
  assert.equal(calls,0);
+});
+
+test('real integration conflict explains preserved changes instead of suggesting model configuration',()=>{
+ const original={...plain(run),error:'并行变更发生冲突，已保留patch，请人工处理'};
+ const {summarizeRunFailure,default:Component}=recovery(),info=summarizeRunFailure(original);
+ assert.equal(info.stage,'成果合并');assert.match(info.title,/成果合并冲突/);
+ assert.match(info.reason,/没有覆盖/);assert.match(info.next,/项目.*目标/);
+ let configured=0,inspected=0;
+ const tree=Component({run:original,writer:true,onNewTask(){},onInspect(){inspected++},onConfigure(){configured++}});
+ assert.ok(!nodes(tree).some(n=>n.type==='button'&&text(n)==='检查成员与模型配置'));
+ nodes(tree).find(n=>n.type==='button'&&text(n)==='查看执行记录与已有产物').props.onClick();
+ assert.equal(inspected,1);assert.equal(configured,0);
+ assert.ok(nodes(tree).some(n=>n.type==='pre'&&text(n)===original.error),'retain exact underlying failure for diagnosis');
 });

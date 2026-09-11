@@ -15,6 +15,10 @@ test('autonomous delegation and message tasks form real lanes without a syntheti
  const content=text(render(run).tree);assert.match(content,/2 个实际分工/);assert.match(content,/任务委派/);assert.match(content,/消息回应/);assert.doesNotMatch(content,/待批准计划|确认计划/);
 });
 
+test('mode-only run summaries identify autonomous work instead of plan placeholders',()=>{
+ const run={...base,mode:'autonomous',tasks:[task('work','a','running','autonomous',{assignment_type:'coordination'})]};assert.match(text(render(run).tree),/1 个实际分工/);assert.match(text(render(run).tree),/工作协调/);
+});
+
 test('autonomous waiting and ready outcomes remain stage submissions, never proof of run success',()=>{
  for(const [outcome,label]of [['waiting',/等待成员消息/],['ready',/候选交付/],['blocked',/未完成/]]){const t={...task('coord','a','done','autonomous',{coordinator:true}),result:{outcome,summary:'实际阶段结论'}};const run={...base,execution_strategy:'autonomous',tasks:[t]};assert.match(helpers.flowStatus(t,run),label);assert.doesNotMatch(text(render(run).tree),/任务已完成|100%/);}
 });

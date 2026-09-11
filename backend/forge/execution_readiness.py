@@ -44,7 +44,7 @@ async def sandbox_readiness():
         return result
 
 
-def inspect_agent(s, agent, project, frozen=None):
+def inspect_agent(s, agent, project, frozen=None, frozen_project=None):
     config = agent.config
     checks = []
     context = {'agent_id': agent.id}
@@ -91,9 +91,25 @@ def inspect_agent(s, agent, project, frozen=None):
     if permissions is None: permissions = TOOLS_BY_ROLE[config['role']]
     permission_valid = 'finish' in permissions and not (set(permissions) - set([*TOOLS_BY_ROLE[config['role']], 'request_decision']))
     add('agent.permissions', permission_valid, '已确认成员执行工具权限；不会因加入团队扩大权限' if permission_valid else '成员执行工具权限无效，请重新确认权限配置')
+    from .member_execution_policy import resolved_policy, execution_project
+    policy = None
+    try:
+        if frozen is not None:
+            config_project = frozen_project if frozen_project is not None else (project.config if project else {})
+            effective = execution_project(SimpleNamespace(snapshot={'project': config_project, 'agents': {agent.id: frozen}}), agent.id)
+            policy = frozen.get('execution_policy') or {'profile': effective['permission_profile'], 'source': 'project',
+                'source_id': project.id if project else None, 'source_name': config_project.get('name', '任务项目'), 'policy_version': None}
+        else:
+            policy = resolved_policy(s, agent.id, project)
+            if policy['profile'] == 'full' and project and project.config.get('execution_mode', 'container') != 'local':
+                raise ValueError('该成员的完全访问仅支持本机项目；当前项目选择了隔离容器')
+        labels = {'ask': '请求审批', 'auto': '帮我批准', 'full': '完全访问', None: '继承任务项目'}
+        add('agent.execution_policy', True, f'执行权限：{labels[policy["profile"]]} · 来源：{policy["source_name"]}', 'execution')
+    except ValueError as exc:
+        add('agent.execution_policy', False, str(exc), 'execution')
     return {'id': agent.id, 'name': config['name'], 'role': config['role'], 'job_title': config.get('job_title', ''), 'department': config.get('department', ''),
             'ready': not any(c['status'] == 'error' for c in checks), 'model_profile_id': models[0] if models else None,
-            'tools': permissions, 'checks': checks}
+            'tools': permissions, 'execution_policy': policy, 'checks': checks}
 
 
 async def inspect(app, user, project_id='', agent_ids=None, snapshot=None, mode='development',
@@ -118,7 +134,7 @@ async def inspect(app, user, project_id='', agent_ids=None, snapshot=None, mode=
                 if aid not in by_id: checks.append(check('agent.exists', False, '所选成员不存在', 'agents', agent_id=aid))
         else:
             agents = [a for a in agents if a.config.get('enabled', True)]
-        inspected = [inspect_agent(s, a, project, (snapshot or {}).get('agents', {}).get(a.id)) for a in agents]
+        inspected = [inspect_agent(s, a, project, (snapshot or {}).get('agents', {}).get(a.id), (snapshot or {}).get('project')) for a in agents]
         from .organization import current_layout, inspect_workstations
         seating = {item['agent_id']: item for item in inspect_workstations(current_layout(s), agents)}
         for agent in inspected:
@@ -136,25 +152,35 @@ async def inspect(app, user, project_id='', agent_ids=None, snapshot=None, mode=
         image = execution_config.get('sandbox_image')
         execution_mode = execution_config.get('execution_mode', 'container')
         permission_profile = execution_config.get('permission_profile', 'ask')
+        command_agents = [a for a in inspected if 'run_command' in a['tools'] or project_commands]
+        member_profiles = {a['execution_policy']['profile'] for a in command_agents if a.get('execution_policy') and a['execution_policy']['profile']}
+        if not member_profiles: member_profiles = {permission_profile}
+        member_policies = [{'agent_id': a['id'], **a['execution_policy']} for a in inspected if a.get('execution_policy')]
         project_list = [{'id': p.id, 'name': p.config['name'], 'archived': p.config.get('archived', False)} for p in projects]
     requires_commands = requires_sandbox
     if execution_mode == 'local':
         from .local_executor import readiness as native_readiness
-        native = await native_readiness(permission_profile)
+        native_by_profile = {profile: await native_readiness(profile) for profile in sorted(member_profiles)}
+        native = {'ready': all(item['ready'] for item in native_by_profile.values()),
+                  'runtime': 'mixed' if len(native_by_profile) > 1 else next(iter(native_by_profile.values()))['runtime'],
+                  'detail': '；'.join(dict.fromkeys(item['detail'] for item in native_by_profile.values()))}
+        permission_profile = next(iter(member_profiles)) if len(member_profiles) == 1 else 'mixed'
         sandbox = {'ready': False, 'state': 'not_required', 'detail': '本项目选择本机执行，不访问容器服务'}
         execution = {**native, 'mode': 'local', 'permission_profile': permission_profile,
-                     'workspace_scope': 'task_working_copy', 'network': 'unrestricted' if permission_profile == 'full' else 'denied',
+                     'workspace_scope': 'task_working_copy', 'network': 'mixed' if permission_profile == 'mixed' else 'unrestricted' if permission_profile == 'full' else 'denied',
+                     'member_policies': member_policies, 'environments': native_by_profile,
                      'limits': {'wall_timeout': True, 'cpu_time': True, 'file_size_bytes': 104857600, 'cpu_core_quota': False, 'memory_quota': False}}
         if requires_commands: checks.append(check('native.ready', native['ready'], native['detail'], 'execution'))
         checks.append(check('native.resource_limits', False, '本机模式限制超时、CPU时间和文件大小；硬CPU核数/内存额度需选择容器模式', 'execution', warning=True))
-        if permission_profile == 'auto': checks.append(check('execution.auto_review', True, '越界/联网申请交给独立审查；不确定或高风险仍等你确认，不直接放行', 'execution'))
-        if permission_profile == 'full': checks.append(check('execution.full_access', False, '完全访问由用户明确选择：命令可读取当前账号可访问的其他文件/凭据并联网；环境变量清理不等于文件隔离', 'execution', warning=True))
+        if 'auto' in member_profiles: checks.append(check('execution.auto_review', True, '帮我批准成员的越界/联网申请交给独立审查；不确定或高风险仍等你确认，不直接放行', 'execution'))
+        if 'full' in member_profiles: checks.append(check('execution.full_access', False, '完全访问成员由管理员明确授权：命令可读取当前账号可访问的其他文件/凭据并联网；环境变量清理不等于文件隔离', 'execution', warning=True))
         requires_sandbox = False
     else:
         sandbox = await sandbox_readiness()
         image_ready = not image or any(i['name'] == image and i['available'] for i in sandbox.get('images', []))
         execution = {'mode': 'container', 'permission_profile': permission_profile, 'runtime': 'runsc',
-                     'ready': sandbox['ready'] and image_ready, 'network': 'denied', 'workspace_scope': 'task_working_copy', 'detail': sandbox['detail']}
+                     'ready': sandbox['ready'] and image_ready, 'network': 'denied', 'workspace_scope': 'task_working_copy', 'detail': sandbox['detail'],
+                     'member_policies': member_policies}
         if requires_sandbox:
             checks.append(check('sandbox.ready', sandbox['ready'] and image_ready, sandbox['detail'] if image_ready else '项目指定的沙箱镜像尚未就绪', 'setup'))
     if not requires_commands:

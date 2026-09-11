@@ -1,0 +1,70 @@
+/* Employee task records share a compact summary and explicit long-content surfaces.
+ * Scope wins over the inspector theme without changing other office panels. */
+.employee-task-panel>header{position:relative}
+.employee-task-panel .employee-run-switch{position:static}
+.employee-task-panel .employee-run-switch .employee-run-picker{top:calc(100% + 6px);width:100%;max-width:100%}
+.employee-task-panel .employee-task-hero{padding:11px;background:linear-gradient(145deg,#b7a5f010,#ffffff02)}
+.employee-task-panel .employee-run-heading{margin-bottom:5px}
+.employee-task-panel .employee-task-context>.employee-task-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:14px;line-height:1.55;font-weight:550;overflow-wrap:anywhere}
+.employee-task-panel .employee-task-context>small{min-width:0;margin-top:7px;font-size:11px}
+.employee-task-panel .employee-task-context>small>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.employee-task-panel .employee-request-details{margin-top:6px;font-size:11px;color:#b9afe1}
+.employee-task-panel .employee-request-details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;padding:3px 0}
+.employee-task-panel .employee-request-details>summary:before{content:'▸';font-size:10px}
+.employee-task-panel .employee-request-details[open]>summary:before{content:'▾'}
+.employee-task-panel .employee-long-content{max-height:240px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#63718b transparent;overflow-wrap:anywhere;white-space:normal}
+.employee-task-panel .employee-request-details>.employee-long-content{padding:10px;margin-top:7px;border:1px solid #ffffff10;border-radius:8px;background:#101a2b66;color:#becce0}
+.employee-task-panel .employee-long-content :is(h4,h5,p,small){white-space:pre-wrap;overflow-wrap:anywhere}
+.employee-task-panel .employee-long-content h4,.employee-task-panel .employee-long-content h5{font-size:12px;line-height:1.7;margin:0 0 8px;color:#d8e1f1}
+.employee-task-panel .employee-long-content p{font-size:12px;line-height:1.75;margin:8px 0}
+.employee-task-panel .employee-long-content small{font-size:11px;color:#9fb1cb}
+.employee-task-panel .employee-task-metrics{grid-template-columns:1.2fr 1fr 1fr;gap:7px;margin-top:8px;padding-top:9px}
+.employee-task-panel .employee-task-metrics>div,.employee-task-panel .employee-task-metrics>button{gap:3px}
+.employee-task-panel .employee-task-metrics strong{font-size:21px;line-height:1.25}
+.employee-task-panel .employee-task-metrics strong small{font-size:11px}
+.employee-task-panel .employee-task-metrics span{font-size:10px}
+.employee-task-panel .employee-task-tabs{margin:12px 0}
+.employee-task-panel .employee-task-tabs button{padding:8px 4px}
+.employee-task-panel .employee-section-heading{gap:8px;margin:0 0 9px;min-width:0}
+.employee-task-panel .employee-section-heading h4{flex:1;min-width:0;font-size:12px}
+.employee-task-panel .employee-section-heading h4>small{margin-left:5px;color:#99acca;font-size:11px}
+.employee-task-panel .employee-section-heading>span{font-size:10px}
+.employee-task-panel .employee-section-heading>select{flex:0 0 auto;width:auto;max-width:120px;height:30px;padding:3px 7px;font-size:11px;background:#101a2b55;color:#b7c6dd;border-color:#ffffff16}
+.employee-task-panel .employee-record-scroll{max-height:330px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#63718b transparent;padding:1px 2px 1px 0;min-width:0}
+.employee-task-panel .employee-record-scroll:focus-visible,.employee-task-panel .employee-long-content:focus-visible{outline:2px solid #bfb0f2;outline-offset:2px}
+.employee-task-panel .employee-work-items>details{margin-bottom:7px}
+.employee-task-panel .employee-work-card>summary{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:5px 7px;padding:10px 8px;align-items:start}
+.employee-task-panel .employee-stage-icon{width:20px;padding-top:1px}
+.employee-task-panel .employee-stage-title>b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:12px;line-height:1.5}
+.employee-task-panel .employee-stage-title>small{font-size:10px;margin-top:3px;line-height:1.5}
+.employee-task-panel .employee-work-card>summary>.badge{padding:3px 5px;font-size:10px;white-space:nowrap}
+.employee-task-panel .employee-stage-outcome{grid-column:2/-1;color:#a8bad3;font-size:10px;line-height:1.6}
+.employee-task-panel .employee-stage-details{padding:0 10px 10px;max-height:260px}
+.employee-task-panel .employee-record-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:8px 0;font-size:10px;color:#9eafc8}
+.employee-task-panel .employee-record-controls button{font-size:11px}
+.employee-task-panel .employee-messages>details{padding:10px;margin-bottom:7px}
+.employee-task-panel .employee-messages>details>summary>small{font-size:10px;margin-bottom:3px}
+.employee-task-panel .employee-messages>details>summary>b{font-size:12px;line-height:1.5;margin:3px 0}
+.employee-task-panel .employee-messages>details>summary>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;line-height:1.6}
+.employee-task-panel .employee-message-preview{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;margin-top:6px;font-style:normal;font-size:11px;line-height:1.6;color:#9cacbf}
+.employee-task-panel .employee-messages>details[open] .employee-message-preview{display:none}
+.employee-task-panel .employee-message-content{border-top:1px solid #ffffff12;margin-top:8px;padding-top:3px}
+.employee-task-panel .employee-message-content>details{font-size:11px}
+.employee-task-panel .employee-run-error{margin:10px 0;padding:10px;border:1px solid #dda26044;border-radius:9px;background:#dda2600c;color:#efc291;font-size:12px;overflow-wrap:anywhere}
+.employee-task-panel .employee-run-error>strong{display:block;margin-bottom:5px;font-size:12px}
+.employee-task-panel .employee-run-error>p{font-size:11px;line-height:1.7;margin:6px 0}
+.employee-task-panel .employee-run-error>details>summary{cursor:pointer;font-size:11px;line-height:1.7}
+.employee-task-panel .employee-run-error button{margin-top:7px;font-size:11px}
+.employee-task-panel .employee-delivery-link{margin-top:12px;padding:10px;gap:8px}
+.employee-task-panel .employee-delivery-link>div{min-width:0}
+.employee-task-panel .employee-delivery-link strong{font-size:12px}
+.employee-task-panel .employee-delivery-link p,.employee-task-panel .employee-delivery-link button{font-size:11px;overflow-wrap:anywhere}
+.employee-task-panel .employee-open-task{margin-top:10px;padding:11px 0}
+.employee-task-panel :is(.form-error,.callout){overflow-wrap:anywhere}
+.employee-task-panel .run-issues{max-height:360px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;margin:10px 0 6px}
+.employee-task-panel .run-issue{padding:11px;font-size:11px;border-radius:9px}
+.employee-task-panel .run-issue header b{font-size:12px}.employee-task-panel .run-issue header span{font-size:10px}
+.employee-task-panel .run-issue dl div{grid-template-columns:76px minmax(0,1fr);gap:6px}
+.employee-task-panel .run-issue details summary{font-size:11px}
+.employee-task-panel .employee-issue-link{font-size:11px;margin-bottom:8px}
+@media(max-height:740px){.employee-task-panel .employee-record-scroll{max-height:260px}.employee-task-panel .employee-long-content{max-height:200px}}
