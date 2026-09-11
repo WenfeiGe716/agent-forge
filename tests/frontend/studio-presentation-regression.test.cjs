@@ -15,24 +15,19 @@ const studio=reuse('./organization-workspace.test.cjs',['harness','nodes','text'
 const employee=reuse('./employee-task-panel.test.cjs',['harness','nodes','text','button','run']);
 const classNode=(tree,name,helper=studio)=>helper.nodes(tree).find(node=>node.props?.className?.split(' ').includes(name));
 
-test('Studio primary navigation stays limited to office, tasks, departments and teams with exact targets',()=>{
+test('Studio passes navigation callbacks to the width-aware navigation without duplicate management menu',()=>{
  const opened=[],h=studio.harness('StudioWorkspace',{onBoard:()=>opened.push('task-workspace')}),tree=h.render();
- const nav=studio.field(tree,'工作台导航');
- const top=(Array.isArray(nav.props.children)?nav.props.children:[nav.props.children]).filter(node=>node?.type==='button');
- assert.deepEqual(Array.from(top,studio.text),['办公室','任务','楼层与部门','团队']);
- assert.equal(top[0].props.className,'selected');
- studio.button(nav,'任务').props.onClick();studio.button(nav,'楼层与部门').props.onClick();studio.button(nav,'团队').props.onClick();
+ const nav=studio.nodes(tree).find(node=>node.type==='StudioNavigation');assert.ok(nav);
+ nav.props.onBoard();nav.props.onNavigate('organization');nav.props.onNavigate('agents');
  assert.deepEqual(opened,['task-workspace']);assert.deepEqual(Array.from(h.navigation),['organization','agents']);
+ assert.equal(classNode(tree,'studio-nav-more'),undefined);
 });
 
-test('the collapsed management disclosure retains configuration targets but removes fixed orchestration',()=>{
- const h=studio.harness('StudioWorkspace'),tree=h.render(),menu=classNode(tree,'studio-nav-more');
- assert.equal(menu.type,'details');assert.ok(!menu.props.open);
- assert.equal(studio.text(studio.nodes(menu).find(node=>node.type==='summary')),'管理与配置');
- const entries=[['设计中心','design'],['执行中心','execution'],['任务看板','board'],['角色模板','role-templates'],['Skill商店','skill-store'],['项目','projects'],['模型','models']];
- assert.ok(!studio.nodes(menu).some(n=>n.type==='button'&&studio.text(n)==='编排'));
- for(const [label] of entries)studio.button(menu,label).props.onClick();
- assert.deepEqual(Array.from(h.navigation),entries.map(([,target])=>target));
+test('passive employee explanations are removed while task failure and action remain visible',()=>{
+ const h=studio.harness('StudioWorkspace',{detail:{id:'stopped',status:'needs_attention',error:'模型调用超时；不自动重放',tasks:[]}}),tree=h.render();
+ assert.doesNotMatch(studio.text(tree),/人物占用按全局任务判断|员工状态汇总所有任务|任务分派、读写代码、工具调用和消息交接决定执行动作|组织布局 v/);
+ assert.match(studio.text(tree),/模型响应超时，结果未确认/);assert.ok(studio.button(tree,'查看原因与处理'));
+ assert.equal(classNode(tree,'employee-organization-context'),undefined);
  studio.field(tree,'运行设置').props.onClick();assert.equal(h.navigation.at(-1),'settings');
 });
 
@@ -51,6 +46,17 @@ test('scene disclosure preserves camera, quality, day-night and city controls wi
  studio.field(tree,'环境设置').props.onClick();tree=h.render();assert.equal(studio.field(tree,'常驻环境设置').props.role,'group');
  assert.equal(studio.field(tree,'城市人车密度').type,'select');assert.equal(studio.field(tree,'切换环境运动').type,'button');
  assert.deepEqual(actions,[['zoom',.85],['zoom',1.15],['reset'],['city'],['intersection'],['reset']]);assert.equal(seeds.length,0);assert.equal(h.navigation.length,0);
+});
+
+test('scene preferences and activity share one bottom toolbar and only one disclosure opens at a time',()=>{
+ const h=studio.harness('StudioWorkspace');let tree=h.render();
+ const dock=classNode(tree,'studio-utility-dock');assert.equal(dock.props.role,'group');assert.equal(dock.props['aria-label'],'场景与活动工具');
+ const tools=classNode(dock,'studio-scene-tools'),activity=classNode(dock,'activity-toggle');
+ assert.ok(tools);assert.ok(activity);assert.equal(classNode(tree,'studio-timeline'),undefined);
+ tools.props.ref.current={open:true};activity.props.onClick();tree=h.render();
+ assert.equal(tools.props.ref.current.open,false);assert.ok(classNode(tree,'studio-timeline'));assert.equal(classNode(tree,'activity-toggle').props['aria-expanded'],true);
+ classNode(tree,'studio-scene-tools').props.onToggle({currentTarget:{open:true}});tree=h.render();
+ assert.equal(classNode(tree,'studio-timeline'),undefined);assert.equal(classNode(tree,'activity-toggle').props['aria-expanded'],false);
 });
 
 test('an employee with no real assigned task shows an empty state, not invented metrics or progress',()=>{

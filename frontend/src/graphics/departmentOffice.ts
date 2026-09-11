@@ -65,10 +65,15 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
   add([x-.55,1,z],[.3,.95,length+.06],0x8fb9aa,'sofa-back',{surface:'cloth'});
   for(const sign of[-1,1]){
    add([x,.83,z+sign*(length/2-.1)],[1.45,.7,.2],0x8bb5a5,'sofa-arm',{surface:'cloth'});
-   add([x+.15,.925,z+sign*length*.21],[.94,.15,length*.43],0xa4cbbb,'sofa-cushion',{surface:'cloth'});
-   add([x-.20,1.18,z+sign*length*.21],[.25,.4,.48],0xb4d6c7,'sofa-pillow',{surface:'cloth'});
+   // Keep the cushion at the same contact height as the authored seated
+   // character pose.  The previous 0.925 centre put the hip inside the
+   // cushion and made the legs visibly pass through the sofa front edge.
+   add([x+.15,.82,z+sign*length*.21],[.94,.12,length*.43],0xa4cbbb,'sofa-cushion',{surface:'cloth'});
+   add([x-.20,1.05,z+sign*length*.21],[.25,.34,.48],0xb4d6c7,'sofa-pillow',{surface:'cloth'});
    for(const dx of[-.5,.5])add([x+dx,.19,z+sign*(length/2-.28)],[.09,.2,.09],0x566e68,'sofa-foot',{surface:'wood'});
-   facilities.nap.push({id:zone.id+':sofa:'+sign,position:[x+.15,0,z+sign*length*.21],yaw:Math.PI/2});
+   // Seat slightly toward the back so the authored nap feet remain inside
+   // the sofa footprint instead of clipping through its front edge.
+   facilities.nap.push({id:zone.id+':sofa:'+sign,position:[x-.20,0,z+sign*length*.21],yaw:Math.PI/2});
   }
   obstacles.push({x,z,w:1.46,d:length+.08,seat:true});
   if(zone.width>=4.8){

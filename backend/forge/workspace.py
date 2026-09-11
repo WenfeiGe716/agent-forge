@@ -313,6 +313,25 @@ def import_project(relative: str, project_id: str) -> str:
     return import_directory_snapshot(source, project_id, expected_identity=_identity(source.stat()))
 
 
+def create_empty_project_snapshot(project_id: str) -> str:
+    """Create an empty, git-backed project workspace for tasks started from scratch."""
+    if not re.fullmatch('[a-f0-9]{32}', project_id):
+        raise ValueError('无效项目标识')
+    target = settings.data_root / 'projects' / project_id
+    if target.exists():
+        raise ValueError('项目工作副本已存在')
+    target.mkdir(parents=True)
+    try:
+        git(target, 'init', '-b', 'main')
+        git(target, 'commit', '--allow-empty', '-m', 'Created empty project workspace')
+        return git(target, 'rev-parse', 'HEAD').stdout.decode().strip()
+    except BaseException as exc:
+        shutil.rmtree(target, ignore_errors=True)
+        if isinstance(exc, OSError):
+            raise ValueError('无法创建空白项目工作副本') from exc
+        raise
+
+
 def import_directory_snapshot(source: Path, project_id: str, *, expected_identity: tuple[int, int]) -> str:
     """Copy a previously authorized directory using the same no-follow IO as export.
 

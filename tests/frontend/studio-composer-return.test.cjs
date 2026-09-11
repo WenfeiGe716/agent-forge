@@ -10,7 +10,9 @@ const projects=[{id:'first-project',name:'项目甲'},{id:'selected-project',nam
 const find=(tree,label)=>studio.nodes(tree).find(node=>node.props?.['aria-label']===label);
 const hasComposer=tree=>!!find(tree,'任务需求');
 const returnEntry=tree=>studio.nodes(tree).find(node=>node.type==='button'&&node.props?.className?.split(' ').includes('studio-composer-entry'));
-function focusEffect(h){const effect=h.effects.find(effect=>effect.deps?.length===1&&typeof effect.deps[0]==='boolean');assert.ok(effect,'composer visibility focus effect');return effect.fn;}
+// The activity dock also has a boolean visibility effect. Run both, as React
+// does, instead of mistaking the first boolean effect for composer focus.
+function focusEffect(h){const effects=h.effects.filter(effect=>effect.deps?.length===1&&typeof effect.deps[0]==='boolean');assert.ok(effects.length,'visibility effects');return()=>effects.forEach(effect=>effect.fn());}
 function fixture(extra={}){const seeds=[];return{seeds,h:studio.harness('StudioWorkspace',{agents:people,organization,projects,runs:[],onCreateTask:seed=>seeds.push(seed),...extra})};}
 function selectEmployee(tree,id='a'){const office=studio.nodes(tree).find(node=>node.type==='Office');assert.ok(office);office.props.onSelect(id);}
 

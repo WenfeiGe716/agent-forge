@@ -19,7 +19,8 @@ MAX_ATTEMPTS = 3
 def summary(task):
     issue = task.spec.get('work_issue', {})
     result = {key: issue.get(key) for key in ('task_key', 'kind', 'source_agent_id', 'source_agent_name',
-        'status', 'summary', 'files', 'attempts', 'max_attempts', 'escalation_reason')}
+        'status', 'summary', 'files', 'attempts', 'max_attempts', 'escalation_reason', 'uncertain',
+        'provider', 'model', 'model_attempt')}
     if issue.get('status') == 'resolved':
         result.update({'resolution': issue['resolution'], 'evidence_task_keys': issue['evidence_task_keys']})
     return result
@@ -95,9 +96,26 @@ def reconcile(s, run):
     from .autonomy import _tasks, _queue, _leader, TERMINAL_TASKS, _id
     rows = _tasks(s, run)
     for task in rows:
-        if task.kind != 'autonomous' or task.status != 'integrated' or task.result.get('outcome') != 'blocked': continue
-        if task.spec.get('work_issue') or task.spec.get('recovery_issue_keys'): continue
-        _save(task, _new_issue(run, task, 'member_blocked', task.result['summary']))
+        # Failed model/tool activations are persisted as blocked results by the
+        # runtime.  Surface them to the coordinator just like an explicit
+        # member blocker, instead of terminating the entire run.
+        if task.kind != 'autonomous' or task.spec.get('work_issue') or task.spec.get('recovery_issue_keys'):
+            continue
+        failed_member = task.status == 'failed' and task.result.get('outcome') == 'blocked'
+        blocked_member = task.status == 'integrated' and task.result.get('outcome') == 'blocked'
+        if not (failed_member or blocked_member): continue
+        kind = 'member_failed' if failed_member else 'member_blocked'
+        issue = _new_issue(run, task, kind, task.result.get('summary', '成员报告无法继续'))
+        failure = task.result.get('failure', {})
+        issue['uncertain'] = bool(failure.get('uncertain'))
+        if failed_member:
+            # Keep the exact candidate that emitted the latest model.started
+            # receipt, so the operator can identify a bad model without
+            # reverse-engineering a generic exception message.
+            for field in ('provider', 'model'):
+                if failure.get(field): issue[field] = failure[field]
+            if failure.get('attempt') is not None: issue['model_attempt'] = failure['attempt']
+        _save(task, issue)
         emit(s, run.id, 'team.issue.opened', summary(task))
     issues = [t for t in rows if t.spec.get('work_issue', {}).get('status') in {'open', 'escalated'}]
     if not issues: return None
@@ -229,7 +247,10 @@ def resolve_work_issue(run_id, key, operation, arguments):
             raise ValueError('引用工作没有修复涉及文件；不能仅口头丢弃冲突补丁')
         issue = {**issue, 'status': 'resolved', 'resolution': arguments['resolution'],
             'resolution_signature': signature, 'evidence_task_keys': evidence, 'resolved_by': task.key, 'resolved_at': now()}
-        if source.status == 'conflicted': source.status = 'superseded'
+        # Failed activations have no integrable result.  A cited repair or
+        # replacement activation supersedes the failed source so it no longer
+        # blocks the coordinator's final delivery validation.
+        if source.status in {'conflicted', 'failed'}: source.status = 'superseded'
         _save(source, issue)
         emit(s, run.id, 'team.issue.resolved', {**summary(source), 'evidence_task_keys': evidence, 'resolution': issue['resolution']})
         return {**summary(source), 'resolution': issue['resolution']}

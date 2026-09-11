@@ -8,7 +8,7 @@ from .workflows import DevelopmentWorkflow
 from . import engine
 
 ACTIVITIES = []
-for name in ['prepare_run','set_stage','prepare_task','save_plan','integrate_task','prepare_review','prepare_rework','publish','prepare_discussion','finish_discussion','publish_discussion','prepare_goal_review','assess_goal','checkpoint_interrupted','open_meeting','prepare_action_plan','save_action_plan']:
+for name in ['prepare_run','set_stage','prepare_task','save_plan','integrate_task','prepare_review','prepare_rework','publish','prepare_discussion','finish_discussion','publish_discussion','prepare_goal_review','assess_goal','checkpoint_interrupted','open_meeting','prepare_action_plan','save_action_plan','record_autonomous_failure']:
     def wrap(fn, activity_name):
         async def invoke(data: dict) -> dict:
             return await asyncio.to_thread(fn, data)

@@ -43,6 +43,12 @@ async def _advance_batch(flow, assignments):
         flow.spent[key] = flow.spent.get(key, 0) + result['elapsed_s']
     errors = [result for result in outcomes if isinstance(result, BaseException)]
     if errors:
+        if getattr(flow.runtime, 'autonomous_recovery', False):
+            failures = [{'key': item['key'], 'error': str(result)}
+                        for item, result in zip(assignments, outcomes)
+                        if isinstance(result, BaseException)]
+            await flow.call('record_autonomous_failure', {'failures': failures})
+            return
         raise errors[0]
 
 

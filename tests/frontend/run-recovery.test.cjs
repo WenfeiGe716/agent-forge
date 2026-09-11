@@ -118,6 +118,24 @@ test('unknown failure stays a generic explanation and viewers cannot invoke reco
  assert.equal(calls,0);
 });
 
+test('model timeout is explained before the generic uncertain-result fallback',()=>{
+ const {summarizeRunFailure}=recovery();
+ const info=summarizeRunFailure({...plain(run),error:'模型调用超时；结果不确定，不自动重放'});
+ assert.equal(info.title,'模型响应超时，结果未确认');
+ assert.match(info.reason,/可能已经被供应商接收/);
+ assert.match(info.next,/最后一条模型与工具记录/);
+});
+
+test('execution timeout and context cap expose actionable continuation guidance',()=>{
+ const {summarizeRunFailure}=recovery();
+ const timeout=summarizeRunFailure({...plain(run),error:'Agent任务超过自动执行时限'});
+ assert.equal(timeout.title,'执行时限已到，任务尚未完成');
+ assert.match(timeout.next,/负责人判断/);
+ const context=summarizeRunFailure({...plain(run),error:'上下文超过成员配置上限'});
+ assert.equal(context.title,'成员上下文空间不足');
+ assert.match(context.next,/缩小当前任务范围或提高/);
+});
+
 test('real integration conflict explains preserved changes instead of suggesting model configuration',()=>{
  const original={...plain(run),error:'并行变更发生冲突，已保留patch，请人工处理'};
  const {summarizeRunFailure,default:Component}=recovery(),info=summarizeRunFailure(original);

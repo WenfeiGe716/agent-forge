@@ -1,11 +1,27 @@
-import {Run,Task} from './types';
+import {ForgeEvent,Run,Task} from './types';
 
 export type TaskTab='progress'|'actions'|'results'|'activity';
 /** Display aliases only; unknown runtime tools remain visible under their real names. */
 export function taskToolLabel(value:unknown){const name=typeof value==='string'?value:'';return ({inspect_team:'查看团队能力目录',read_work_result:'读取团队已集成成果'} as Record<string,string>)[name]||name;}
+/** Only this run's evidence may drive its activity; run state wins over stale heartbeats. */
+export function taskActivity(run:Run,events:ForgeEvent[]){
+ const scoped=[...new Map(events.filter(e=>e.run_id===run.id).map(e=>[e.id,e])).values()].sort((a,b)=>a.id-b.id);
+ const visible=new Set(['model.started','model.progress','model.delta','model.completed','agent.started','tool.started','tool.completed','agent.message','agent.message.delivered','run.state','task.failed','team.issue.opened','team.issue.coordinating','team.issue.resolved','team.issue.escalated']);
+ const latest=[...scoped].reverse().find(e=>visible.has(e.kind));
+ const latestStart=[...scoped].map((e,i)=>e.kind==='model.started'?i:-1).filter(i=>i>=0).pop()??-1;
+ const latestTerminal=[...scoped].map((e,i)=>e.kind==='model.completed'?i:-1).filter(i=>i>=0).pop()??-1;
+ const streamEvents=scoped.slice(Math.max(latestStart,latestTerminal+1)+1).filter(e=>e.kind==='model.delta').sort((a,b)=>(a.data.sequence||0)-(b.data.sequence||0));
+ const streamText=streamEvents.map(e=>typeof e.data.text==='string'?e.data.text:'').join('');
+ const outputText=(e:ForgeEvent)=>e.kind==='agent.message'?(e.data.body||e.data.summary):e.data.summary;
+ const output=[...scoped].reverse().find(e=>['model.completed','agent.message','tool.completed','task.finished'].includes(e.kind)&&typeof outputText(e)==='string'&&outputText(e).trim());
+ const stopped:Record<string,string>={paused:'任务已暂停，等待继续',needs_attention:'任务已停止，查看原因与处理',cancelled:'任务已取消，不再执行',completed:'任务已完成',awaiting_decision:'等待你的回答或授权',awaiting_approval:'等待计划审批',awaiting_acceptance:'等待成果验收'};
+ let status=stopped[run.status]||'';
+ if(!status&&latest){const d=latest.data;status=latest.kind==='model.started'?`正在调用 ${d.provider||'已配置模型'} / ${d.model||''}`:latest.kind==='model.progress'?`模型仍在响应（已等待 ${d.elapsed_s||0} 秒）`:latest.kind==='model.delta'?`正在接收模型输出（已收到 ${streamText.length} 字）`:latest.kind==='model.completed'?'模型已返回，本轮结果已记录':latest.kind==='tool.started'?`正在执行工具 ${taskToolLabel(d.tool)}`:latest.kind==='tool.completed'?`工具 ${taskToolLabel(d.tool)} 已返回`:latest.kind==='agent.message'?'成员消息已发送':latest.kind==='agent.message.delivered'?'消息已进入接收者上下文':latest.kind==='agent.started'?'成员已开始处理':latest.kind==='task.failed'?'成员执行失败，已交给负责人分析':latest.kind==='team.issue.coordinating'?'负责人正在处理执行问题':latest.kind==='team.issue.opened'?'发现执行问题，等待负责人处理':latest.kind==='team.issue.resolved'?'修复依据已核对':latest.kind==='team.issue.escalated'?'负责人处理未解决，等待人工协助':'';}
+ return {events:scoped,status,agentId:stopped[run.status]?'':latest?.data.agent_id||latest?.data.from_agent_id||'',output,outputText:output?outputText(output):'',outputAgentId:output?.data.agent_id||output?.data.from_agent_id||'',streamText};
+}
 export function isAutonomous(run:Run){return run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';}
 export function isDiscussion(run:Run){return !isAutonomous(run)&&(run.report?.mode==='discussion'||run.snapshot?.orchestration?.mode==='discussion');}
-export function primaryTab(run:Run):TaskTab{return ['awaiting_approval','awaiting_decision'].includes(run.status)?'actions':run.artifact_digest?'results':'progress';}
+export function primaryTab(run:Run):TaskTab{return ['awaiting_approval','awaiting_decision'].includes(run.status)?'actions':['paused','needs_attention'].includes(run.status)?'progress':run.artifact_digest?'results':'progress';}
 export function taskStage(task:Task,discussion=false){
  if(discussion)return task.kind==='intake'?0:task.kind==='action_plan'?2:1;
  return task.kind==='plan'||task.kind==='intake'||task.kind==='discussion'?0:task.kind==='review'||task.kind==='check'||task.key.startsWith('review_')||task.key.startsWith('checks_')?3:2;
@@ -20,7 +36,7 @@ export function runPresentation(run:Run){
  const attention=['awaiting_approval','awaiting_decision','awaiting_acceptance'].includes(run.status);
  const blocked=['paused','needs_attention','cancelled'].includes(run.status);
  const copy:Record<string,[string,string,TaskTab,string]>={
-  queued:['等待启动','任务已保存，正在等待编排器接手。','progress','查看任务安排'],
+  queued:['等待启动','任务已保存，正在等待执行服务接手。','progress','查看任务安排'],
   intake:['负责人正在理解需求','如需澄清，问题会集中出现在“待我处理”。','progress','查看执行进度'],
   planning:['正在制定执行计划','计划生成后由你确认，确认前不会开始开发。','progress','查看执行进度'],
   discussing:['成员正在讨论','展示实际发言和阶段结果；讨论不代表已经执行代码。','progress','查看成员进度'],

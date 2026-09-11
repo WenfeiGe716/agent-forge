@@ -77,14 +77,17 @@ async def discover(data: ConnectionSettings) -> dict:
         # Deliberately exclude URL, credential, arbitrary vendor response body.
         raise providers.ProviderError('无法获取模型目录，请检查地址或直接填写模型ID') from exc
 
-async def probe_connection(data: ConnectInput) -> dict:
-    connection = {'protocol': data.protocol, 'base_url': data.base_url, 'external': data.external, 'protocol_config': data.protocol_config}
-    model = {'model_id': data.model_id, 'allowed_parameters': list(data.parameters), 'parameters': data.parameters}
+async def probe_model_connection(connection: dict, model: dict, key: str) -> dict:
+    """Perform the same small, real tool round-trip used during onboarding.
+
+    Keeping this in one place prevents a saved catalog model from requiring a
+    second, subtly different verification path before it can run an Agent.
+    """
     nonce = secrets.token_hex(12)
     tool = {'name': 'forge_connection_check', 'description': 'Read-only onboarding connection check. Return the given nonce. No files or commands.',
             'parameters': {'type': 'object', 'properties': {'nonce': {'type': 'string'}}, 'required': ['nonce'], 'additionalProperties': False}}
     messages = [{'role': 'user', 'content': 'Connection test only, no project data. Call forge_connection_check exactly once with nonce '+nonce+'. Do not answer in text yet.'}]
-    first = await providers.complete(connection, model, messages, [tool], data.api_key, 30)
+    first = await providers.complete(connection, model, messages, [tool], key, 30)
     if len(first.calls) != 1 or first.calls[0]['name'] != tool['name'] or first.calls[0]['arguments'] != {'nonce':nonce}:
         raise providers.ProviderError('模型未返回有效工具调用；请确认型号支持工具调用及当前协议。未创建配置。')
     call = first.calls[0]
@@ -93,12 +96,18 @@ async def probe_connection(data: ConnectInput) -> dict:
         assistant['anthropic_native'] = first.native
     messages.extend([assistant, {'role':'tool','call_id':call['id'], 'content':json.dumps({'ok':True,'nonce':nonce})},
                      {'role':'user','content':'The test tool succeeded. Reply only OK; do not call another tool.'}])
-    second = await providers.complete(connection, model, messages, [], data.api_key, 30)
+    second = await providers.complete(connection, model, messages, [], key, 30)
     if second.calls or second.text.strip().strip('.!。！').upper() != 'OK':
         raise providers.ProviderError('工具结果回传后的确认不符合要求；未创建配置。')
     return {'checked_at':now(),'requests':2,'tool_roundtrip':True,
             'input_tokens':first.input_tokens+second.input_tokens,
             'output_tokens':first.output_tokens+second.output_tokens}
+
+
+async def probe_connection(data: ConnectInput) -> dict:
+    connection = {'protocol': data.protocol, 'base_url': data.base_url, 'external': data.external, 'protocol_config': data.protocol_config}
+    model = {'model_id': data.model_id, 'allowed_parameters': list(data.parameters), 'parameters': data.parameters}
+    return await probe_model_connection(connection, model, data.api_key)
 
 
 def initialize_skills(s, actor: str) -> tuple[dict, list]:

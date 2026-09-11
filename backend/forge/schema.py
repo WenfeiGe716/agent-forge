@@ -147,12 +147,16 @@ class ProjectInput(Strict):
     full_access_confirmed: bool = Field(False, exclude=True)
     archived: bool = False
     name: str = Field(min_length=1, max_length=120)
-    import_path: str = Field(min_length=1, max_length=1000)
+    import_path: str = Field('blank', min_length=1, max_length=1000)
+    blank: bool = False
     desktop_directory_token: str | None = Field(None, min_length=20, max_length=200, exclude=True)
     instructions: str = Field('', max_length=20000)
     sandbox_image: str = Field('agent-forge/sandbox:local', min_length=1, max_length=250, pattern=r'^[\w][\w./:@-]*$')
     check_commands: list[str] = Field(default_factory=list, max_length=20)
-    allow_external_models: bool = False
+    # New projects opt in to external model providers unless explicitly disabled.
+    # Existing projects are handled by the update endpoint, which preserves this
+    # setting when the field is omitted (including legacy configs where it is absent).
+    allow_external_models: bool = True
     runtime: dict[str, Any] = Field(default_factory=dict)
     members: list[str] = Field(default_factory=list)
     @model_validator(mode='after')

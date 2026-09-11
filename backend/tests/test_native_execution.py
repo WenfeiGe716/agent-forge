@@ -12,6 +12,7 @@ import pytest
 from sqlalchemy import func, select
 
 from forge import engine, local_executor as native, tools
+from forge.config import settings
 from forge.db import Run, Task, session
 from forge.execution_permissions import ExecutionPermission, request_permission, invoke
 from forge.local_executor import NativeExecution
@@ -199,6 +200,17 @@ def test_project_new_defaults_and_full_explicit_acknowledgement(client, configur
     assert response.status_code == 201, response.text
     assert 'full_access_confirmed' not in response.json()
     assert client.post('/api/projects', json={**body, 'full_access_confirmed': True, 'execution_mode': 'container'}).status_code == 422
+
+
+def test_blank_project_creates_empty_git_workspace_without_source_directory(client):
+    response = client.post('/api/projects', json={'name': '从零开始', 'blank': True})
+    assert response.status_code == 201, response.text
+    project = response.json()
+    assert project['blank'] is True and project['import_path'] == 'blank'
+    root = settings.data_root / 'projects' / project['id']
+    assert root.is_dir() and (root / '.git').is_dir()
+    assert not any(path for path in root.iterdir() if path.name != '.git')
+    assert project['base_commit']
 
 
 def test_legacy_snapshot_missing_mode_stays_container(client, configured):

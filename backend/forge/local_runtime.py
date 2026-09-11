@@ -18,11 +18,16 @@ from . import engine
 
 EPOCH = datetime(2000,1,1,tzinfo=timezone.utc)
 TERMINAL = {'completed','cancelled','needs_attention'}
-ACTIVITIES = {'prepare_run','set_stage','prepare_task','save_plan','integrate_task','prepare_review','prepare_rework','publish','turn','check_project','prepare_discussion','finish_discussion','publish_discussion','prepare_goal_review','assess_goal','checkpoint_interrupted','open_meeting','prepare_action_plan','save_action_plan','autonomy_tick'}
+ACTIVITIES = {'prepare_run','set_stage','prepare_task','save_plan','integrate_task','prepare_review','prepare_rework','publish','turn','check_project','prepare_discussion','finish_discussion','publish_discussion','prepare_goal_review','assess_goal','checkpoint_interrupted','open_meeting','prepare_action_plan','save_action_plan','autonomy_tick','record_autonomous_failure'}
 
 class LocalRuntime:
     def __init__(self, run_id, semaphore):
         self.run_id, self.semaphore = run_id, semaphore
+        # Enables durable per-member failure recording and coordinator recovery
+        # for the local-first desktop runtime.  It is intentionally an
+        # explicit capability so Temporal keeps its conservative semantics
+        # until the corresponding activity is deployed there.
+        self.autonomous_recovery = True
         with session() as s:
             self.elapsed = sum(float(x.elapsed_s) for x in s.scalars(select(ActivityJournal).where(ActivityJournal.run_id==run_id,ActivityJournal.state=='completed')))
     def now(self): return EPOCH + timedelta(seconds=self.elapsed)
@@ -83,7 +88,19 @@ class LocalScheduler:
         try:
             while True:
                 with session() as s:
-                    candidates=list(s.scalars(select(Run).where(Run.status.notin_(TERMINAL)).order_by(Run.created_at)))
+                    # needs_attention is terminal until the user explicitly
+                    # requests resume.  A resume command reuses the same run
+                    # and workspace; it must not be mistaken for a new run.
+                    candidates=[]
+                    for run in s.scalars(select(Run).order_by(Run.created_at)):
+                        if run.status in {'completed','cancelled'}: continue
+                        if run.status == 'needs_attention':
+                            resume = s.scalar(select(Outbox).where(
+                                Outbox.run_id == run.id, Outbox.action == 'control',
+                                Outbox.sent == False,
+                                Outbox.payload['action'].as_string() == 'resume'))
+                            if not resume: continue
+                        candidates.append(run)
                 for run in candidates:
                     if run.id in self.running: continue
                     # Limit total active runs; awaiting approvals consumes one slot.

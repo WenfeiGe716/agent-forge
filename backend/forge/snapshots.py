@@ -15,7 +15,7 @@ def freeze_model(s, profile_id: str, overrides: dict, allow_external: bool) -> d
     if not revision: raise ValueError('供应商连接版本不存在，请重新保存连接')
     connection = deepcopy(revision.config)
     if connection['external'] and not allow_external: raise ValueError('项目未授权向外部模型发送代码')
-    if not model['supports_tools']: raise ValueError('Agent运行需要支持工具调用的模型')
+    if not model['supports_tools']: raise ValueError('当前模型配置尚未确认支持工具调用；请先执行模型工具调用验证')
     model['parameters'].update(overrides)
     validate_parameters(connection['protocol'], model['allowed_parameters'], model['parameters'], connection.get('protocol_config'))
     return {'profile_id': profile_id, 'profile_version': profile.version, 'credential_revision': revision.id,

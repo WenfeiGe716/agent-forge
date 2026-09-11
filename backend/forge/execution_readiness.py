@@ -66,7 +66,7 @@ def inspect_agent(s, agent, project, frozen=None, frozen_project=None):
         details = {'model_profile_id': model_id, 'provider_id': model['provider_id']}
         add('model.enabled', bool(model.get('enabled', True)), label + ('已启用' if model.get('enabled', True) else '已停用或从当前目录移出'), 'providers', **details)
         add('provider.enabled', bool(provider and provider.enabled and rev), label + ('的供应商已启用' if provider and provider.enabled and rev else '的供应商缺失或停用'), 'providers', **details)
-        add('model.tools', model.get('supports_tools') is True, label + ('声明支持工具调用（不是实时验证）' if model.get('supports_tools') else '未确认支持工具调用'), 'providers', **details)
+        add('model.tools', model.get('supports_tools') is True, label + ('已验证可发起工具调用（工具由本机执行器提供）' if model.get('supports_tools') else '尚未验证能否发起工具调用；本机工具由 Agent Forge 执行'), 'providers', **details)
         if rev:
             try:
                 params = dict(model['parameters'])
@@ -77,7 +77,7 @@ def inspect_agent(s, agent, project, frozen=None, frozen_project=None):
                 add('model.parameters', False, label + '参数需要修正：' + str(exc)[:400], 'providers', **details)
             if project and rev.config.get('external'):
                 add('project.external_models', project.config.get('allow_external_models') is True,
-                    '项目已明确授权模型外发' if project.config.get('allow_external_models') else '项目未授权向外部模型发送任务和文件', 'projects', **details)
+                    '项目已明确授权模型外发' if project.config.get('allow_external_models') else '项目外部模型授权未开启（与“完全访问”独立；需在项目配置中明确允许发送任务和文件）', 'projects', **details)
         probe = s.get(PlatformConfig, 'probe:' + model_id)
         checked = bool(probe and provider and probe.value.get('revision_id') == provider.revision_id and probe.value.get('model_version') == profile.version)
         add('model.live_probe', checked, label + ('当前配置有已记录的连接检查' if checked else '当前配置没有匹配的连接检查；本次预检未发送推理请求'), 'providers', warning=True, **details)

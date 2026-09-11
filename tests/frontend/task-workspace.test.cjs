@@ -15,7 +15,7 @@ test('long title and complete request stay accessible in an initially closed dis
  assert.equal(disclosure.type,'details');assert.ok(!disclosure.props.open);
  assert.ok(text(disclosure).includes(run.request));assert.ok(text(disclosure).includes(run.title));
 });
-function harness(run=base,{handler}={}){
+function harness(run=base,{handler,events=[]}={}){
  let cursor=0;const slots=[],effects=[],cleanups=[],calls=[];
  const React={useState(init){const i=cursor++;if(!(i in slots))slots[i]=typeof init==='function'?init():init;return[slots[i],v=>slots[i]=typeof v==='function'?v(slots[i]):v];},useRef(init){const i=cursor++;return slots[i]||(slots[i]={current:init});},useEffect(fn,deps){const i=cursor++;if(!(i in slots)||deps.some((v,j)=>v!==slots[i][j])){cleanups[i]?.();slots[i]=deps;effects.push(()=>cleanups[i]=fn());}}};
  const jsx=(type,props)=>typeof type==='function'?type(props||{}):{type,props:props||{}};
@@ -36,7 +36,7 @@ function harness(run=base,{handler}={}){
   if(id==='./TaskFlow')return{__esModule:true,default:component('task-flow'),TaskOutputs:component('task-outputs')};
   throw Error(id);
  }});
- const props={run,runs:[run],selected:run.id,projects:[{id:'p',name:'研发项目'}],agents:[],events:[],writer:true,admin:true,busy:false,live:true,onSelect(){},onNew(){},onControl(){},onCancel(){},onSnapshot(){},onTask(){},onCollaboration(){},onConfigure(){},onNavigate(){},onRefresh:async()=>{}};
+ const props={run,runs:[run],selected:run.id,projects:[{id:'p',name:'研发项目'}],agents:[],events,writer:true,admin:true,busy:false,live:true,onSelect(){},onNew(){},onControl(){},onCancel(){},onSnapshot(){},onTask(){},onCollaboration(){},onConfigure(){},onNavigate(){},onRefresh:async()=>{}};
  const render=()=>{cursor=0;const tree=exports.default(props);effects.splice(0).forEach(f=>f());return tree;};
  return{render,calls,async settle(){await new Promise(r=>setImmediate(r));return render();}};
 }
@@ -80,6 +80,12 @@ test('discussion-only stages never claim that a plan approval or code execution 
 test('paused and failed states use the actual affected task without marking it complete',()=>{
  for(const status of ['paused','needs_attention']){const p=helpers.runPresentation({...base,status,artifact_digest:'',tasks:[{kind:'plan',key:'plan',status:'failed'}]});assert.equal(p.steps[0].state,'blocked');assert.ok(p.steps.slice(1).every(s=>s.state==='upcoming'));}
  const p=helpers.runPresentation({...base,status:'awaiting_decision',tasks:[{kind:'develop',key:'implementation',status:'waiting_decision'}]});assert.equal(p.steps[2].state,'waiting');
+});
+
+test('stopped tasks with preserved artifacts open their cause rather than hiding it behind deliverables',()=>{
+ for(const status of ['paused','needs_attention'])assert.equal(helpers.primaryTab({...base,status}),'progress');
+ assert.equal(helpers.primaryTab(base),'results');
+ assert.equal(helpers.primaryTab({...base,status:'awaiting_decision'}),'actions');
 });
 
 test('nonempty successful command receipts are required before displaying a passed command count',()=>{
@@ -131,4 +137,44 @@ test('the public run mode alone identifies autonomy and wins over stale legacy g
 
 test('team tool aliases describe actual events without defining or limiting runtime tool availability',()=>{
  assert.equal(helpers.taskToolLabel('inspect_team'),'查看团队能力目录');assert.equal(helpers.taskToolLabel('read_work_result'),'读取团队已集成成果');assert.equal(helpers.taskToolLabel('custom_live_tool'),'custom_live_tool');assert.equal(helpers.taskToolLabel(undefined),'');
+});
+
+test('model completion replaces old liveness and exposes the real output without crossing task scope',()=>{
+ const event=(id,kind,data={},run_id=base.id)=>({id,kind,data,run_id,created_at:base.updated_at});
+ const progress=event(1,'model.progress',{agent_id:'dev',elapsed_s:22});
+ const result=event(2,'model.completed',{agent_id:'dev',summary:'已检查实际项目文件，下一步运行测试。'});
+ const other=event(3,'model.completed',{agent_id:'lead',summary:'另一个任务的私有输出'},'run-b');
+ const run={...base,status:'running',artifact_digest:'',report:{}};
+ const activity=helpers.taskActivity(run,[result,progress,result,other]);
+ assert.equal(activity.events.length,2);assert.equal(activity.status,'模型已返回，本轮结果已记录');
+ assert.equal(activity.output.id,2);
+ const tree=harness(run,{events:[progress,result,other]}).render();
+ assert.match(text(tree),/最近输出摘要 · 研发成员/);assert.match(text(tree),/已检查实际项目文件/);
+ assert.doesNotMatch(text(tree),/仍在响应|另一个任务的私有输出/);
+ const disclosure=nodes(tree).find(n=>n.props.className==='task-recent-output');
+ assert.ok(disclosure&&!disclosure.props.open,'long model output starts collapsed');
+});
+
+test('pause, approval and terminal states take precedence over stale model heartbeats',()=>{
+ const events=[{id:1,run_id:base.id,kind:'model.progress',created_at:base.updated_at,data:{agent_id:'dev',elapsed_s:120}}];
+ const expected={paused:'任务已暂停，等待继续',needs_attention:'任务已停止，查看原因与处理',cancelled:'任务已取消，不再执行',completed:'任务已完成',awaiting_decision:'等待你的回答或授权',awaiting_approval:'等待计划审批',awaiting_acceptance:'等待成果验收'};
+ for(const [status,message] of Object.entries(expected)){
+  const activity=helpers.taskActivity({...base,status},events);
+  assert.equal(activity.status,message);assert.equal(activity.agentId,'');assert.equal(activity.output,undefined);
+ }
+});
+
+test('live member messages use the real sender and body without claiming a reply or read receipt',()=>{
+ const events=[{id:1,run_id:base.id,kind:'agent.message',created_at:base.updated_at,data:{from_agent_id:'dev',to_agent_id:'lead',body:'测试命令已返回，待核对结果。'}}];
+ const activity=helpers.taskActivity({...base,status:'running'},events);
+ assert.equal(activity.outputAgentId,'dev');assert.equal(activity.agentId,'dev');
+ assert.equal(activity.outputText,events[0].data.body);assert.equal(activity.status,'成员消息已发送');
+});
+
+test('real model delta events are aggregated per run and rendered while the turn is active',()=>{
+ const event=(id,kind,data={},run_id=base.id)=>({id,kind,data,run_id,created_at:base.updated_at});
+ const events=[event(1,'model.started',{agent_id:'dev'}),event(2,'model.delta',{agent_id:'dev',sequence:1,text:'部分'}),event(3,'model.delta',{agent_id:'dev',sequence:2,text:'输出'})];
+ const activity=helpers.taskActivity({...base,status:'running'},events);
+ assert.equal(activity.streamText,'部分输出');assert.equal(activity.status,'正在接收模型输出（已收到 4 字）');
+ const tree=harness({...base,status:'running'},{events}).render();assert.match(text(tree),/实时模型输出 · 研发成员/);assert.match(text(tree),/部分输出/);
 });

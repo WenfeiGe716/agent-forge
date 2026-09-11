@@ -463,7 +463,12 @@ def projects(user=Depends(current_user)):
 def create_project(data: ProjectInput,user=Depends(admin)):
     project_id=uid()
     config=data.model_dump()
-    if data.desktop_directory_token:
+    if data.blank:
+        if data.desktop_directory_token:
+            raise ValueError('空白项目不能同时携带目录授权')
+        from .workspace import create_empty_project_snapshot
+        base = create_empty_project_snapshot(project_id)
+    elif data.desktop_directory_token:
         if Path(data.import_path).is_absolute() or '..' in Path(data.import_path).parts or '\\' in data.import_path or '\x00' in data.import_path:
             raise ValueError('目录授权导入不接受绝对输入路径')
         base,source=desktop.import_authorized_directory(data.desktop_directory_token,project_id)
@@ -485,10 +490,17 @@ def update_project(project_id: str,data: ProjectInput,user=Depends(admin)):
         if data.import_path!=p.config['import_path']: raise ValueError('更换源目录请导入为新项目，不修改已有基线')
         config=data.model_dump()
         if 'desktop_source_path' in p.config: config['desktop_source_path']=p.config['desktop_source_path']
+        # A blank project is backed by an intentionally empty Git workspace;
+        # ordinary metadata edits must not turn it back into a source import.
+        if p.config.get('blank'): config['blank'] = True
         # Old clients do not know the new execution fields. An ordinary metadata
         # edit must never silently move an existing project onto the host.
         for field,legacy in (('execution_mode','container'),('permission_profile','ask')):
             if field not in data.model_fields_set: config[field]=p.config.get(field,legacy)
+        # Preserve an existing project's authorization when older clients omit
+        # this field. Legacy project configs without the key remain disabled.
+        if 'allow_external_models' not in data.model_fields_set:
+            config['allow_external_models'] = p.config.get('allow_external_models', False)
         if config['permission_profile']=='full' and (config['execution_mode']!='local' or not data.full_access_confirmed):
             raise ValueError('完全访问需要明确选择本机执行并再次确认风险；不会继承隐含同意')
         previous={key:p.config.get(key,default) for key,default in (('execution_mode','container'),('permission_profile','ask'))}
@@ -610,7 +622,20 @@ def get_run(run_id: str,user=Depends(current_user)):
 def control_run(run_id: str,data: Control,user=Depends(developer)):
     with session() as s:
         r=run_access(s,run_id,user)
-        if r.status in TERMINAL: raise HTTPException(409,'运行已结束；重新执行需要新建运行')
+        # A failed autonomous run is recoverable in place.  Re-opening the
+        # same run preserves its frozen team, workspace and audit trail; the
+        # coordinator gets a fresh activation to inspect the failure and may
+        # retry or reassign work.  Completed/cancelled runs remain immutable.
+        if r.status == 'needs_attention' and data.action == 'resume':
+            if r.snapshot.get('execution_strategy') != 'autonomous':
+                raise HTTPException(409,'只有团队自治运行支持在原任务中继续；固定流程请从剩余工作新建任务')
+            for task in s.scalars(select(Task).where(Task.run_id == r.id)):
+                issue = task.spec.get('work_issue') if isinstance(task.spec, dict) else None
+                if issue and issue.get('status') == 'escalated':
+                    task.spec = {**task.spec, 'work_issue': {**issue, 'status': 'open', 'attempts': 0, 'escalation_reason': ''}}
+            r.status, r.error, r.updated_at = 'queued', '', now()
+            emit(s, r.id, 'run.resumed', {'actor': user.id, 'mode': 'same_run', 'summary': '已恢复原任务，负责人将先检查并处理未完成工作'})
+        elif r.status in TERMINAL: raise HTTPException(409,'运行已结束；重新执行需要新建运行')
         command=Outbox(run_id=run_id,action='control',payload={'action':data.action,'actor':user.id})
         s.add(command);s.flush()
         emit(s,run_id,'control.requested',{'actor':user.id,'action':data.action,'command_id':command.id})
@@ -702,6 +727,48 @@ async def test_model(model_id: str, user=Depends(admin)):
     with session() as s:
         emit(s,None,'model.tested',{'actor':user.id,'model_id':model_id,'input_tokens':reply.input_tokens,'output_tokens':reply.output_tokens})
     return {'text':reply.text[:300], 'input_tokens':reply.input_tokens, 'output_tokens':reply.output_tokens}
+
+
+@app.post('/api/models/{model_id}/tool-test')
+async def test_model_tools(model_id: str, user=Depends(admin)):
+    """Run one explicit tool round-trip and promote this model configuration.
+
+    Catalog discovery never guesses tool support. This endpoint is the single
+    repair action exposed by the UI: it sends only a nonce, records the exact
+    provider revision, and marks the profile usable only after the real round
+    trip succeeds.
+    """
+    from .security import decrypt
+    from .setup_api import probe_model_connection
+    with session() as s:
+        profile = s.get(ModelProfile, model_id)
+        if not profile: raise HTTPException(404, '模型不存在')
+        provider = s.get(Provider, profile.config['provider_id'])
+        if not provider or not provider.enabled: raise ValueError('供应商未启用')
+        revision = s.get(ProviderRevision, provider.revision_id)
+        if not revision: raise ValueError('供应商连接版本不存在，请重新保存连接')
+        connection, model_config, secret = revision.config, dict(profile.config), decrypt(revision.encrypted_key)
+    try:
+        probe = await probe_model_connection(connection, model_config, secret)
+    except (ProviderError, ValueError) as exc:
+        raise HTTPException(502, str(exc)) from exc
+    finally:
+        secret = ''
+    with session() as s:
+        profile = s.get(ModelProfile, model_id)
+        provider = s.get(Provider, profile.config['provider_id']) if profile else None
+        if not profile or not provider or provider.revision_id != revision.id:
+            raise HTTPException(409, '供应商或模型配置在检查期间已变化，请重新检查')
+        profile.config = {**profile.config, 'supports_tools': True}
+        profile.version += 1
+        record = s.get(PlatformConfig, 'probe:' + model_id)
+        value = {'revision_id': revision.id, 'model_version': profile.version, 'probe': probe}
+        if record: record.value = value
+        else: s.add(PlatformConfig(id='probe:' + model_id, value=value))
+        emit(s, None, 'model.tools_tested', {'actor': user.id, 'model_id': model_id,
+                                             'provider_id': provider.id, 'model_version': profile.version,
+                                             'revision_id': revision.id, 'requests': probe['requests']})
+        return {**config_out(profile), 'probe': probe}
 
 
 from .extensions_api import register as register_extensions

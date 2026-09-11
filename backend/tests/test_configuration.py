@@ -67,12 +67,25 @@ def test_run_snapshot_is_immutable_after_agent_edit(client,configured):
     after=client.get('/api/runs/'+r['id']).json()['snapshot']
     assert before==after and before['agents'][a['id']]['runtime']['max_steps']!=99
 
-def test_external_model_needs_project_authorization(client,configured):
+@pytest.mark.parametrize('permission_profile',['ask','auto','full'])
+def test_external_model_needs_project_authorization(client,configured,permission_profile):
     p=client.get('/api/providers').json()[0]
     body={k:p[k] for k in ('name','protocol','base_url','external','enabled')};body['external']=True
     assert client.put('/api/providers/'+p['id'],json=body).status_code==200
     result=client.post('/api/runs/preview-config',json=run_body(configured))
+    assert result.status_code==200,result.text  # New projects default to allowing configured providers.
+    project=configured['project']
+    update={k:v for k,v in project.items() if k not in ('id','owner_id','base_commit','created_at')}
+    update.update(allow_external_models=False,execution_mode='local',permission_profile=permission_profile,
+                  full_access_confirmed=permission_profile=='full')
+    saved=client.put('/api/projects/'+project['id'],json=update)
+    assert saved.status_code==200,saved.text
+    result=client.post('/api/runs/preview-config',json=run_body(configured))
     assert result.status_code==422 and '外部' in result.text
+    update['allow_external_models']=True
+    assert client.put('/api/projects/'+project['id'],json=update).status_code==200
+    result=client.post('/api/runs/preview-config',json=run_body(configured))
+    assert result.status_code==200,result.text
 
 def test_duplicate_idempotency_request_is_not_a_second_run(client,configured):
     body=run_body(configured)

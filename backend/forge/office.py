@@ -12,13 +12,14 @@ OFFICE_DEFAULTS = {
     'durations_s': {'drink': 9, 'phone': 13, 'restroom': 14, 'nap': 16, 'stretch': 7},
 }
 FINISHED = {'completed', 'cancelled'}
-WORK_PHASES = {'agent.started': 'thinking', 'model.completed': 'thinking', 'model.fallback': 'thinking'}
+WORK_PHASES = {'agent.started': 'thinking', 'model.started': 'thinking', 'model.progress': 'thinking', 'model.delta': 'thinking',
+               'model.completed': 'thinking', 'model.fallback': 'thinking'}
 TOOL_PHASES = {'read_file': 'reading', 'list_files': 'reading', 'search_files': 'reading',
                'read_work_result': 'reading', 'read_work_issue': 'reading',
                'write_file': 'writing', 'apply_patch': 'writing', 'run_command': 'testing',
                'send_message': 'communicating'}
 LABELS = {'idle':'空闲', 'waiting':'等待分派', 'approval':'等待审批', 'paused':'已暂停',
-          'attention':'需人工处理', 'thinking':'思考中', 'reading':'阅读代码',
+          'attention':'已停止 · 待处理', 'thinking':'思考中', 'reading':'阅读代码',
           'writing':'修改代码', 'testing':'执行命令', 'reviewing':'代码审查',
           'communicating':'发送消息', 'reserved':'其他任务占用'}
 

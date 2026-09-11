@@ -16,6 +16,17 @@ export type AgentPlace={id:string;home:Vec;yaw:number;role?:string;reportsTo?:st
 export type World={agents:AgentPlace[];facilities:Record<string,Slot[]>;meetingSeats?:{position:Vec;yaw:number}[];route:(from:Vec,to:Vec)=>Vec[]};
 export type Transition={at:number;agent_id:string;from:string;to:string;source:'business'|'idle'|'safety';reason:string;evidence_ids:number[]};
 export type ActorView={posture?:string;sitBlend?:number;visitor_id?:string;leader_visit?:boolean;visit_event_id?:number;id:string;position:Vec;yaw:number;pose:Pose;label:string;detail:string;source:'business'|'idle'|'safety';busy:boolean;visible:boolean;evidence_ids:number[];run_id:string|null;task_key:string|null;stage:string;action:IdleAction|null;facility:string|null;poseTime:number};
+export function actorActivityLabel(view?:ActorView,preview=false){
+ if(view?.source==='idle')return '空闲演绎';
+ if(view?.source!=='business')return '安全等待';
+ if(view.stage==='work:attention')return '现场保留';
+ if(view.stage==='work:paused')return '已暂停';
+ if(view.stage==='work:approval')return '等待决定';
+ return preview?'示例占用':'真实任务';
+}
+export function actorStageLabel(view:ActorView){
+ return ({'work:attention':'任务已停止 · 查看原因','work:paused':'任务已暂停 · 可继续','work:approval':'等待人工决定','work:waiting':'等待团队分派','work:reserved':'受限项目任务'} as Record<string,string>)[view.stage]||view.task_key||'正在同步执行阶段';
+}
 type Route={points:Vec[];start:number;length:number;end:number;lengths:number[];yaw:number};
 type Runtime={place:AgentPlace;position:Vec;yaw:number;stage:string;action:IdleAction|null;slot:Slot|null;cycle:number;next:number;deadline:number;entered:number;route:Route|null;business:string;settle:boolean;view:ActorView};
 const copy=(v:Vec):Vec=>[...v];
@@ -75,7 +86,7 @@ export class OfficeBehavior {
   a.business=key;let moving=false;
   if(p.phase==='paused'||p.phase==='attention'){a.route=null;}
   else {if(distance(a.position,a.place.home)>.04&&!a.route)this.move(a,a.place.home,at,a.place.yaw);moving=!this.sample(a,at);if(!moving)a.route=null;}
-  a.view={id:a.place.id,position:copy(a.position),yaw:a.yaw,pose:moving?'walking':workPose[p.phase]||'idle',label:p.label,detail:moving?'已接到任务，返回工位；后台执行不等待动画':p.tool?`工具：${p.tool}`:p.scope==='reserved'?'另一受限项目占用，隐藏任务详情':'依据全局运行状态',source:'business',busy:true,visible:true,evidence_ids:[...p.evidence_ids],run_id:p.run_id||null,task_key:p.task_key||null,stage:'work:'+p.phase,action:null,facility:null,poseTime:(at-a.entered)/1000};
+  a.view={id:a.place.id,position:copy(a.position),yaw:a.yaw,pose:moving?'walking':workPose[p.phase]||'idle',label:p.label,detail:moving?'已接到任务，返回工位；后台执行不等待动画':p.tool?`工具：${p.tool}`:p.scope==='reserved'?'另一受限项目占用，隐藏任务详情':p.phase==='attention'?'此任务已经停止，保留现场等待处理；不是仍在执行或等待审批。':p.phase==='paused'?'此任务已暂停；继续后从执行边界恢复，不重新执行已完成步骤。':p.phase==='approval'?'等待本任务的回答、授权或验收；未获得相应决定前不会越权执行。':'依据全局运行状态',source:'business',busy:true,visible:true,evidence_ids:[...p.evidence_ids],run_id:p.run_id||null,task_key:p.task_key||null,stage:'work:'+p.phase,action:null,facility:null,poseTime:(at-a.entered)/1000};
  }
  advance(at:number):ActorView[]{
   if(!Number.isFinite(at)||at<this.clock)throw Error('场景时间必须单调递增');this.clock=at;

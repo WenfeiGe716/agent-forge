@@ -5,6 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const ts=require('../../frontend/vendor/typescript.cjs');
 const assignmentExports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('frontend/src/office/memberAssignment.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports:assignmentExports});
+const behaviorExports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('frontend/src/office/behavior.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports:behaviorExports});
 const jsx=(type,props)=>({type,props:props||{}});
 const recoveryExports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.resolve(__dirname,'../../frontend/src/components/RunRecovery.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText,{exports:recoveryExports,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:assert.fail(id)});
 function nodes(value){if(Array.isArray(value))return value.flatMap(nodes);if(!value||typeof value!=='object')return[];return[value,...nodes(value.props?.children)];}
@@ -13,7 +14,7 @@ function button(tree,label){const result=nodes(tree).find(n=>n.type==='button'&&
 function field(tree,label){const result=nodes(tree).find(n=>n.props?.['aria-label']===label);assert.ok(result,label);return result;}
 const agents=[{id:'a',name:'市场同事',job_title:'品牌策划',role:'developer',department:'市场部',office_position:{x:0,z:-3,floor:2,zone:'market'},runtime:{}},{id:'b',name:'财务同事',job_title:'财务分析师',role:'reviewer',department:'财务部',office_position:{x:0,z:-3,floor:5,zone:'finance'},runtime:{}}];
 const organization={ref:{id:'org',version:2,digest:'exact'},config:{floors:[{floor:2,name:'品牌楼层',department:'市场部',zones:[]},{floor:5,name:'财务楼层',department:'财务部',zones:[]}],positions:{}}};
-function harness(name,overrides={}){
+function harness(name,overrides={},apiHandler){
  let cursor=0,effects=[],tree;const slots=[],navigation=[];
  const React={useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==='function'?initial():initial;return[slots[i],value=>{slots[i]=typeof value==='function'?value(slots[i]):value;}];},useRef(initial){const i=cursor++;if(!(i in slots))slots[i]={current:initial};return slots[i];},useEffect(fn,deps){cursor++;effects.push({fn,deps});}};
  const source=fs.readFileSync(path.resolve(__dirname,`../../frontend/src/components/${name}.tsx`),'utf8');
@@ -28,11 +29,12 @@ function harness(name,overrides={}){
   if(name==='./RunRecovery')return recoveryExports;
   if(name==='../office/ambientEnvironment')return{environment};
   if(name==='./Office')return{__esModule:true,default:'Office'};
+  if(name==='./StudioNavigation')return{__esModule:true,default:'StudioNavigation'};
   if(name==='../graphics/officeWorld')return{palette:{developer:0x54b2cc,reviewer:0xda91b0}};
   if(name==='../graphics/departmentOffice')return{officeFloorOptions:(people,org)=>[...new Set([...(org?.config?.floors||[]).map(f=>f.floor),...people.map(a=>a.office_position?.floor||1)])].map(floor=>({floor,definition:org?.config?.floors?.find(f=>f.floor===floor)}))};
   if(name==='../office/useOfficeFeed')return{useOfficeFeed:()=>({packet:null,connected:false})};
-  if(name==='../office/behavior')return{defaults:{idle_enabled:true,activities:[],durations_s:{}},idleLabels:{}};
-  if(name==='../api')return{api(){assert.fail('workspace rendering must not perform API writes');},requestId:()=>''};
+  if(name==='../office/behavior')return behaviorExports;
+  if(name==='../api')return{api(...args){if(apiHandler)return apiHandler(...args);assert.fail('workspace rendering must not perform API writes');},requestId:()=>''};
   return new Proxy({},{get:(_,key)=>String(key)});
  };
  vm.runInNewContext(code,{exports,require:requireMock,console,performance,document:{},localStorage:{getItem(){return null;}}});
@@ -45,8 +47,35 @@ test('workspace passes explicit organization to Office and displays business rol
  assert.match(text(tree),/组织成员/);assert.match(text(tree),/品牌策划/);assert.match(text(tree),/财务分析师/);
  assert.match(text(tree),/市场部 · 2 楼/);assert.match(text(tree),/财务部 · 5 楼/);
  assert.doesNotMatch(text(tree),/开发团队|暂无开发任务/);
- button(tree,'设计部门与楼层').props.onClick();button(tree,'检查执行条件').props.onClick();
- assert.deepEqual(h.navigation,['organization','execution']);
+ assert.ok(!nodes(tree).some(node=>node.props?.className==='employee-organization-context'),'do not repeat organization/version configuration above every employee tab');
+ assert.doesNotMatch(text(tree),/任务分派、读写代码、工具调用和消息交接决定执行动作/);
+});
+
+test('blank project creation defaults external models on, permits opt-out, and selects only the new project',async()=>{
+ for(const allow of [true,false]){
+  const calls=[],existing={id:'old',name:'历史项目',allow_external_models:false},before=JSON.stringify(existing);
+  const h=harness('StudioWorkspace',{projects:[existing],onRefresh:async()=>{}},async(...args)=>{calls.push(args);return{id:'new',name:'新项目',allow_external_models:allow};});
+  field(h.render(),'任务项目').props.onChange({target:{value:'__new_blank_project__'}});
+  let tree=h.render();assert.equal(field(tree,'允许外部模型访问').props.checked,true);
+  assert.equal(calls.length,0);
+  field(tree,'空白项目名称').props.onChange({target:{value:'新项目'}});
+  if(!allow)field(tree,'允许外部模型访问').props.onChange({target:{checked:false}});
+  tree=h.render();const form=nodes(tree).find(n=>n.type==='form'&&n.props.onSubmit);
+  await form.props.onSubmit({preventDefault(){}});
+  assert.equal(calls.length,1);assert.equal(calls[0][0],'/projects');assert.equal(calls[0][1],'POST');
+  assert.equal(calls[0][2].blank,true);assert.equal(calls[0][2].allow_external_models,allow);
+  assert.equal(calls[0][2].permission_profile,'ask');assert.equal(calls[0][2].full_access_confirmed,false);
+  assert.equal(field(h.render(),'任务项目').props.value,'new');assert.equal(JSON.stringify(existing),before);
+ }
+});
+
+test('canceling a blank project does not save; the next new project starts with default external access',()=>{
+ const h=harness('StudioWorkspace',{projects:[{id:'p',name:'已有项目'}]});
+ field(h.render(),'任务项目').props.onChange({target:{value:'__new_blank_project__'}});
+ let tree=h.render();field(tree,'允许外部模型访问').props.onChange({target:{checked:false}});
+ tree=h.render();nodes(tree).find(n=>n.props?.title==='新增空白项目').props.onClose();
+ field(h.render(),'任务项目').props.onChange({target:{value:'__new_blank_project__'}});
+ assert.equal(field(h.render(),'允许外部模型访问').props.checked,true);
 });
 
 test('Studio quick configuration cannot erase the saved binding by only switching provider',async()=>{
@@ -74,7 +103,7 @@ test('global roster busy filters use real presence for other floors, not only cu
  office.props.onSnapshot({complete:true,presence:[{agent_id:'a',busy:false,label:'空闲'},{agent_id:'b',busy:true,label:'真实任务占用'}],events:[]},true);
  office.props.onViews([{id:'a',source:'idle',busy:false,label:'空闲'}]);tree=h.render();
  assert.match(text(tree),/1 位被任务占用/);
- button(tree,'任务占用').props.onClick();tree=h.render();
+ button(tree,'任务关联').props.onClick();tree=h.render();
  const people=nodes(tree).filter(n=>n.type==='button'&&n.props.className?.startsWith('studio-member'));
  assert.equal(people.length,1);assert.match(text(people[0]),/财务同事/);
 });

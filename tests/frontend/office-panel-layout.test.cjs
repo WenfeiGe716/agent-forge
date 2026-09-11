@@ -26,9 +26,11 @@ const html=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><style>${css
  <button class="studio-composer-entry glass">${icon}发起需求 / 补充说明</button>
  <section class="studio-composer glass"><header><span>${icon}<select><option>本机执行闭环验证 ezpcw7</option></select></span><select><option>新建定向需求</option></select></header><div><textarea placeholder="描述目标与验收期望"></textarea><button>→</button></div><footer><span>选择办公团队 → 确认需求与预检 → 创建任务</span><span>⌘ / Ctrl + Enter</span></footer></section>
  <section class="office-session-window glass"><header class="office-window-handle"><span class="office-window-symbol">${icon}</span><div><b>验证需求师 ezpcw7 · 工作会话</b><small>真实记录 · 按任务独立查看</small></div><span class="office-window-grip">⠿</span><button>×</button></header><div class="office-window-body">真实任务记录</div></section>
+ <select class="office-floor-picker" style="position:absolute;left:16px;bottom:20px;width:250px;max-width:calc(100% - 32px);padding:8px"><option>1 楼 · 研发部 · 研发楼层</option></select>
+ <div class="studio-utility-dock"><details class="studio-scene-tools"><summary>${icon}场景与环境</summary><div class="studio-scene-tools-popover"><div class="scene-controls glass"><button>${icon}<span>日间</span></button><button>−</button><button>${icon}</button><button>+</button><select class="quality-select"><option>均衡</option></select><button>${icon}<span>空闲策略</span></button></div><div class="city-controls glass"><button>城市全景</button><button>路口观察</button><button>返回办公区</button><button>环境</button><div class="ambient-settings"><header><b>城市环境</b><button>×</button></header><label>人车密度<select><option>标准</option></select></label><button>静止景观 · 减少运动</button><p>街景始终保留。切换页面不重置交通，静止景观不影响 Agent 执行。</p></div></div></div></details><button class="activity-toggle glass">${icon}活动记录<span>250</span></button></div>
 </div></body></html>`;
 const scenarios=[];
-for(const [width,height] of [[1920,1080],[1400,880],[980,700],[740,640],[390,640]]){
+for(const [width,height] of [[1920,1080],[1400,880],[1281,720],[1251,720],[980,700],[740,640],[390,640]]){
  for(const longName of [false,true])scenarios.push({width,height,longName,left:244,right:376});
 }
 for(const [left,right] of [[0,376],[244,0],[0,0]])scenarios.push({width:1400,height:880,longName:false,left,right});
@@ -56,7 +58,9 @@ with sync_playwright() as pw:
           const initial=rect(session),dragOrigin={left:session.offsetLeft,top:session.offsetTop};
           session.style.left=(dragOrigin.left+17)+'px';session.style.top=(dragOrigin.top+23)+'px';
           const moved=rect(session);session.style.removeProperty('left');session.style.removeProperty('top');
-          return {...s,workspace:rect(workspace),inspector:rect(q('.studio-inspector')),dock:rect(dock),entry:rect(q('.studio-composer-entry')),composer:rect(q('.studio-composer')),session:initial,dragOrigin,moved,dockClientWidth:dock.clientWidth,dockScrollWidth:dock.scrollWidth,buttons:[...q('.office-dock-actions').children].map(rect),checkbox:rect(q('input[type=checkbox]')),select:rect(q('.inspector-body select'))};
+          const sceneTools=q('.studio-scene-tools');sceneTools.open=true;
+          const popover=rect(q('.studio-scene-tools-popover')),ambient=rect(q('.ambient-settings'));sceneTools.open=false;
+          return {...s,workspace:rect(workspace),inspector:rect(q('.studio-inspector')),dock:rect(dock),entry:rect(q('.studio-composer-entry')),composer:rect(q('.studio-composer')),session:initial,dragOrigin,moved,dockClientWidth:dock.clientWidth,dockScrollWidth:dock.scrollWidth,buttons:[...q('.office-dock-actions').children].map(rect),checkbox:rect(q('input[type=checkbox]')),select:rect(q('.inspector-body select')),utility:rect(q('.studio-utility-dock')),sceneButton:rect(q('.studio-scene-tools>summary')),activityButton:rect(q('.activity-toggle')),floorPicker:rect(q('.office-floor-picker')),popover,ambient};
         }''',scenario))
         if payload.get('artifactDir') and scenario['longName'] and scenario['width'] in [1400,390]:
             for component in ['office-employee-dock','studio-inspector','office-session-window']:
@@ -97,4 +101,17 @@ test('session CSS geometry matches offset drag origin and does not jump on first
 });
 test('compact inspector retains small checkbox and normal input heights',options,()=>{
  for(const m of measurements){close(m.checkbox.width,15,`${description(m)}: checkbox width`);close(m.checkbox.height,15,`${description(m)}: checkbox height`);close(m.select.height,38,`${description(m)}: select height`);}
+});
+test('scene settings sit left of activity, above their dock, and stay clear of the task composer',options,()=>{
+ const overlaps=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+ for(const m of measurements){
+  const label=description(m);
+  close(m.sceneButton.cy,m.activityButton.cy,`${label}: utility buttons aligned`);
+  assert.ok(m.sceneButton.right<m.activityButton.left,`${label}: scene settings must sit beside activity`);
+  assert.ok(m.utility.left>=12&&m.utility.right<=m.width-11&&m.utility.bottom<=m.workspace.bottom-7,`${label}: utility dock escapes viewport`);
+  assert.ok(!overlaps(m.utility,m.composer),`${label}: utility dock covers composer`);
+  assert.ok(!overlaps(m.utility,m.floorPicker),`${label}: utility dock covers floor picker`);
+  assert.ok(m.popover.bottom<m.utility.top&&m.popover.left>=12&&m.popover.right<=m.width-11&&m.popover.top>=96,`${label}: scene popover must open upward inside viewport`);
+  assert.ok(m.ambient.left>=m.popover.left&&m.ambient.right<=m.popover.right&&m.ambient.bottom<=m.popover.bottom,`${label}: expanded environment controls escape popover`);
+ }
 });

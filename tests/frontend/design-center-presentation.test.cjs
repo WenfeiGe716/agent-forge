@@ -76,11 +76,11 @@ test('AI recommendation still requires explicit paid-call consent after a model 
  assert.ok(h.calls.every(c=>c.method==='GET'));
 });
 
-test('only the two requested page introductions are removed and empty subtitle paragraphs are not rendered',()=>{
+test('requested page introductions are removed while real security controls stay available',()=>{
  const source=fs.readFileSync('frontend/src/App.tsx','utf8'),exports={};
  vm.runInNewContext(compile(source+'\nexport const pageMetadataForTest=pages;'),{exports,require:()=>({})});
  assert.equal(exports.pageMetadataForTest.organization.subtitle,'');assert.equal(exports.pageMetadataForTest.design.subtitle,'');
- assert.match(exports.pageMetadataForTest.execution.subtitle,/权限审批/);assert.match(exports.pageMetadataForTest.users.subtitle,/项目成员关系决定可见范围/);
+ assert.equal(exports.pageMetadataForTest.execution.title,'工具与权限');assert.equal(exports.pageMetadataForTest.execution.subtitle,'');assert.match(exports.pageMetadataForTest.users.subtitle,/项目成员关系决定可见范围/);
  assert.match(source,/pageInfo\.subtitle&&<p>\{pageInfo\.subtitle\}<\/p>/);
  assert.match(source,/page!=='organization'&&page!=='design'&&<span className="eyebrow">BUILD WITH YOUR AGENTS/);
 });

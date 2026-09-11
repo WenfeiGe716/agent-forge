@@ -4,13 +4,14 @@ An unfinished step is uncertain; it is never automatically replayed.
 import asyncio
 import copy
 import hashlib
+import inspect
 import json
 import time
 import zipfile
 from pathlib import Path
 from pydantic import ValidationError
 from sqlalchemy import select, update
-from .db import session, Run, Task, Step, Project, ProviderRevision, Provider, emit, now
+from .db import session, Run, Task, Step, Project, ProviderRevision, Provider, Event, emit, now
 from . import engagement, skills
 from .security import decrypt
 from . import providers, tools, workspace as ws
@@ -34,35 +35,6 @@ def append_context_once(messages: list[dict], label: str, value: dict) -> list[d
         return messages
     return messages + [{'role': 'user', 'content': content}]
 
-
-async def complete_with_progress(*args, run_id: str, task_key: str, agent_id: str,
-                                 provider_name: str, model_id: str, attempt: int):
-    """Run one model request while publishing honest liveness events.
-
-    Provider adapters currently return a completed ``Reply`` (they buffer the
-    upstream response), so exposing token text here would be fabricated.  A
-    bounded heartbeat keeps the UI useful during long calls without leaking
-    prompt/response content; the final ``model.completed`` event remains the
-    source of truth for output.
-    """
-    request = asyncio.create_task(providers.complete(*args))
-    started = time.monotonic()
-    while not request.done():
-        _done, _ = await asyncio.wait({request}, timeout=2.0)
-        if request.done():
-            break
-        elapsed = round(time.monotonic() - started, 1)
-        with session() as s:
-            emit(s, run_id, 'model.progress', {
-                'task_key': task_key,
-                'agent_id': agent_id,
-                'provider': provider_name,
-                'model': model_id,
-                'attempt': attempt,
-                'elapsed_s': elapsed,
-                'summary': f'模型仍在响应 · 已等待 {elapsed:g} 秒',
-            })
-    return await request
 
 def load(run_id: str):
     with session() as s:
@@ -219,6 +191,52 @@ def reserve_call(run_id: str) -> None:
         result = s.execute(update(Run).where(Run.id == run_id, Run.calls < limit).values(calls=Run.calls + 1))
         if result.rowcount != 1: raise ValueError('已达到本次运行的模型调用次数上限')
 
+def record_autonomous_failure(data: dict) -> dict:
+    """Persist per-member failures so the coordinator can recover in-run.
+
+    A failed model turn is deliberately represented as a blocked work issue,
+    not as success and not as an automatic replay.  The coordinator receives
+    the exact error and may inspect it, request a human decision for uncertain
+    side effects, then assign a fresh activation to the same or another member.
+    """
+    failures = data.get('failures', [])
+    if not isinstance(failures, list) or not failures:
+        raise ValueError('缺少失败成员记录')
+    with session() as s:
+        run = s.get(Run, data['run_id'])
+        if not run or run.snapshot.get('execution_strategy') != 'autonomous':
+            raise ValueError('仅自治运行支持负责人恢复')
+        saved = []
+        for item in failures[:20]:
+            key, error = item.get('key'), str(item.get('error', ''))[:2200]
+            task = s.get(Task, task_id(run.id, key)) if isinstance(key, str) else None
+            if not task or task.kind != 'autonomous':
+                continue
+            if task.status in {'done', 'integrated', 'superseded'}:
+                continue
+            uncertain = any(token in error for token in ('不确定', '超时', '通信失败', '未知结果', 'timeout', 'Timeout'))
+            # Keep the last attempted provider/model attached to the failure.
+            # The exception text alone often omits which fallback candidate
+            # failed; the journaled model.started event is the authoritative
+            # source and makes the recovery UI actionable without guessing.
+            started = s.scalar(select(Event).where(
+                Event.run_id == run.id, Event.kind == 'model.started',
+                Event.data['task_key'].as_string() == key
+            ).order_by(Event.id.desc()))
+            model_meta = {}
+            if started:
+                model_meta = {field: started.data.get(field) for field in ('provider', 'model', 'attempt')
+                              if started.data.get(field) is not None}
+            failure = {'uncertain': uncertain, 'recorded_at': now(), **model_meta}
+            task.status = 'failed'
+            task.result = {'outcome': 'blocked', 'summary': '成员执行失败：' + (error or '未知错误'),
+                           'error': error, 'failure': failure}
+            emit(s, run.id, 'task.failed', {'task_key': key, 'agent_id': task.agent_id,
+                 'summary': task.result['summary'][:1800], 'uncertain': uncertain,
+                 'recovery': 'coordinator_review_required', **model_meta})
+            saved.append(key)
+        return {'failed': saved}
+
 async def _model_progress(run_id: str, task_key: str, agent_id: str, provider: str, model: str, attempt: int, started: float):
     """Emit truthful in-flight progress while an upstream response is buffered.
 
@@ -370,8 +388,24 @@ async def turn(data: dict) -> dict:
                 'attempt': model_index + 1,
             })
         heartbeat = asyncio.create_task(_model_progress(run_id, key, agent['id'], candidate['provider_name'], candidate['model']['model_id'], model_index + 1, time.monotonic()))
+        async def on_model_delta(delta):
+            # Persist only text fragments that the provider actually delivered;
+            # the UI can render these in order while the final response remains
+            # authoritative in model.completed.
+            with session() as s:
+                emit(s, run_id, 'model.delta', {
+                    'task_key': key, 'agent_id': agent['id'],
+                    'provider': candidate['provider_name'],
+                    'model': candidate['model']['model_id'],
+                    'sequence': delta.get('sequence', 0),
+                    'text': delta.get('text', '')[:4000],
+                })
         try:
-            reply = await providers.complete(candidate['connection'], candidate['model'], sanitize_model_history(messages, candidate['profile_id']), definitions, secret, rt['call_timeout_s'])
+            model_args = (candidate['connection'], candidate['model'], sanitize_model_history(messages, candidate['profile_id']), definitions, secret, rt['call_timeout_s'])
+            # Keep legacy/in-process provider test adapters compatible while the
+            # built-in adapter receives the live delta callback.
+            supports_delta = 'on_delta' in inspect.signature(providers.complete).parameters
+            reply = await providers.complete(*model_args, on_delta=on_model_delta) if supports_delta else await providers.complete(*model_args)
             selected = candidate
             break
         except providers.ProviderError as exc:

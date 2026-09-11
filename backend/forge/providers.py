@@ -6,7 +6,7 @@ import socket
 import re
 import uuid
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Awaitable, Callable
 from urllib.parse import urlparse
 import httpx
 from .security import validate_url
@@ -158,7 +158,124 @@ def gemini_messages(messages: list[dict]) -> tuple[str, list]:
             output.append({'role': role, 'parts': list(parts)})
     return '\n\n'.join(system), output
 
-async def complete(connection: dict, model: dict, messages: list[dict], tools: list[dict], key: str, timeout: int, transport=None) -> Reply:
+async def _notify_delta(on_delta, text: str, *, protocol: str, sequence: int) -> None:
+    """Deliver a verified upstream text fragment to the run event log.
+
+    The callback is deliberately optional so existing non-streaming callers and
+    compatibility adapters retain their exact request/response behaviour.
+    """
+    if not text or on_delta is None:
+        return
+    value = on_delta({'text': text, 'protocol': protocol, 'sequence': sequence})
+    if hasattr(value, '__await__'):
+        await value
+
+
+async def _read_sse(response, protocol: str, on_delta) -> dict:
+    """Read a provider SSE response and rebuild the normal JSON envelope.
+
+    This parser only emits text that arrived from the upstream stream. Tool
+    calls are accumulated and parsed by the existing protocol response logic;
+    malformed/unsupported events remain a ProviderError instead of being shown
+    as a successful model result.
+    """
+    text = ''
+    sequence = 0
+    usage = {}
+    tool_calls = {}
+    response_output = []
+    anthropic_blocks = []
+    gemini_parts = []
+    event_name = None
+    async for line in response.aiter_lines():
+        if line.startswith('event:'):
+            event_name = line[6:].strip()
+            continue
+        if not line.startswith('data:'):
+            continue
+        raw = line[5:].strip()
+        if raw == '[DONE]':
+            break
+        try:
+            item = json.loads(raw)
+        except (TypeError, ValueError):
+            continue
+        if protocol == 'openai_chat':
+            usage.update(item.get('usage') or {})
+            for choice in item.get('choices') or []:
+                delta = choice.get('delta') or {}
+                fragment = delta.get('content') or ''
+                if fragment:
+                    text += fragment; sequence += 1
+                    await _notify_delta(on_delta, fragment, protocol=protocol, sequence=sequence)
+                for call in delta.get('tool_calls') or []:
+                    index = call.get('index', 0)
+                    current = tool_calls.setdefault(index, {'id': '', 'type': 'function', 'function': {'name': '', 'arguments': ''}})
+                    current['id'] += call.get('id') or ''
+                    fn = call.get('function') or {}
+                    current['function']['name'] += fn.get('name') or ''
+                    current['function']['arguments'] += fn.get('arguments') or ''
+        elif protocol == 'anthropic_messages':
+            usage.update((item.get('message') or {}).get('usage') or {})
+            usage.update(item.get('usage') or {})
+            if item.get('type') == 'content_block_start':
+                block = item.get('content_block') or {}
+                anthropic_blocks.append(dict(block))
+            elif item.get('type') == 'content_block_delta':
+                delta = item.get('delta') or {}
+                if delta.get('type') == 'text_delta' and delta.get('text'):
+                    fragment = delta['text']; text += fragment; sequence += 1
+                    if anthropic_blocks and anthropic_blocks[-1].get('type') == 'text':
+                        anthropic_blocks[-1]['text'] = (anthropic_blocks[-1].get('text') or '') + fragment
+                    await _notify_delta(on_delta, fragment, protocol=protocol, sequence=sequence)
+                elif delta.get('type') == 'input_json_delta' and anthropic_blocks:
+                    anthropic_blocks[-1]['input'] = (anthropic_blocks[-1].get('input') or '') + (delta.get('partial_json') or '')
+            elif item.get('type') == 'message_delta':
+                usage.update(item.get('usage') or {})
+            elif item.get('type') == 'message_stop':
+                break
+        elif protocol == 'openai_responses':
+            typ = item.get('type') or event_name or ''
+            fragment = item.get('delta') if 'output_text.delta' in typ else ''
+            if fragment:
+                text += fragment; sequence += 1
+                await _notify_delta(on_delta, fragment, protocol=protocol, sequence=sequence)
+            if 'function_call_arguments.delta' in typ:
+                call_id = item.get('item_id') or item.get('call_id') or 'stream-call'
+                call = tool_calls.setdefault(call_id, {'id': call_id, 'type': 'function_call', 'call_id': call_id, 'name': item.get('name') or '', 'arguments': ''})
+                call['arguments'] += item.get('delta') or ''
+            if 'output_item.done' in typ:
+                output = item.get('item')
+                if isinstance(output, dict): response_output.append(output)
+            usage.update(item.get('usage') or {})
+        elif protocol == 'google_gemini':
+            candidates = item.get('candidates') or []
+            parts = ((candidates[0].get('content') or {}).get('parts') if candidates else []) or []
+            for part in parts:
+                if part.get('text') and not part.get('thought'):
+                    fragment = part['text']; text += fragment; sequence += 1
+                    await _notify_delta(on_delta, fragment, protocol=protocol, sequence=sequence)
+                gemini_parts.append(part)
+            usage.update(item.get('usageMetadata') or {})
+    if protocol == 'openai_chat':
+        calls = list(tool_calls.values())
+        return {'choices': [{'message': {'content': text or None, 'tool_calls': calls}}], 'usage': usage}
+    if protocol == 'anthropic_messages':
+        for block in anthropic_blocks:
+            if block.get('type') == 'tool_use' and isinstance(block.get('input'), str):
+                try:
+                    block['input'] = json.loads(block['input'] or '{}')
+                except (TypeError, ValueError) as exc:
+                    raise ProviderError('Anthropic 工具参数流格式无效') from exc
+        return {'content': anthropic_blocks or ([{'type': 'text', 'text': text}] if text else []), 'usage': usage}
+    if protocol == 'openai_responses':
+        output = response_output or ([{'type': 'message', 'content': [{'type': 'output_text', 'text': text}]}] if text else [])
+        output.extend(tool_calls.values())
+        return {'status': 'completed', 'output': output, 'usage': usage}
+    return {'candidates': [{'finishReason': 'STOP', 'content': {'parts': gemini_parts or ([{'text': text}] if text else [])}}], 'usageMetadata': usage}
+
+
+async def complete(connection: dict, model: dict, messages: list[dict], tools: list[dict], key: str, timeout: int, transport=None, on_delta: Callable[[dict], Awaitable[None] | None] | None = None) -> Reply:
     base = validate_url(connection['base_url'])
     protocol = connection['protocol']
     params = model['parameters']
@@ -172,18 +289,21 @@ async def complete(connection: dict, model: dict, messages: list[dict], tools: l
     if protocol == 'openai_chat':
         if key: headers['authorization'] = f'Bearer {key}'
         body = {'model': model['model_id'], 'messages': openai_messages(messages), **params}
+        if on_delta: body['stream'] = True
         if tools: body['tools'] = [{'type': 'function', 'function': t} for t in tools]
         url = base + '/chat/completions'
     elif protocol == 'anthropic_messages':
         headers.update({'x-api-key': key, 'anthropic-version': '2023-06-01'})
         system, converted = anthropic_messages(messages)
         body = {'model': model['model_id'], 'system': system, 'messages': converted, **params}
+        if on_delta: body['stream'] = True
         if tools: body['tools'] = [{'name': t['name'], 'description': t['description'], 'input_schema': t['parameters']} for t in tools]
         url = base + '/messages'
     elif protocol == 'openai_responses':
         if key: headers['authorization'] = f'Bearer {key}'
         body = {'model': model['model_id'], 'input': responses_messages(messages), 'store': False,
                 'include': ['reasoning.encrypted_content'], **params}
+        if on_delta: body['stream'] = True
         if tools: body['tools'] = [{'type': 'function', 'name': t['name'], 'description': t.get('description', ''), 'parameters': t['parameters'], 'strict': False} for t in tools]
         url = base + '/responses'
     elif protocol == 'google_gemini':
@@ -195,7 +315,7 @@ async def complete(connection: dict, model: dict, messages: list[dict], tools: l
         body = {'contents': converted, 'generationConfig': params}
         if system: body['systemInstruction'] = {'parts': [{'text': system}]}
         if tools: body['tools'] = [{'functionDeclarations': [{'name': t['name'], 'description': t.get('description', ''), 'parametersJsonSchema': t['parameters']} for t in tools]}]
-        url = base + '/models/' + model_id + ':generateContent'
+        url = base + ('/models/' + model_id + ':streamGenerateContent?alt=sse' if on_delta else '/models/' + model_id + ':generateContent')
     else:
         config = protocols.validate_connection(protocol, base, connection['external'], connection.get('protocol_config'))
         adapter = protocols.parse_config(config)
@@ -210,12 +330,15 @@ async def complete(connection: dict, model: dict, messages: list[dict], tools: l
                 if response.status_code >= 300:
                     # Never store vendor error bodies: they may echo keys or code.
                     raise ProviderError(f'模型接口 HTTP {response.status_code}', response.status_code == 429)
-                data, count = [], 0
-                async for chunk in response.aiter_bytes():
-                    count += len(chunk)
-                    if count > max_response_bytes: raise ProviderError('模型响应超过配置的安全上限')
-                    data.append(chunk)
-                result = json.loads(b''.join(data))
+                if on_delta and protocol in {'openai_chat', 'anthropic_messages', 'openai_responses', 'google_gemini'} and 'text/event-stream' in response.headers.get('content-type', ''):
+                    result = await _read_sse(response, protocol, on_delta)
+                else:
+                    data, count = [], 0
+                    async for chunk in response.aiter_bytes():
+                        count += len(chunk)
+                        if count > max_response_bytes: raise ProviderError('模型响应超过配置的安全上限')
+                        data.append(chunk)
+                    result = json.loads(b''.join(data))
     except httpx.ConnectError as exc:
         raise ProviderError('模型接口连接失败', True) from exc
     except (httpx.TimeoutException, TimeoutError) as exc:

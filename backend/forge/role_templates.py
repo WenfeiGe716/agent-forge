@@ -141,7 +141,7 @@ def propose_member(s, item_id, data):
     )
     from .design_schema import TeamMember
     member = TeamMember(
-        key=data.key or 'role_' + item.id[:12], name=name.strip(), role=data.role,
+        key=data.key or 'role_' + item.id[:12], name=name.strip(), job_title=revision.details['title'], role=data.role,
         instructions=instructions, model_profile_id=None, skills=[],
         tool_permissions=['finish', 'request_decision'], role_template_ref=reference,
         communication={'scope': 'custom', 'recipients': []},

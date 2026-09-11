@@ -32,7 +32,6 @@
 .studio-nav-more>div{position:absolute;top:calc(100% + 12px);left:0;display:grid;grid-template-columns:1fr 1fr;gap:5px;width:310px;padding:11px;background:#202939;border:1px solid #ffffff20;border-radius:13px;box-shadow:0 18px 50px #0005}
 .studio-header .studio-nav-more button{height:40px;justify-content:flex-start;border:0;padding:0 11px;color:#c8d4e7}
 .studio-header .studio-nav-more button:hover{background:#ffffff08}
-.studio-title{display:none}
 .studio-toggle{top:100px;right:16px;gap:6px}
 .has-inspector .studio-toggle{right:calc(var(--office-panel) + 32px)}
 .studio-toggle button{width:32px;height:32px;padding:7px;background:#202c40e6;border-color:#ffffff28}
@@ -293,16 +292,18 @@
 .office-run-review .flow-branch-card:is(.integrated,.done,.planned,.pending){background:#242f40}
 
 /* Scene controls are local view preferences, not execution authority. */
-.studio-scene-tools{position:absolute;left:calc(var(--office-roster) + 32px);top:96px;z-index:21;color:#c4d3e8;font-size:12px}
-.studio-workspace:not(.has-roster) .studio-scene-tools{left:16px}
-.studio-scene-tools>summary{display:flex;align-items:center;gap:7px;padding:10px 12px;border:1px solid #ffffff23;border-radius:9px;background:#202b3eea;list-style:none;cursor:pointer;box-shadow:0 5px 18px #101b3024}
-.studio-scene-tools>summary:after{content:'⌄';margin-left:5px;color:#8da9ca}
-.studio-scene-tools-popover{position:absolute;top:calc(100% + 8px);left:0;width:345px;max-width:calc(100vw - 28px);padding:11px;background:#202b3bf7;border:1px solid #ffffff21;border-radius:13px;box-shadow:0 16px 38px #0004}
+.studio-utility-dock{position:absolute;right:16px;bottom:45px;display:flex;align-items:center;gap:8px;max-width:calc(100% - 24px);z-index:36}
+.studio-scene-tools{color:#c4d3e8;font-size:12px;flex:none}
+.studio-scene-tools>summary{display:flex;align-items:center;gap:7px;min-height:40px;padding:10px 12px;border:1px solid #ffffff23;border-radius:9px;background:#202b3eea;list-style:none;white-space:nowrap;cursor:pointer;box-shadow:0 5px 18px #101b3024}
+.studio-scene-tools>summary::-webkit-details-marker{display:none}
+.studio-scene-tools>summary:after{content:'⌃';margin-left:5px;color:#8da9ca}
+.studio-scene-tools[open]>summary:after{content:'⌄'}
+.studio-scene-tools-popover{position:absolute;bottom:calc(100% + 8px);right:0;width:345px;max-width:calc(100vw - 28px);max-height:calc(100vh - 160px);overflow-y:auto;overscroll-behavior:contain;padding:11px;background:#202b3bf7;border:1px solid #ffffff21;border-radius:13px;box-shadow:0 -12px 38px #0004}
 .studio-scene-tools .scene-controls,.studio-workspace .studio-scene-tools .city-controls{position:static!important;transform:none;max-width:none;width:auto;margin:0;padding:5px;box-shadow:none;border:0;background:none;flex-wrap:wrap;justify-content:flex-start;gap:7px}
 .studio-scene-tools .scene-controls button span,.studio-scene-tools .scene-controls .quality-select,.studio-workspace .studio-scene-tools .city-controls button{font-size:12px;color:#c4d8ee}
 .studio-workspace .studio-scene-tools .city-controls{border-top:1px solid #ffffff14;margin-top:8px;padding-top:12px}
 .studio-scene-tools .ambient-badge{display:none}
-.studio-scene-tools .ambient-settings{top:calc(100% + 8px);bottom:auto;right:0;background:#263247f7}
+.studio-scene-tools .ambient-settings{position:static;flex-basis:100%;width:100%;margin-top:6px;background:#263247f7;box-shadow:none}
 .studio-scene-tools .ambient-settings p{font-size:12px;color:#aec0da}
 .studio-timeline{left:52px;right:auto;top:180px;bottom:auto;width:min(560px,calc(100% - 76px));height:400px;max-height:calc(100% - 205px);border-radius:14px}
 .studio-timeline header>button,.studio-timeline summary,.studio-timeline summary>time,.studio-timeline summary>b,.studio-timeline pre{font-size:12px}
@@ -328,7 +329,7 @@
 .studio-composer>footer>span:last-child{flex-shrink:0}
 .studio-composer .approval-link{flex:none;min-height:32px;margin-left:0;font-size:12px;padding:5px 7px}
 .studio-composer-entry{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);z-index:20;display:flex;align-items:center;justify-content:center;gap:8px;height:42px;max-width:calc(100% - 32px);padding:10px 19px;border-radius:22px!important;color:#e3dafb;font-size:12px;background:#242e42f2!important;border-color:#b7a5f03a!important;box-shadow:0 8px 24px #0b13302a!important}
-.activity-toggle{bottom:45px;right:16px;min-height:40px;padding:10px 12px;font-size:12px}
+.studio-utility-dock .activity-toggle{position:static;min-height:40px;padding:10px 12px;font-size:12px;white-space:nowrap;flex:none}
 .activity-toggle>span{font-size:11px;color:#c6b7f0}
 .scene-help{bottom:16px;left:50%;transform:translateX(-50%);font-size:11px;color:#607791;max-width:calc(100% - 32px);overflow:hidden;gap:9px}
 .night .scene-help{color:#9eafc8}
@@ -336,6 +337,12 @@
 .city-overview .studio-composer-entry,.city-overview .studio-composer{display:none}
 .studio-notice{font-size:12px;color:#e1dafa;background:#29364cec;border-color:#b7a5f058;max-width:calc(100% - 40px)}
 
+@media(max-width:1280px){
+ .studio-utility-dock{bottom:8px;right:12px;gap:6px}
+ .studio-utility-dock .activity-toggle,.studio-scene-tools>summary{min-height:28px;padding:5px 9px;font-size:11px}
+ .studio-utility-dock .activity-toggle>span{max-width:38px;overflow:hidden;text-overflow:ellipsis}
+ .scene-help{max-width:calc(100% - 600px)}
+}
 @media(max-width:1250px){
  .studio-header{gap:12px;padding:0 13px}.studio-header nav button{padding:0 9px}.studio-header-end{gap:8px}
  .studio-header .connection{display:none}.studio-nav-more>summary{padding-inline:9px}
@@ -358,7 +365,7 @@
  .studio-header-end>button{display:none}.studio-nav-more>summary{font-size:12px;padding-inline:7px}
  .studio-nav-more>div{left:auto;right:0;width:min(300px,calc(100vw - 26px))}
  .studio-toggle,.has-inspector .studio-toggle{top:83px;right:12px}
- .studio-workspace .studio-scene-tools{top:80px;left:12px}.studio-scene-tools-popover{width:320px}
+ .studio-scene-tools-popover{width:320px}
  .studio-roster{top:133px;left:12px;bottom:230px;max-width:calc(100% - 24px)}
  .studio-workspace.has-inspector .studio-roster{display:none}
  .studio-roster .roster-run{display:block}
@@ -373,8 +380,8 @@
  .studio-composer{bottom:44px;left:50%;right:auto;transform:translateX(-50%);width:calc(100% - 24px);padding:11px 13px}
  .studio-composer>footer{font-size:11px;flex-wrap:wrap}
  .studio-composer>footer>span:first-child{flex:1;min-width:180px}.studio-composer textarea{height:42px;min-height:42px}
- .activity-toggle{bottom:8px;right:12px;padding:5px 9px;min-height:28px;font-size:11px}
- .scene-help{bottom:15px;left:12px;transform:none;max-width:calc(100% - 150px);font-size:10px;gap:7px}
+ .studio-workspace .office-floor-picker{max-width:calc(100% - 282px)!important;text-overflow:ellipsis}
+ .scene-help{display:none}
  .office-run-review{padding:18px 15px 22px}.office-run-review>header h2{font-size:21px}.office-review-section{padding:16px}
  .office-review-tabs{gap:3px}.office-review-tabs button{font-size:12px;padding:8px 9px}.office-review-tabs button:last-child{margin-left:0}
  .office-artifact-grid{grid-template-columns:1fr}.office-artifact-grid>article{display:grid;grid-template-columns:28px 1fr;gap:7px 10px;align-items:center;padding:14px}

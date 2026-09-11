@@ -102,6 +102,20 @@ test('new Agent can copy a role without saving until explicit submit; cancelling
  assert.equal(h.calls[0].method,'POST');assert.equal(h.calls[0].body.name,'客服专员');assert.equal(h.calls[0].body.model_profile_id,null);
 });
 
+test('AgentForm accepts the role proposal envelope and applies it to the local draft',async()=>{
+ const h=harness({initial:undefined});button(h.render(),'从角色模板库选择').props.onClick();
+ const picker=nodes(h.render()).find(n=>n.type==='RoleTemplatePicker');assert.ok(picker);
+ const member={name:'研究员',job_title:'市场研究',role:'reviewer',instructions:'独立职责副本',role_template_ref:{item_id:'a'.repeat(32),revision_id:'b'.repeat(64),digest:'c'.repeat(64)}};
+ picker.props.onMember({member,provenance:{document_url:'/api/role-templates/items/x'}});
+ const draft=h.render();
+ assert.equal(field(draft,'成员角色指令').props.value,member.instructions);
+ assert.match(text(draft),/已将角色模板职责复制到当前 Agent 草稿/);
+ assert.deepEqual(h.calls,[],'importing a proposal only updates the local form draft');
+ await draft.props.onSubmit();
+ assert.equal(h.calls[0].method,'POST');
+ assert.deepEqual(h.calls[0].body.role_template_ref,member.role_template_ref);
+});
+
 test('personal Skill bindings are saved with their exact version and parameters only on Agent endpoint',async()=>{
  const h=harness();const tree=h.render();const bindings=nodes(tree).find(n=>n.type==='SkillBindings');
  const choice=[{skill_id:'skill',version:3,mode:'always',enabled:true,allow_scripts:false,parameters:{focus:'security'}}];

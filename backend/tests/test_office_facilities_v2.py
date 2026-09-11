@@ -37,6 +37,33 @@ def test_default_floor_has_varied_required_facilities_and_twelve_real_desks():
     OfficeConfig.model_validate(layout)
 
 
+def test_fresh_bootstrap_uses_current_rnd_layout_as_default(client, monkeypatch):
+    """A new installation starts from the editable rich R&D floor preset.
+
+    The preset must be the same layout exposed by ``default_layout`` (including
+    facilities, team zones and empty desks), while existing Agent identities are
+    only assigned to matching desks; no new Agents are created by the layout.
+    """
+    monkeypatch.setenv('FORGE_BOOTSTRAP_DEFAULT_ORGANIZATION', 'true')
+    before_agents = client.get('/api/agents').json()
+    api.bootstrap()
+    current = client.get('/api/organization').json()
+    with session() as s:
+        expected = presets.default_layout(list(s.scalars(select(Agent))))
+    assert current['config'] == expected
+    assert current['config']['floors'][0]['department'] == '研发部'
+    assert current['config']['teams'][0]['name'] == '开发团队'
+    assert len(current['config']['desks']) == 12
+    assert sum(desk['agent_id'] is None for desk in current['config']['desks']) == 8
+    assert current['ref']['version'] == 1
+    marker = client.get('/api/organization').json()['ref']
+    assert marker['id'] and marker['digest']
+    after_agents = client.get('/api/agents').json()
+    assert {a['id'] for a in after_agents} == {a['id'] for a in before_agents}
+    assert {a['name'] for a in after_agents} == {a['name'] for a in before_agents}
+    assert all(a['department'] == '研发部' for a in after_agents)
+
+
 @pytest.mark.parametrize('kind', ['meeting', 'restroom', 'pantry'])
 @pytest.mark.parametrize('operation', ['remove', 'retype'])
 def test_new_floors_cannot_remove_or_retype_last_required_facility(kind, operation):

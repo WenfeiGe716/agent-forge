@@ -95,12 +95,10 @@ test('slow prior search cannot replace current search results',async()=>{
   pending[0].resolve({items:[role],total:1,categories:{}});tree=await h.settle();assert.match(text(tree),/测试负责人/);assert.doesNotMatch(text(tree),/后端架构师/);
 });
 
-test('Agent instructions-only picker hides permission mapping and returns a reviewed copy without saving shared state',async()=>{
- let chosen;const member={name:'后端架构师',role:'developer',instructions:'可编辑职责原文',role_template_ref:{item_id:role.id,revision_id:role.revision_id,digest:role.digest}};
+test('Agent instructions-only picker imports a reviewed copy directly without saving shared state',async()=>{
+ let chosen;const member={name:'后端架构师',job_title:'后端架构师',role:'developer',instructions:'可编辑职责原文',role_template_ref:{item_id:role.id,revision_id:role.revision_id,digest:role.digest}};
  const h=harness({instructionsOnly:true,onMember:result=>{chosen=result;},handler:url=>url.endsWith('/proposal')?{member}:undefined});
- h.render();let tree=await h.settle();assert.doesNotMatch(text(tree),/职责映射由你确认/);button(tree,'查看内容与选择').props.onClick();tree=await h.settle();assert.doesNotMatch(text(tree),/确认职责映射并编辑团队配置/);assert.match(text(tree),/复制.*当前成员/);button(tree,'选择此版本').props.onClick();tree=h.render();
- assert.ok(!nodes(tree).some(n=>n.props?.['aria-label']==='后端架构师 执行职责映射'));
- assert.match(text(tree),/执行权限档不随模板改变/);assert.equal(button(tree,'复制职责到当前成员').props.disabled,true);
- nodes(tree).find(n=>n.type==='input'&&n.props.type==='checkbox').props.onChange({target:{checked:true}});tree=h.render();button(tree,'复制职责到当前成员').props.onClick();await h.settle();
+ h.render();let tree=await h.settle();assert.doesNotMatch(text(tree),/职责映射由你确认/);button(tree,'查看内容与选择').props.onClick();tree=await h.settle();assert.doesNotMatch(text(tree),/确认职责映射并编辑团队配置/);assert.match(text(tree),/直接导入当前 Agent/);button(tree,'导入到当前 Agent').props.onClick();await h.settle();
+ assert.equal(chosen.job_title,'后端架构师');
  assert.equal(chosen,member);assert.deepEqual(h.calls.filter(c=>c.method!=='GET').map(c=>c.url),[`/role-templates/items/${role.id}/proposal`]);
 });

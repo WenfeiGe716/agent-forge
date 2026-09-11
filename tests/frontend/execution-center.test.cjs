@@ -35,6 +35,45 @@ test('new projects default to local/ask and do not enable full access',async()=>
  const h=harness('ProjectForm');const tree=h.render();assert.equal(field(tree,'项目执行位置').props.value,'local');assert.equal(field(tree,'项目权限策略').props.value,'ask');assert.match(text(tree),/工作副本/);assert.ok(!nodes(tree).some(n=>n.props?.['aria-label']==='执行镜像'));await tree.props.onSubmit();const body=h.calls[0].body;assert.equal(body.execution_mode,'local');assert.equal(body.permission_profile,'ask');assert.equal(body.full_access_confirmed,false);
 });
 
+test('new imported projects allow configured external models by default and can opt out before saving',async()=>{
+ for(const allow of [true,false]){
+  const h=harness('ProjectForm');let tree=h.render();
+  assert.equal(field(tree,'允许外部模型访问').props.checked,true);
+  assert.equal(h.calls.length,0,'rendering a default does not save or call any model');
+  if(!allow){field(tree,'允许外部模型访问').props.onChange({target:{checked:false}});tree=h.render();}
+  await tree.props.onSubmit();
+  assert.equal(h.calls[0].method,'POST');assert.equal(h.calls[0].body.allow_external_models,allow);
+  assert.equal(h.calls[0].body.permission_profile,'ask');
+ }
+});
+
+test('editing existing projects preserves explicit and legacy external-model authorization',async()=>{
+ for(const value of [true,false,undefined]){
+  const initial={...project};if(value===undefined)delete initial.allow_external_models;else initial.allow_external_models=value;
+  const before=JSON.stringify(initial),h=harness('ProjectForm',{props:{initial}});const tree=h.render();
+  assert.equal(field(tree,'允许外部模型访问').props.checked,value===true);
+  labelledInput(tree,'项目名称').props.onChange({target:{value:'仅修改名称'}});
+  await h.render().props.onSubmit();
+  assert.equal(h.calls[0].method,'PUT');assert.equal(h.calls[0].body.allow_external_models,value===true);
+  assert.equal(JSON.stringify(initial),before,'the original project object stays unchanged');
+ }
+});
+
+test('external-model checks are grouped once without hiding unrelated model failures or changing raw results',async()=>{
+ const result={...readiness('p'),ready:false,checks:[
+  ...['a','b','c'].map(id=>({code:'project.external_models',status:'error',message:'重复项目限制',target:'projects',agent_id:id,model_profile_id:'m',provider_id:'provider'})),
+  {code:'model.enabled',status:'error',message:'Ada 的模型已停用',target:'models',agent_id:'a',model_profile_id:'m'},
+ ]};
+ const before=JSON.stringify(result),h=harness('ExecutionCenter',{handler:url=>url.startsWith('/execution/readiness')?result:undefined});
+ h.render();const tree=await h.settle(),checks=nodes(tree).find(n=>n.props?.className==='execution-checks');
+ const problems=nodes(checks).filter(n=>n.type==='li');assert.equal(problems.length,2);
+ assert.equal((text(checks).match(/当前项目未开启外部模型访问/g)||[]).length,1);
+ assert.match(text(problems[1]),/Ada 的模型已停用/);assert.doesNotMatch(text(problems[0]),/成员：/);
+ button(problems[0],'前往查看').props.onClick();assert.equal(h.navigation[0][0],'projects');
+ assert.equal(h.navigation[0][1].project_id,'p');assert.equal(h.navigation[0][1].agent_id,undefined);
+ assert.equal(JSON.stringify(result),before);
+});
+
 test('desktop project requires native directory selection and sends only its one-time ticket',async()=>{
  const desktop={selectProjectDirectory:async()=>({ticket:'one-time-ticket',path:'/Users/example/Project',name:'Project'})};
  const h=harness('ProjectForm',{desktop});let tree=h.render();

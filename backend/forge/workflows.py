@@ -5,6 +5,13 @@ from temporalio.common import RetryPolicy
 from .workflow_core import DevelopmentFlow
 
 class TemporalRuntime:
+    # Autonomous member failures are converted by autonomous_flow into a
+    # durable blocked work issue and a fresh coordinator activation.  Keep the
+    # same policy in Temporal as the local-first runner: never replay an
+    # unfinished side-effectful turn, but let the leader inspect evidence and
+    # explicitly assign a replacement task.
+    autonomous_recovery = True
+
     def now(self): return workflow.now()
     def start_time(self): return workflow.now()
     async def wait_condition(self, predicate): await workflow.wait_condition(predicate)
