@@ -1,0 +1,18 @@
+{
+  "method": "CUA real browser interactions + HTTP evidence checks plus isolated test fixtures",
+  "model_calls": 0,
+  "run_status": "queued",
+  "checks": [
+    "Published capability v1 remains coding95 while v2 draft coding88 exists",
+    "Routing v2 and enterprise rule frozen at max_parallel2",
+    "Team draft edited and explicitly published/instantiated",
+    "Member permissions narrowed and custom communication enforced",
+    "All-hands meeting preview refused restricted communication",
+    "Default workflow task explicitly created after preview",
+    "Frozen Nova office floor2 x5 z2 survives later office application",
+    "Independent office template published and applied",
+    "Custom JSON benchmark suite published; benchmark execution left disabled without consent"
+  ],
+  "playwright_script_executed": false,
+  "paid_inference_executed": false
+}

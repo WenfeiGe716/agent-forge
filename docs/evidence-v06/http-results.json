@@ -1,0 +1,277 @@
+{
+  "method": "real HTTP/SQLite/local workflows/Git/fixed unittest; SCRIPTED model replies",
+  "passed": 17,
+  "failed": 0,
+  "run_ids": {
+    "goal-sequential": "9ba4f5c9666846deb547bc243d2c70df",
+    "HTTP并行目标讨论": "035a88c51a62484bac5b49028bf25ae7",
+    "HTTP目标一次满足": "f9ec85bf9cd1474eb375a00aa1535371",
+    "HTTP目标无进展": "0a2bd8555f3743c3865d848a35aa4c04",
+    "HTTP目标调用预算": "e361c9e766504f13ab30877db050d525",
+    "HTTP目标需要人工": "5d390ec1b6224f1991226abf98dd4545",
+    "HTTP文件证据核验": "3f8f6799c2564206b17eb0ce33441f20",
+    "HTTP目标后开发": "530d75a81c1844bd9fbb74b4009e5c43"
+  },
+  "results": [
+    {
+      "name": "真实本地API与验证模式启动",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "version": "0.6.0"
+      }
+    },
+    {
+      "name": "目标快照无固定轮次且模板更新不污染已启动任务",
+      "status": "passed",
+      "detail": [
+        {
+          "cycle": 1,
+          "prior": 0
+        },
+        {
+          "cycle": 1,
+          "prior": 1
+        },
+        {
+          "cycle": 2,
+          "prior": 2
+        },
+        {
+          "cycle": 2,
+          "prior": 3
+        }
+      ]
+    },
+    {
+      "name": "全体ready不能提前终止；未满足目标反馈到下一次发言",
+      "status": "passed",
+      "detail": {
+        "checkpoints": [
+          {
+            "cycle": 1,
+            "outcome": "continue",
+            "met_count": 0,
+            "total_count": 2,
+            "stagnation_count": 0,
+            "open_issues": [
+              "边界方案缺少确认"
+            ],
+            "task_key": "goal_review_1",
+            "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+            "transcript_digest": "e88b19fb8928a9a4070358873352cd72b4a273132b06124e68008b3ff7f4bd06",
+            "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力"
+          },
+          {
+            "cycle": 2,
+            "outcome": "goal_satisfied",
+            "met_count": 2,
+            "total_count": 2,
+            "stagnation_count": 0,
+            "open_issues": [],
+            "task_key": "goal_review_2",
+            "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+            "transcript_digest": "9159a5c52353131744621f5af652feba3823fbd6cdf9c61ad1aa219f68e14866",
+            "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力"
+          }
+        ],
+        "calls": 6
+      }
+    },
+    {
+      "name": "单独复核步骤验证目标覆盖与发言来源后才进入待验收",
+      "status": "passed",
+      "detail": {
+        "cycle": 2,
+        "outcome": "goal_satisfied",
+        "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力",
+        "transcript_digest": "9159a5c52353131744621f5af652feba3823fbd6cdf9c61ad1aa219f68e14866",
+        "assessor_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+        "criteria": [
+          {
+            "id": "solution",
+            "description": "形成可执行方案并说明关键取舍",
+            "evidence_type": "decision",
+            "status": "met",
+            "rationale": "已具备候选证据",
+            "evidence": [
+              {
+                "task_key": "discussion_2_0",
+                "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                "path": "",
+                "sha256": ""
+              },
+              {
+                "task_key": "discussion_2_1",
+                "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                "path": "",
+                "sha256": ""
+              }
+            ],
+            "file_receipts": [],
+            "errors": []
+          },
+          {
+            "id": "validation",
+            "description": "明确验证步骤和风险处理方式",
+            "evidence_type": "decision",
+            "status": "met",
+            "rationale": "已具备候选证据",
+            "evidence": [
+              {
+                "task_key": "discussion_2_0",
+                "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                "path": "",
+                "sha256": ""
+              },
+              {
+                "task_key": "discussion_2_1",
+                "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                "path": "",
+                "sha256": ""
+              }
+            ],
+            "file_receipts": [],
+            "errors": []
+          }
+        ],
+        "open_issues": [],
+        "met_count": 2,
+        "total_count": 2,
+        "stagnation_count": 0,
+        "best_met_count": 2,
+        "seen_progress": [
+          "4266ed231cb7408cd15f66fe3fd3c7ae5407efe2781f16601abbb9b57e278135",
+          "1515d901b5ac7104aabe9143f2d70a098049fa7decaf4666e7520ebc03f1666e"
+        ],
+        "semantic_verification": "model_assessed; human acceptance required",
+        "code_tests": "not_executed_in_read_only_discussion"
+      }
+    },
+    {
+      "name": "过期模板版本拒绝创建",
+      "status": "passed",
+      "detail": 409
+    },
+    {
+      "name": "同一目标讨论实际使用双协议供应商连接",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "只读讨论有实际纪要与证据，不伪造代码补丁",
+      "status": "passed",
+      "detail": {
+        "verification": "unverified",
+        "reason": "只读讨论，未执行代码构建或测试"
+      }
+    },
+    {
+      "name": "目标达成只生成候选，仍需人工接受才完成",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "目标驱动的并行输入仍隔离同一批成员结果",
+      "status": "passed",
+      "detail": [
+        {
+          "cycle": 1,
+          "prior": 0
+        },
+        {
+          "cycle": 1,
+          "prior": 0
+        },
+        {
+          "cycle": 2,
+          "prior": 2
+        },
+        {
+          "cycle": 2,
+          "prior": 2
+        }
+      ]
+    },
+    {
+      "name": "第一次目标满足即可候选收敛，无最低轮数",
+      "status": "passed",
+      "detail": {
+        "calls": 3,
+        "cycle": 1
+      }
+    },
+    {
+      "name": "无进展保护保存部分结果并转人工，不记成功",
+      "status": "passed",
+      "detail": {
+        "calls": 12,
+        "status": "needs_attention",
+        "stop_reason": "stalled"
+      }
+    },
+    {
+      "name": "预算耗尽不是完成条件且已完成发言被保存",
+      "status": "passed",
+      "detail": {
+        "calls": 2,
+        "stop_reason": "budget_exhausted"
+      }
+    },
+    {
+      "name": "复核指出需要人工时不继续自动完成",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "源文件证据有真实read_file回执与SHA，不充当测试通过",
+      "status": "passed",
+      "detail": {
+        "calls": 8,
+        "receipts": [
+          {
+            "task_key": "goal_review_2",
+            "path": "calc.py",
+            "sha256": "e1a894022d1a082987b87adecb623438c9e386d86b2b621cff4a5fe7fdf7edc8"
+          }
+        ],
+        "checks": {
+          "verification": "unverified",
+          "reason": "只读讨论，未执行代码构建或测试"
+        }
+      }
+    },
+    {
+      "name": "目标达成后的讨论传入开发计划且继续等待人工批准",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "目标讨论接通真实Git与固定测试且保留目标检查点",
+      "status": "passed",
+      "detail": {
+        "calls": 22,
+        "checks": {
+          "verification": "passed",
+          "commands": [
+            {
+              "command": "python -m unittest discover -s tests",
+              "exit_code": 0,
+              "stdout": "",
+              "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+              "timed_out": false,
+              "fixture_only": true,
+              "sandbox_verified": false
+            }
+          ],
+          "tracked_files_modified": false
+        }
+      }
+    },
+    {
+      "name": "开发成果经人工验收，原项目未被修改",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

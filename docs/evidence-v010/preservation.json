@@ -1,0 +1,184 @@
+{
+  "baseline": "Agent-Forge-v0.9.0-visual-polish.zip",
+  "checks": 29,
+  "identical": 28,
+  "results": [
+    {
+      "path": "frontend/src/graphics/characters.ts",
+      "v09_sha256": "965d046605d38926de67e61a942ae65889921ea88d34e2c2b2ce967b470541d8",
+      "v010_sha256": "965d046605d38926de67e61a942ae65889921ea88d34e2c2b2ce967b470541d8",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/furniture.ts",
+      "v09_sha256": "1f8cc57197feb987bb6729f4f7566ee3b5ee857f2b740d7be23881606867c93c",
+      "v010_sha256": "1f8cc57197feb987bb6729f4f7566ee3b5ee857f2b740d7be23881606867c93c",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/visualMeshes.ts",
+      "v09_sha256": "c1d1bfea6cf7520a32eba68a1ac8fe84cbbeb2c88fa55068a557297ffa613d1b",
+      "v010_sha256": "c1d1bfea6cf7520a32eba68a1ac8fe84cbbeb2c88fa55068a557297ffa613d1b",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/officeWorld.ts",
+      "v09_sha256": "abcca256fd4a2828c6209f69d9fdc3b3feb9ffc726c77e4cf3a3c991e1a9d6a0",
+      "v010_sha256": "abcca256fd4a2828c6209f69d9fdc3b3feb9ffc726c77e4cf3a3c991e1a9d6a0",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/behavior.ts",
+      "v09_sha256": "97eb20432a2c500462819690249c0804d4c6e219df10af2d87410db200be53fd",
+      "v010_sha256": "97eb20432a2c500462819690249c0804d4c6e219df10af2d87410db200be53fd",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/etiquette.ts",
+      "v09_sha256": "fafc2d61b65fb1a537cbb50ce5ddd37a92a826d649e2514f5d63076989a55e75",
+      "v010_sha256": "fafc2d61b65fb1a537cbb50ce5ddd37a92a826d649e2514f5d63076989a55e75",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/meetings.ts",
+      "v09_sha256": "587503eacffdaa6d77d0cb599bcedc427e0231ef3514a381cb4057c9101ac972",
+      "v010_sha256": "587503eacffdaa6d77d0cb599bcedc427e0231ef3514a381cb4057c9101ac972",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/db.py",
+      "v09_sha256": "fe5422c1f195634e1e2246dd22261639eac3f145265c5cebf3df8452ed994d74",
+      "v010_sha256": "fe5422c1f195634e1e2246dd22261639eac3f145265c5cebf3df8452ed994d74",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/setup_api.py",
+      "v09_sha256": "9032004b10c5a6df835046f5af4876c526067ec11d970defe67727a4a05b36b6",
+      "v010_sha256": "9032004b10c5a6df835046f5af4876c526067ec11d970defe67727a4a05b36b6",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/snapshots.py",
+      "v09_sha256": "3189c4b55b39335d4d3d2da7a46f7d8b761614905c4b5abacd938874d9ce8e61",
+      "v010_sha256": "3189c4b55b39335d4d3d2da7a46f7d8b761614905c4b5abacd938874d9ce8e61",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/workflow_core.py",
+      "v09_sha256": "ef9c0a4e716e846d1b483b2bcbb87fd122f6f7f0741ff7106674a7d96f94287f",
+      "v010_sha256": "ef9c0a4e716e846d1b483b2bcbb87fd122f6f7f0741ff7106674a7d96f94287f",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/engine.py",
+      "v09_sha256": "e6173d91d054eae1f7f197fd3c8245e0d52309f2a15a18830c64ec5c0030b7ab",
+      "v010_sha256": "e6173d91d054eae1f7f197fd3c8245e0d52309f2a15a18830c64ec5c0030b7ab",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/api.py",
+      "v09_sha256": "e9dc68a84f8c37c9ab1727434d5b681408574dd97ba1aa8077162f531f6cc043",
+      "v010_sha256": "e4e9313247db6ae2e20cefef4c37ef720f3d7a2f12ac407c6eb74d242fddfcd9",
+      "identical": false,
+      "only_changes": "FastAPI/OpenAPI metadata and /api/health version strings 0.9.0 → 0.10.0; all business code unchanged.",
+      "business_identical_excluding_release_version": true
+    },
+    {
+      "path": "backend/forge/tools.py",
+      "v09_sha256": "d5c5d1d12d236aa2b6193b54a2984ae4fa6d97d688d090854939a3cf6e4b907c",
+      "v010_sha256": "d5c5d1d12d236aa2b6193b54a2984ae4fa6d97d688d090854939a3cf6e4b907c",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/worker.py",
+      "v09_sha256": "1473dfaf346a276d7bb84ca437d3b9c3a7899b0df9ccd2156f3959e7d94ed4e9",
+      "v010_sha256": "1473dfaf346a276d7bb84ca437d3b9c3a7899b0df9ccd2156f3959e7d94ed4e9",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/office.py",
+      "v09_sha256": "ef2ce9bc642d8ae0f662081b19bb178c09c6a59eeb428a9a70f746ffec3de1ad",
+      "v010_sha256": "ef2ce9bc642d8ae0f662081b19bb178c09c6a59eeb428a9a70f746ffec3de1ad",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/schema.py",
+      "v09_sha256": "a0e6999170d93ccb3e08b71b6621acd7698765d860678fe16d936cd13af4e441",
+      "v010_sha256": "a0e6999170d93ccb3e08b71b6621acd7698765d860678fe16d936cd13af4e441",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/skills.py",
+      "v09_sha256": "d5f6c2085c954e18d02be1c55fe0ac6e18d857bec42b8658b228e9add111f641",
+      "v010_sha256": "d5f6c2085c954e18d02be1c55fe0ac6e18d857bec42b8658b228e9add111f641",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/providers.py",
+      "v09_sha256": "d54f092042f8439cdaadee489d55f638aa1ff0b24f391ec797e30c2f4ae62622",
+      "v010_sha256": "d54f092042f8439cdaadee489d55f638aa1ff0b24f391ec797e30c2f4ae62622",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/config.py",
+      "v09_sha256": "0a963c66b0b3be725946853d45e1113d8386cecd6aed0996bbb9f21e6a2b7e65",
+      "v010_sha256": "0a963c66b0b3be725946853d45e1113d8386cecd6aed0996bbb9f21e6a2b7e65",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/workflows.py",
+      "v09_sha256": "93ba5acb095a8d9d93a57c036af9564bcda1a684f58a974c0cc88854c7cdba58",
+      "v010_sha256": "93ba5acb095a8d9d93a57c036af9564bcda1a684f58a974c0cc88854c7cdba58",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/security.py",
+      "v09_sha256": "c228484e88d0eb16fbdd4c81cc3e45abaca19847c08a1238ad81ca1b1f246d26",
+      "v010_sha256": "c228484e88d0eb16fbdd4c81cc3e45abaca19847c08a1238ad81ca1b1f246d26",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/extensions_api.py",
+      "v09_sha256": "5bff755a81032c9e60b1fc312cbf83eb5fc7e903c3c85316e674e85ffd0f0594",
+      "v010_sha256": "5bff755a81032c9e60b1fc312cbf83eb5fc7e903c3c85316e674e85ffd0f0594",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/collaboration.py",
+      "v09_sha256": "c812f20f462d11182c6eb8c8a59f39e37e437623539999bc869938507ea8e33c",
+      "v010_sha256": "c812f20f462d11182c6eb8c8a59f39e37e437623539999bc869938507ea8e33c",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/goal_gate.py",
+      "v09_sha256": "cca76b36df0a3abffe9fec62a0e29ecabaf9a2ca59ead551d8067a135373d606",
+      "v010_sha256": "cca76b36df0a3abffe9fec62a0e29ecabaf9a2ca59ead551d8067a135373d606",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/sandbox.py",
+      "v09_sha256": "8fc07709682f8a442583da4c4b613a30c4b5e1b1bca96015b9086464dc161d4c",
+      "v010_sha256": "8fc07709682f8a442583da4c4b613a30c4b5e1b1bca96015b9086464dc161d4c",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/engagement.py",
+      "v09_sha256": "6599f5b5ae0ace4725c97216e0051ebf154abc3901e592f00ff9ac9b09071868",
+      "v010_sha256": "6599f5b5ae0ace4725c97216e0051ebf154abc3901e592f00ff9ac9b09071868",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/workspace.py",
+      "v09_sha256": "628c45ebbcf60509a82fd3c780fbdbd30394793b6beaf4c3fb98bfb3ec614f81",
+      "v010_sha256": "628c45ebbcf60509a82fd3c780fbdbd30394793b6beaf4c3fb98bfb3ec614f81",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/local_runtime.py",
+      "v09_sha256": "7044a78ceaa49893505bc27950c26b0238f4bc7b8469814e3ed6e602b0e2589b",
+      "v010_sha256": "7044a78ceaa49893505bc27950c26b0238f4bc7b8469814e3ed6e602b0e2589b",
+      "identical": true
+    }
+  ],
+  "version_metadata_only": 1
+}

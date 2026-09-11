@@ -1,0 +1,223 @@
+{
+  "platform": "linux",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "provenance": "Repacked installed distributions; not downloaded upstream artifacts. Licenses and package metadata are retained. No Temporal, psycopg, Docker or model weights included.",
+  "packages": [
+    {
+      "name": "annotated-doc",
+      "version": "0.0.4",
+      "file": "annotated_doc-0.0.4-py3-none-any.whl",
+      "sha256": "f3f15bb4bd6ce9b885324ebe3c256a2aa9fc7039c0bb6f1a8b201524ffc6d869",
+      "files": 9,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.7.0",
+      "file": "annotated_types-0.7.0-py3-none-any.whl",
+      "sha256": "240326388bfc770092f393ba77fe37af5f65c53d942911439b843ead18a3a7eb",
+      "files": 8,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "anyio",
+      "version": "4.13.0",
+      "file": "anyio-4.13.0-py3-none-any.whl",
+      "sha256": "e8dfc348c0cb710de0903c7185c012423fa2aa2ab84ce25a05197827e7c45f2a",
+      "files": 50,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.5.20",
+      "file": "certifi-2026.5.20-py3-none-any.whl",
+      "sha256": "c36b0e47215ea277ad0bead2506eda146f32a662c8e3a9a013dd304f63d61fbb",
+      "files": 11,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "cffi",
+      "version": "2.0.0",
+      "file": "cffi-2.0.0-cp313-cp313-manylinux_2_17_x86_64.whl",
+      "sha256": "ef476f700c236e4696260f3a960c848fd6ce70855b4cd57a93066050751f5bfa",
+      "files": 31,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "click",
+      "version": "8.1.8",
+      "file": "click-8.1.8-py3-none-any.whl",
+      "sha256": "21b68f660101288fd01a2db789337d72dff699403c1b257db95c52b5fa3dd8e0",
+      "files": 22,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "cryptography",
+      "version": "46.0.4",
+      "file": "cryptography-46.0.4-cp311-abi3-manylinux_2_34_x86_64.whl",
+      "sha256": "2cc1a359c8071a700e14e637bccd9978a0a068f0474355b150d838844c501e86",
+      "files": 108,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "fastapi",
+      "version": "0.128.2",
+      "file": "fastapi-0.128.2-py3-none-any.whl",
+      "sha256": "58da7b31a421f0932197864346ceebd5ee75f28c41676b7400518c4c8bcddc39",
+      "files": 54,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.1",
+      "file": "greenlet-3.5.1-cp313-cp313-manylinux_2_24_x86_64.whl",
+      "sha256": "c4785a8862cf766b2ce35363cde15abd21545ccf2a5e76be3f7af405275bfd3e",
+      "files": 96,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "file": "h11-0.16.0-py3-none-any.whl",
+      "sha256": "6405bf85c5ce3bb81aa2ca6c8495a65a3621d632f1ca092e150c701d565cc172",
+      "files": 18,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "file": "httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "4669b2d02d6f6dff960043abe3b735393d101e99de4ca8f911546ac65457d699",
+      "files": 37,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "file": "httpx-0.28.1-py3-none-any.whl",
+      "sha256": "c35801b06ac33ef3b1b0e2965c17e7a4bd35d215e1dac5b49f2dd149beb25215",
+      "files": 30,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "idna",
+      "version": "3.17",
+      "file": "idna-3.17-py3-none-any.whl",
+      "sha256": "3d18fa4ffffe577e5937a4188665e17152179e4b5c906b2138b1e45c76bf8acd",
+      "files": 17,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0",
+      "file": "iniconfig-2.3.0-py3-none-any.whl",
+      "sha256": "574e519441a4c83db83b2def763d75d978772c9d766641d010f3e2e8c1318d93",
+      "files": 11,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "packaging",
+      "version": "25.0",
+      "file": "packaging-25.0-py3-none-any.whl",
+      "sha256": "43d237fe7c2dc25de4f4544a980915627a4dbf7032f0acd794a0776729e1b3f1",
+      "files": 24,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "file": "pluggy-1.6.0-py3-none-any.whl",
+      "sha256": "ecc199dd7e1a8cb967cb408ff9b39bc4da2ffc5d8920ff453f797cb5445cb788",
+      "files": 15,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "file": "pycparser-3.0-py3-none-any.whl",
+      "sha256": "072abf145accd614116fbc8a7620215c73ff20db814c2b65ba06aa33824bd2b1",
+      "files": 14,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.4",
+      "file": "pydantic-2.13.4-py3-none-any.whl",
+      "sha256": "18afa2a555fb86a5576e6b293df964ee355edc8dbf749330e0a78c3296c36c71",
+      "files": 112,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.4",
+      "file": "pydantic_core-2.46.4-cp313-cp313-manylinux_2_17_x86_64.whl",
+      "sha256": "ff3012f02a0312125060fc5056387a3c7c540435eb6c172c7f0c77dcf3c11593",
+      "files": 11,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pygments",
+      "version": "2.20.0",
+      "file": "pygments-2.20.0-py3-none-any.whl",
+      "sha256": "95f02267a443cbb14a886534273e5d3e77a2ac2e3ee4881824b10ad2202504c7",
+      "files": 346,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pytest",
+      "version": "9.0.2",
+      "file": "pytest-9.0.2-py3-none-any.whl",
+      "sha256": "8bfeda5852a646d3331fd96114dab43ad763ee3bd7e27387755d36287f89e026",
+      "files": 83,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.3.0",
+      "file": "pytest_asyncio-1.3.0-py3-none-any.whl",
+      "sha256": "8bf5ab717e2d3931ed19cbc8ed838ea8defa6e61c2f8075c119bd00f6ed969ff",
+      "files": 10,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "sqlalchemy",
+      "version": "2.0.50",
+      "file": "sqlalchemy-2.0.50-cp313-cp313-manylinux_2_17_x86_64.whl",
+      "sha256": "6dca9b77c2a8e93e971dd1c26ae20b3aa57d6b47a9e360123b46c2c2bdb350e6",
+      "files": 275,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "starlette",
+      "version": "0.50.0",
+      "file": "starlette-0.50.0-py3-none-any.whl",
+      "sha256": "753ed9db0f5c87e9c9ed64da6ac407c717bd2b48783fe8ca623ba5b3f0206b1f",
+      "files": 40,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "file": "typing_extensions-4.16.0-py3-none-any.whl",
+      "sha256": "b1efcb48ea0cc37aa66cbc44d432ed1813122417bda6b02ce7af2cb77706ce9e",
+      "files": 6,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.2",
+      "file": "typing_inspection-0.4.2-py3-none-any.whl",
+      "sha256": "158162d94f37eb85d490bc2bc3f8542e4a0570eca55157a88bd7d2e5d7e40ca6",
+      "files": 10,
+      "source": "installed distribution repack; upstream download unavailable"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.48.0",
+      "file": "uvicorn-0.48.0-py3-none-any.whl",
+      "sha256": "6fa9a470861b3f0d768bafd2ed70337666186f69a7a2a73ecf0902cbbea61c39",
+      "files": 47,
+      "source": "installed distribution repack; upstream download unavailable"
+    }
+  ]
+}

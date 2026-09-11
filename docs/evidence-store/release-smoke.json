@@ -1,0 +1,24 @@
+{
+  "passed": 8,
+  "failed": 0,
+  "checks": [
+    "New archive automatically installs offline dependencies and starts",
+    "Actual API reports 0.10.1",
+    "Skill Store requires authentication",
+    "Generated administrator login works",
+    "Three bundled skill entries available in installed archive",
+    "Upstream is honestly unsynced, not a fabricated roster",
+    "No auto-install, binding, model or fictional business data",
+    "Server provides exact built production frontend"
+  ],
+  "tested_archive_sha256": "e7aca758f288d4ef3940db8814e38d55c5c1565a2655f62b726ceb8dce86b465",
+  "runtime_file_hashes": {
+    "backend/forge/api.py": "f43c78c7f2f95019eb09f2d14831598df2ea3424d46189e6d46b8cade1a84572",
+    "backend/forge/skill_store.py": "0db000e89c71c68e6584e92cc6043351e6d09ffb2390460b1348c541cd7ad862",
+    "backend/forge/skill_store_api.py": "b161d8865ed846e6c7004ff34d7283e21266bcc8e68c322361f1a6e22e44e46f",
+    "frontend/dist/index.html": "9ee1c1a287636e69ba72c44757a449cc498cc232cbf51b09b4b1e9a0fc47356b",
+    "start.sh": "14466c536c5e6ef6b1fb79e81b4e1676ae2ffb120822a1365222d751518b29b3",
+    "scripts/start-local.py": "7bd855c63a828fcad45bea3e9a39485212dfd32e1bd565de753d855b73403eb4"
+  },
+  "method": "Actual bash start.sh from a fresh extracted ZIP; no existing deployment or model calls"
+}

@@ -1,0 +1,50 @@
+{
+  "method": "actual controlled process termination/restart and HTTP, scripted models",
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {
+      "name": "重启前问题真实持久化且运行等待用户",
+      "status": "passed",
+      "detail": {
+        "run_id": "7bc1f0c40eaa4a078d6ea940980788d5",
+        "question_id": "980ab0f50969611beb40226dc9e55698a880bfa4e82fedb046c67981a57ff05e",
+        "digest": "779ab39cc276e395a09e9d841a25264ed619ec03d4c201a5dd1402f0d9e87f08",
+        "model_calls": 3
+      }
+    },
+    {
+      "name": "实际服务重启后恢复同一问题，已完成调用不重复",
+      "status": "passed",
+      "detail": {
+        "model_calls_before": 3,
+        "model_calls_after": 3
+      }
+    },
+    {
+      "name": "暂停时回答先保存，未恢复前不偷偷继续调用",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "恢复后从原步骤继续，答案进入实际上下文且问题只提出一次",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "未批准计划前取消，不启动开发",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "取消后未回答问题标记取消，保留原问题不自动选择",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "已取消问题拒绝迟到回答，不恢复已关闭运行",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

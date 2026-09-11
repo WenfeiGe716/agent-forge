@@ -1,0 +1,7 @@
+{
+  "live_sync": false,
+  "error_type": "ConnectError",
+  "message": "[Errno -3] Temporary failure in name resolution",
+  "upstream_archive_downloaded": false,
+  "note": "公开页面经web工具阅读；执行容器未能完成上游仓库下载。未导入、未验证完整上游。"
+}

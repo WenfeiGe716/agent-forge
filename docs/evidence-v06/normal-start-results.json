@@ -1,0 +1,42 @@
+{
+  "method": "actual subprocess + direct HTTP, no model or sandbox invocation",
+  "passed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "name": "真实启动命令提供v0.6健康接口",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "version": "0.6.0"
+      }
+    },
+    {
+      "name": "未登录不能访问运行列表",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "随机初始化管理员凭据可登录；凭据不写入报告",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "使用本地编排且明确关闭脚本化验证模式",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "正常平台无预置虚假供应商和模型",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "HTTP首页为最终构建产物的真实字节",
+      "status": "passed",
+      "detail": {
+        "sha256": "199fb75e500c835b4fcde992943083351da97a2694ae4ef8c1c38ff19acb8e93"
+      }
+    }
+  ]
+}

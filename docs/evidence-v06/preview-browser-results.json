@@ -1,0 +1,115 @@
+{
+  "method": "headed Chromium SwiftShader, actual DOM/WebGL, in-memory demo, no native URL navigation",
+  "passed": 21,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "实际WebGL办公室14名成员保留工位坐姿",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "默认加载城市、12车辆及6名过街行人",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "城市全景隐藏办公面板和密集人物标签",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "商场及五座楼宇可定位且具有明确地标说明",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "实际点击商场地标显示范围说明",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "暂停交通冻结城市模拟时钟，不暂停Agent",
+      "status": "passed",
+      "detail": {
+        "time": 3.7499999999999947
+      }
+    },
+    {
+      "name": "继续交通恢复固定步长模拟",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "低密度4车2过街行人不修改办公室成员",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "路口近景镜头可观察实际人车与信号灯",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "日夜切换应用到实际城市渲染与灯光",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "关闭街景自动返回办公视角，不留下空白远景",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "办公区与城市镜头可反复切换且保留管理操作",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "1100px视口无文档横向溢出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "编排页面已移除固定轮数和ready停止设置",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "仍支持指定子团队与上下文执行方式",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "验收目标、证据类型和复核成员均可编辑",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "异常保护与目标成功退出明确分开",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "新目标模板在示例列表实际保存并更新结构图",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "示例创建保留明确不执行模型的提示",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "新增任务可从任务看板检索，界面非静态效果图",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "所有操作无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

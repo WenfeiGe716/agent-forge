@@ -1,0 +1,10 @@
+
+> agent-forge-workbench@0.5.0 check
+> node ../scripts/check-source.mjs
+
+{
+  "check": "TS/TSX syntax only",
+  "typescript": "5.8.3",
+  "files": 20,
+  "errors": []
+}

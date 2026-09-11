@@ -1,0 +1,16 @@
+import {useMemo} from 'react';
+import {ReactFlow,Background,Controls,MarkerType,Node,Edge} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import {Task,states} from '../types';
+export default function TaskGraph({tasks,onSelect}:{tasks:Task[];onSelect:(task:Task)=>void}){
+ const {nodes,edges}=useMemo(()=>{
+  const shown=tasks.filter(t=>t.kind==='develop');const levels=new Map<string,number>();
+  for(let pass=0;pass<=shown.length;pass++)for(const task of shown){const deps:string[]=task.spec.depends_on||[];if(deps.every(d=>levels.has(d)||!shown.some(t=>t.key===d)))levels.set(task.key,Math.max(-1,...deps.map(d=>levels.get(d)??-1))+1);}
+  const counts:Record<number,number>={};
+  const nodes:Node[]=shown.map(t=>{const level=levels.get(t.key)||0;const row=counts[level]||0;counts[level]=row+1;return {id:t.key,position:{x:level*290,y:row*130},data:{label:<div className="flow-task"><span className={`tiny-state ${t.status}`}>{states[t.status]||t.status}</span><strong>{t.title}</strong><small>{t.key}</small></div>},className:`task-node ${t.status}`};});
+  const edges:Edge[]=shown.flatMap(t=>(t.spec.depends_on||[]).map((d:string)=>({id:d+'-'+t.key,source:d,target:t.key,animated:t.status==='running',markerEnd:{type:MarkerType.ArrowClosed},style:{stroke:'#617b74'}})));
+  return {nodes,edges};
+ },[tasks]);
+ if(!nodes.length)return <div className="empty graph-empty"><b>计划批准后，在这里查看任务依赖</b><p>任务节点来自真实开发计划，不生成模拟任务。</p></div>;
+ return <div className="graph-viewport"><ReactFlow nodes={nodes} edges={edges} colorMode="dark" fitView fitViewOptions={{padding:.2}} nodesDraggable={false} nodesConnectable={false} onNodeClick={(_,node)=>{const t=tasks.find(t=>t.key===node.id);if(t)onSelect(t);}}><Background gap={22} color="#2a373a"/><Controls showInteractive={false}/></ReactFlow></div>;
+}

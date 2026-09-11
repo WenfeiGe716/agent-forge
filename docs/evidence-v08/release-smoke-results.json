@@ -1,0 +1,31 @@
+{
+  "passed": 6,
+  "failed": 0,
+  "mode": "Fresh ZIP extraction, automatic offline install, actual default local launcher. No Docker available.",
+  "checks": [
+    {
+      "name": "从ZIP全新解压后，bash start.sh自动离线安装并启动真实API",
+      "passed": true
+    },
+    {
+      "name": "新解压包安装后的依赖一致性通过",
+      "passed": true
+    },
+    {
+      "name": "首页实际HTTP返回与发布构建字节一致",
+      "passed": true
+    },
+    {
+      "name": "默认页面没有示例散会和演示注入器",
+      "passed": true
+    },
+    {
+      "name": "管理员与加密密钥已自动生成且配置权限0600",
+      "passed": true
+    },
+    {
+      "name": "首次配置接口仍需登录",
+      "passed": true
+    }
+  ]
+}

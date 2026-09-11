@@ -1,0 +1,25 @@
+{
+  "runtime": "React 18.2.0, ReactDOM 18.2.0, scheduler as bundled by Notebook",
+  "compiler": "TypeScript 5.8.3 (installed compiler; emit only)",
+  "provenance": [
+    {
+      "package": "notebook/static/7378.df12091e8f42a5da0429.js",
+      "sha256": "23fd15a85bc5954cb48541ca1d79fb79226e529e31d761d9e48848c002e2763f"
+    },
+    {
+      "package": "notebook/static/1542.8f0b79431f7af2f43f1e.js",
+      "sha256": "67f700da25fe76a35208dbb67c5de0cd2df6f8a98d163c49cce87e97aee39a43"
+    },
+    {
+      "package": "notebook/static/7811.fa11577c84ea92d4102c.js",
+      "sha256": "df513bc1f1ef47b7475624125b30a4b2512283c306f7a9c18a2c49698672c288"
+    }
+  ],
+  "files": {
+    "jsx-runtime.js": "b112d0f7e030a4253b4f42da81c2e43a5a60dca09df0f034efcedc08864d76b3",
+    "react-dom-client.js": "077e9cb135c23de5669b09ec581fa6b6760189c5f66da82f20d973afc0cea8c0",
+    "react-runtime.js": "b6422feb7fb8c6e1bcf8aeb344737891da208b0b9d8d9b910263e7dd8c1051b4",
+    "react.js": "275059f9f64862f46d24788f0cc2a1bdbd5bcc4a425aba49b530f26d9618093c",
+    "typescript.cjs": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0"
+  }
+}

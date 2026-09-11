@@ -1,0 +1,108 @@
+{
+  "method": "actual DOM/WebGL + real HTTP bridge; not native navigation/SSE",
+  "passed": 13,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "正式页面登录真实API，真实4成员与WebGL正常",
+      "status": "passed",
+      "detail": {
+        "members": 4,
+        "demo_controls": 0
+      }
+    },
+    {
+      "name": "项目表单保存至真实数据库",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "错误模型JSON显示错误且不保存",
+      "status": "passed",
+      "detail": 1
+    },
+    {
+      "name": "模型参数真实持久化且版本增加",
+      "status": "passed",
+      "detail": {
+        "version": 2,
+        "parameters": {
+          "max_tokens": 3072
+        }
+      }
+    },
+    {
+      "name": "成员管理真实保存领导关系和接待偏好",
+      "status": "passed",
+      "detail": {
+        "version": 4,
+        "reception": "stand"
+      }
+    },
+    {
+      "name": "通过编排编辑器创建可执行子团队3轮模板",
+      "status": "passed",
+      "detail": {
+        "id": "4e050fdfe7b04a37b0841169a8cb839f",
+        "version": 1,
+        "graph": {
+          "mode": "discussion",
+          "participants": [
+            "6c2755ed34e34d73af1a758f819265a3",
+            "1ab51190d8f84384846277ff278d7ef7"
+          ],
+          "rounds": 3,
+          "min_rounds": 1,
+          "strategy": "sequential",
+          "stop_when": "max_rounds",
+          "prompt": "讨论需求、识别风险，给出有依据的建议与待解决问题。"
+        }
+      }
+    },
+    {
+      "name": "通过表单启动真实工作流且只占用指定2位成员",
+      "status": "passed",
+      "detail": {
+        "run_id": "f0ca6cb59660aea5632c616ff05f7470",
+        "participants": [
+          "6c2755ed34e34d73af1a758f819265a3",
+          "1ab51190d8f84384846277ff278d7ef7"
+        ]
+      }
+    },
+    {
+      "name": "真实双协议模型HTTP请求6次，逐轮结果回显6条",
+      "status": "passed",
+      "detail": {
+        "calls": 6,
+        "rounds": 3
+      }
+    },
+    {
+      "name": "最后一轮界面可展开核对5份先前发言",
+      "status": "passed",
+      "detail": 5
+    },
+    {
+      "name": "讨论详情展示正确产物链接，不出现不存在的代码快照",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "浏览器人工验收真正完成讨论运行",
+      "status": "passed",
+      "detail": "completed"
+    },
+    {
+      "name": "看板完成列来自实际后台状态",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "正式界面整个操作链无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

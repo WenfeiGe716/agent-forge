@@ -1,0 +1,122 @@
+name: agent-forge
+x-app-env: &app-env
+  ORCHESTRATOR: temporal
+  DATABASE_URL: postgresql+psycopg://forge:${FORGE_DB_PASSWORD:?Run scripts/init.sh}@database:5432/forge
+  DATA_ROOT: /data
+  IMPORT_ROOT: /imports
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run scripts/init.sh}
+  ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Run scripts/init.sh}
+  TEMPORAL_ADDRESS: temporal:7233
+  TEMPORAL_NAMESPACE: default
+  TEMPORAL_TASK_QUEUE: agent-forge
+  SANDBOX_URL: http://sandbox-broker:8091
+  SANDBOX_TOKEN: ${SANDBOX_TOKEN:?Run scripts/init.sh}
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
+  SECURE_COOKIE: ${SECURE_COOKIE:-false}
+  MAX_ACTIVE_ACTIVITIES: ${MAX_ACTIVE_ACTIVITIES:-4}
+  MAX_PROJECT_MB: ${MAX_PROJECT_MB:-200}
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Run scripts/init.sh}
+      FORGE_DB_PASSWORD: ${FORGE_DB_PASSWORD}
+      TEMPORAL_DB_PASSWORD: ${TEMPORAL_DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/init-db.sh:/docker-entrypoint-initdb.d/01-forge.sh:ro
+    networks: [private]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  temporal:
+    image: temporalio/auto-setup:1.29.1
+    depends_on:
+      database: {condition: service_healthy}
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: ${TEMPORAL_DB_PASSWORD}
+      POSTGRES_SEEDS: database
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CLI_ADDRESS: temporal:7233
+    networks: [private]
+    restart: unless-stopped
+  api:
+    build: ./backend
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment: *app-env
+    volumes:
+      - ${FORGE_DATA_DIR:?Run scripts/init.sh}:/data
+      - ${FORGE_IMPORT_DIR:?Run scripts/init.sh}:/imports:ro
+    networks: [private, web]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      database: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  worker:
+    build: ./backend
+    command: ["python", "-m", "forge.worker"]
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment: *app-env
+    volumes:
+      - ${FORGE_DATA_DIR}:/data
+    networks: [private, broker, egress]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      api: {condition: service_healthy}
+      temporal: {condition: service_started}
+      sandbox-broker: {condition: service_started}
+    restart: unless-stopped
+  sandbox-broker:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.broker
+    environment:
+      DATA_ROOT: /data
+      HOST_DATA_ROOT: ${FORGE_DATA_DIR}
+      SANDBOX_TOKEN: ${SANDBOX_TOKEN}
+      SANDBOX_RUNTIME: ${SANDBOX_RUNTIME:-runsc}
+      SANDBOX_IMAGES: ${SANDBOX_IMAGES:-agent-forge/sandbox:local}
+      SANDBOX_UID: ${HOST_UID:-1000}
+      SANDBOX_GID: ${HOST_GID:-1000}
+      MAX_SANDBOXES: ${MAX_SANDBOXES:-4}
+    volumes:
+      - ${FORGE_DATA_DIR}:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks: [broker]
+    restart: unless-stopped
+  web:
+    build: ./frontend
+    ports: ["${BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-8080}:8080"]
+    networks: [web]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+  temporal-ui:
+    image: temporalio/ui:2.34.0
+    profiles: [ops]
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:8081
+    ports: ["127.0.0.1:8081:8080"]
+    networks: [private]
+    depends_on: [temporal]
+    restart: unless-stopped
+networks:
+  private: {internal: true}
+  broker: {internal: true}
+  web: {}
+  egress: {}
+volumes:
+  postgres-data: {}

@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {CityTraffic,PHASES} from '../../frontend/dist/office/cityTraffic.js';
+import {makeCity,drawCity} from '../../frontend/dist/graphics/cityWorld.js';
+const results=[];function test(name,fn){try{fn();results.push({name,status:'passed'});console.log('PASS',name);}catch(e){results.push({name,status:'failed',error:e.stack});console.log('FAIL',name,e.message);}}
+const step=(sim,seconds)=>{for(let t=0;t<seconds;t+=.05)sim.advance(.05);};
+test('同样时钟输入得到相同交通状态，不使用随机数',()=>{const old=Math.random;Math.random=()=>{throw Error('random');};try{const a=new CityTraffic(),b=new CityTraffic();step(a,180);step(b,180);assert.deepEqual(a.snapshot(),b.snapshot());}finally{Math.random=old;}});
+test('八个信号阶段互斥，行人绿灯时所有车辆红灯',()=>{const s=new CityTraffic();const seen=new Set();for(let i=0;i<6000;i++){s.advance(.05);seen.add(s.phase);if(s.signals.ped==='green'){assert.equal(s.signals.ew,'red');assert.equal(s.signals.ns,'red');}assert.ok(!(s.signals.ew==='green'&&s.signals.ns==='green'));}assert.equal(seen.size,PHASES.length);});
+test('600秒内车辆只在对应绿灯进入停止线，无闯黄灯和红灯',()=>{const s=new CityTraffic();let count=0;for(let i=0;i<12000;i++){s.advance(.05);for(const e of s.events.filter(e=>e.time===s.time&&e.kind==='vehicle_entered')){const lane=Number(e.id.split('-')[2]);assert.equal(e.phase,lane<2?'ew_green':'ns_green');count++;}}assert.ok(count>40);});
+test('同车道保持至少4.25场景单位中心间距，不追尾',()=>{const s=new CityTraffic();for(let i=0;i<12000;i++){s.advance(.05);for(const c of s.cars)for(const other of s.cars){if(c.id===other.id||c.lane!==other.lane)continue;const d=(other.s-c.s+s.lanes[c.lane].length)%s.lanes[c.lane].length;assert.ok(d>=4.249,`${c.id} gap ${d}`);}}});
+test('行人按绿灯过斑马线，所有过街者结束后再放行车辆',()=>{const s=new CityTraffic();let crossed=0;for(let i=0;i<5000;i++){s.advance(.05);if(s.pedestrians.some(p=>p.crossing)){assert.equal(s.signals.ew,'red');assert.equal(s.signals.ns,'red');for(const c of s.cars)assert.ok(Math.abs(c.s-s.lanes[c.lane].cross)>=7.8);}for(const e of s.events.filter(e=>e.time===s.time&&e.kind==='pedestrian_entered')){assert.equal(e.phase,'ped_green');crossed++;}}assert.ok(crossed>12);});
+test('动态路口清空检查可延长红灯而不强行放行',()=>{const s=new CityTraffic();s.phaseIndex=5;s.phaseTime=2;s.cars[0].s=s.lanes[0].cross;s.cars[0].speed=0;s.advance(.2);assert.equal(s.phase,'all_red_ns');assert.ok(!s.pedestrians.some(p=>p.crossing));});
+test('低密度使用4车2名过街行人',()=>{const s=new CityTraffic(0,'low');assert.equal(s.cars.length,4);assert.equal(s.pedestrians.length,2);});
+test('慢帧或恢复页面不快进跳过红灯',()=>{const s=new CityTraffic();s.advance(100);assert.ok(s.time<=.250001);assert.equal(s.phase,'ew_green');});
+test('非法负时间与NaN不会移动场景',()=>{const s=new CityTraffic(),before=s.snapshot();s.advance(-1);s.advance(NaN);assert.deepEqual(s.snapshot(),before);});
+test('办公区扩展时路口与行人整体外移',()=>{const s=new CityTraffic(8.4);assert.equal(s.cz,22.4);step(s,100);for(const c of s.cars)assert.ok(Number.isFinite(c.x)&&Number.isFinite(c.z));});
+test('城市地标和商场均具有可渲染几何',()=>{const c=makeCity();assert.equal(c.landmarks.length,6);assert.ok(c.landmarks.some(l=>l.id==='mall'));assert.ok(c.parts.length>400);assert.ok(c.parts.every(p=>p.s.every(v=>v>0)&&p.p.every(Number.isFinite)));assert.ok(c.lamps.length>10);});
+test('夜间路灯与信号采用显式发光材质',()=>{const c=makeCity(),s=new CityTraffic();const day=drawCity(s,true,c.lamps),night=drawCity(s,false,c.lamps);assert.ok(night.length>day.length);assert.ok(night.filter(p=>p.emissive===1).length>=c.lamps.length);});
+test('城市动作明确标记ambient，无业务或模型事件',()=>{const s=new CityTraffic();step(s,80);assert.equal(s.source,'ambient');assert.ok(s.events.every(e=>!e.kind.startsWith('agent.')&&!e.kind.startsWith('task.')));});
+fs.mkdirSync(new URL('../../docs/evidence-v06/',import.meta.url),{recursive:true});const out={passed:results.filter(r=>r.status==='passed').length,failed:results.filter(r=>r.status==='failed').length,results};fs.writeFileSync(new URL('../../docs/evidence-v06/city-tests.json',import.meta.url),JSON.stringify(out,null,2));if(out.failed)process.exit(1);

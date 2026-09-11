@@ -1,0 +1,218 @@
+{
+  "providers": "scripted HTTP, no real LLM",
+  "runtime": "real local workflow + SQLite + actual Git/fixed unittest",
+  "passed": 16,
+  "failed": 0,
+  "run_ids": {
+    "sequential": "03c4d63168394bc4befe63f2f068c77b",
+    "HTTP并行3轮": "449d032032654c2683b7590a19c036a2",
+    "HTTP一致就绪提前结束": "d4a5ffd7166848f2a1d100e8446f5f78",
+    "HTTP讨论预算限制": "6a048b062761449eaba419642f968f8c",
+    "HTTP暂停与取消": "4202052fcc494c0fbb411e730b98b347",
+    "HTTP讨论后完整开发": "59d286c2720646ac8900ef5881921acf"
+  },
+  "results": [
+    {
+      "name": "实际API启动v0.5并使用本地持久化编排",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "version": "0.5.0"
+      }
+    },
+    {
+      "name": "成员领导关系与接待方式在数据库保存",
+      "status": "passed",
+      "detail": [
+        {
+          "name": "Atlas",
+          "reports_to": null,
+          "peer_reception": "sit"
+        },
+        {
+          "name": "Nova",
+          "reports_to": "be64e8d4c68644aa858814de7892a61f",
+          "peer_reception": "sit"
+        },
+        {
+          "name": "Echo",
+          "reports_to": "be64e8d4c68644aa858814de7892a61f",
+          "peer_reception": "sit"
+        },
+        {
+          "name": "Sage",
+          "reports_to": "be64e8d4c68644aa858814de7892a61f",
+          "peer_reception": "sit"
+        }
+      ]
+    },
+    {
+      "name": "模板更新后已启动运行仍按原快照执行3轮6次真实HTTP请求",
+      "status": "passed",
+      "detail": [
+        {
+          "round": 1,
+          "order": 0,
+          "prior": 0
+        },
+        {
+          "round": 1,
+          "order": 1,
+          "prior": 1
+        },
+        {
+          "round": 2,
+          "order": 0,
+          "prior": 2
+        },
+        {
+          "round": 2,
+          "order": 1,
+          "prior": 3
+        },
+        {
+          "round": 3,
+          "order": 0,
+          "prior": 4
+        },
+        {
+          "round": 3,
+          "order": 1,
+          "prior": 5
+        }
+      ]
+    },
+    {
+      "name": "过期模板版本不能启动新运行",
+      "status": "passed",
+      "detail": {
+        "status": 409
+      }
+    },
+    {
+      "name": "同一讨论使用两个不同协议连接的模型",
+      "status": "passed",
+      "detail": [
+        "fixture-anthropic",
+        "fixture-openai"
+      ]
+    },
+    {
+      "name": "只读讨论生成实际纪要与JSON，不生成伪造代码补丁",
+      "status": "passed",
+      "detail": {
+        "verification": "unverified",
+        "reason": "只读讨论，未执行代码构建或测试"
+      }
+    },
+    {
+      "name": "讨论成果必须人工接受后才完成",
+      "status": "passed",
+      "detail": "completed"
+    },
+    {
+      "name": "并行轮间屏障：同轮只看到上一轮及更早的全部结果",
+      "status": "passed",
+      "detail": [
+        {
+          "round": 1,
+          "order": 0,
+          "prior": 0
+        },
+        {
+          "round": 1,
+          "order": 1,
+          "prior": 0
+        },
+        {
+          "round": 2,
+          "order": 0,
+          "prior": 2
+        },
+        {
+          "round": 2,
+          "order": 1,
+          "prior": 2
+        },
+        {
+          "round": 3,
+          "order": 0,
+          "prior": 4
+        },
+        {
+          "round": 3,
+          "order": 1,
+          "prior": 4
+        }
+      ]
+    },
+    {
+      "name": "至少2轮且全体ready后提前结束，不跑满5轮",
+      "status": "passed",
+      "detail": 2
+    },
+    {
+      "name": "多轮讨论也遵守总调用次数硬上限",
+      "status": "passed",
+      "detail": {
+        "calls": 1,
+        "error": "已达到本次运行的模型调用次数上限"
+      }
+    },
+    {
+      "name": "讨论暂停后无新增模型请求",
+      "status": "passed",
+      "detail": {
+        "calls_while_paused": 1
+      }
+    },
+    {
+      "name": "讨论可恢复并在执行边界取消",
+      "status": "passed",
+      "detail": "cancelled"
+    },
+    {
+      "name": "讨论结果传入负责人规划，开发仍须人工审批",
+      "status": "passed",
+      "detail": {
+        "discussion_turns": 4,
+        "planned_tasks": 3
+      }
+    },
+    {
+      "name": "开发前讨论与原Git修改/测试/独立审查链路集成",
+      "status": "passed",
+      "detail": {
+        "calls": 20,
+        "checks": {
+          "verification": "passed",
+          "commands": [
+            {
+              "command": "python -m unittest discover -s tests",
+              "exit_code": 0,
+              "stdout": "",
+              "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+              "timed_out": false,
+              "fixture_only": true,
+              "sandbox_verified": false
+            }
+          ],
+          "tracked_files_modified": false
+        }
+      }
+    },
+    {
+      "name": "原始导入目录不被修改且真实成果可读取",
+      "status": "passed",
+      "detail": {
+        "source_unchanged": true,
+        "patch_bytes": 734
+      }
+    },
+    {
+      "name": "完整开发成果也经人工验收后完成",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

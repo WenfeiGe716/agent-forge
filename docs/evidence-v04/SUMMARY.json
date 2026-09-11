@@ -1,0 +1,32 @@
+{
+  "version": "0.4.0",
+  "frontend": {
+    "compiler": "5.8.3",
+    "mode": "offline-transpile-and-browser-validation",
+    "semantic_typecheck": false,
+    "source_files": 16,
+    "syntax_errors": 0,
+    "react": "18.2.0",
+    "output": "frontend/dist"
+  },
+  "behavior": {
+    "passed": 35,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 23,
+    "failed": 0,
+    "page_errors": []
+  },
+  "backend_output": "........................................................................ [ 84%]\n.............                                                            [100%]\n85 passed in 9.46s",
+  "recording": {
+    "frames": 123,
+    "source_duration_s": 23.06795620918274,
+    "software_gpu_fps": "4"
+  },
+  "preview_sha256": "ccd7b9de00fd1f37047f7a149f8a43d488ed3ac41cb740684b86188df1b386c3",
+  "platform_html_sha256": "82b4d6712da699bd618e597b5952f39f88f47071d065fb88959d167e23477b65",
+  "no_real_llm_validation": true,
+  "browser_transport": "page.set_content with constrained local API bridge; native navigation not certified",
+  "python_install_note": "v0.2 offline wheels retained; current installed Python used for v0.4 tests, not a fresh virtualenv installation claim"
+}

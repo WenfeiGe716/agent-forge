@@ -1,0 +1,3782 @@
+[
+  {
+    "frame": 0,
+    "seconds": 0.0,
+    "mean_change_0_255": 0.0,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.0,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0001.jpg"
+  },
+  {
+    "frame": 10,
+    "seconds": 0.171856,
+    "mean_change_0_255": 25.16122,
+    "changed_pixel_fraction_gt12": 0.46666,
+    "center_change": 42.57136,
+    "left_panel_change": 9.75592,
+    "right_panel_change": 15.34169,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0002.jpg"
+  },
+  {
+    "frame": 30,
+    "seconds": 0.506856,
+    "mean_change_0_255": 3.97679,
+    "changed_pixel_fraction_gt12": 0.07375,
+    "center_change": 5.69498,
+    "left_panel_change": 1.2886,
+    "right_panel_change": 4.65793,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0003.jpg"
+  },
+  {
+    "frame": 89,
+    "seconds": 1.493722,
+    "mean_change_0_255": 3.99843,
+    "changed_pixel_fraction_gt12": 0.05953,
+    "center_change": 9.21575,
+    "left_panel_change": 0.31289,
+    "right_panel_change": 0.03476,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0004.jpg"
+  },
+  {
+    "frame": 100,
+    "seconds": 1.671256,
+    "mean_change_0_255": 32.43804,
+    "changed_pixel_fraction_gt12": 0.62291,
+    "center_change": 47.00671,
+    "left_panel_change": 18.14851,
+    "right_panel_change": 37.69751,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0005.jpg"
+  },
+  {
+    "frame": 148,
+    "seconds": 2.474144,
+    "mean_change_0_255": 0.48817,
+    "changed_pixel_fraction_gt12": 0.01366,
+    "center_change": 0.26089,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.01935,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0006.jpg"
+  },
+  {
+    "frame": 157,
+    "seconds": 2.619244,
+    "mean_change_0_255": 3.75963,
+    "changed_pixel_fraction_gt12": 0.09064,
+    "center_change": 0.51962,
+    "left_panel_change": 0.36414,
+    "right_panel_change": 0.03843,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0007.jpg"
+  },
+  {
+    "frame": 196,
+    "seconds": 3.417889,
+    "mean_change_0_255": 22.36502,
+    "changed_pixel_fraction_gt12": 0.3817,
+    "center_change": 33.70171,
+    "left_panel_change": 9.15345,
+    "right_panel_change": 8.23751,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0008.jpg"
+  },
+  {
+    "frame": 201,
+    "seconds": 3.504211,
+    "mean_change_0_255": 11.81784,
+    "changed_pixel_fraction_gt12": 0.21189,
+    "center_change": 18.14358,
+    "left_panel_change": 5.47077,
+    "right_panel_change": 3.1037,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0009.jpg"
+  },
+  {
+    "frame": 236,
+    "seconds": 4.084767,
+    "mean_change_0_255": 2.664,
+    "changed_pixel_fraction_gt12": 0.00625,
+    "center_change": 2.95669,
+    "left_panel_change": 2.64083,
+    "right_panel_change": 2.26815,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0010.jpg"
+  },
+  {
+    "frame": 275,
+    "seconds": 4.733767,
+    "mean_change_0_255": 23.25829,
+    "changed_pixel_fraction_gt12": 0.28291,
+    "center_change": 34.40424,
+    "left_panel_change": 0.0083,
+    "right_panel_change": 53.80507,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0011.jpg"
+  },
+  {
+    "frame": 295,
+    "seconds": 5.068167,
+    "mean_change_0_255": 2.80633,
+    "changed_pixel_fraction_gt12": 0.02131,
+    "center_change": 3.25446,
+    "left_panel_change": 2.75881,
+    "right_panel_change": 2.34542,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0012.jpg"
+  },
+  {
+    "frame": 326,
+    "seconds": 5.584722,
+    "mean_change_0_255": 25.40447,
+    "changed_pixel_fraction_gt12": 0.47152,
+    "center_change": 42.65689,
+    "left_panel_change": 10.11336,
+    "right_panel_change": 15.55573,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0013.jpg"
+  },
+  {
+    "frame": 354,
+    "seconds": 6.053467,
+    "mean_change_0_255": 4.25859,
+    "changed_pixel_fraction_gt12": 0.03475,
+    "center_change": 5.43262,
+    "left_panel_change": 3.43199,
+    "right_panel_change": 3.56572,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0014.jpg"
+  },
+  {
+    "frame": 408,
+    "seconds": 6.951556,
+    "mean_change_0_255": 0.81636,
+    "changed_pixel_fraction_gt12": 0.01802,
+    "center_change": 0.0202,
+    "left_panel_change": 4.55744,
+    "right_panel_change": 0.03535,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0015.jpg"
+  },
+  {
+    "frame": 413,
+    "seconds": 7.034833,
+    "mean_change_0_255": 1.31734,
+    "changed_pixel_fraction_gt12": 0.00155,
+    "center_change": 1.33431,
+    "left_panel_change": 1.78613,
+    "right_panel_change": 1.05579,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0016.jpg"
+  },
+  {
+    "frame": 449,
+    "seconds": 7.635189,
+    "mean_change_0_255": 0.47122,
+    "changed_pixel_fraction_gt12": 0.00711,
+    "center_change": 0.02752,
+    "left_panel_change": 2.50304,
+    "right_panel_change": 0.06095,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0017.jpg"
+  },
+  {
+    "frame": 480,
+    "seconds": 8.151956,
+    "mean_change_0_255": 1.09109,
+    "changed_pixel_fraction_gt12": 0.02159,
+    "center_change": 0.22232,
+    "left_panel_change": 5.00027,
+    "right_panel_change": 0.27855,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0018.jpg"
+  },
+  {
+    "frame": 516,
+    "seconds": 8.751544,
+    "mean_change_0_255": 0.7827,
+    "changed_pixel_fraction_gt12": 0.01273,
+    "center_change": 0.04079,
+    "left_panel_change": 4.31542,
+    "right_panel_change": 0.03938,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0019.jpg"
+  },
+  {
+    "frame": 531,
+    "seconds": 9.004389,
+    "mean_change_0_255": 0.78449,
+    "changed_pixel_fraction_gt12": 0.00048,
+    "center_change": 0.8362,
+    "left_panel_change": 0.83914,
+    "right_panel_change": 0.70036,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0020.jpg"
+  },
+  {
+    "frame": 590,
+    "seconds": 9.983556,
+    "mean_change_0_255": 0.91441,
+    "changed_pixel_fraction_gt12": 0.00233,
+    "center_change": 0.82967,
+    "left_panel_change": 1.48824,
+    "right_panel_change": 0.69037,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0021.jpg"
+  },
+  {
+    "frame": 605,
+    "seconds": 10.234611,
+    "mean_change_0_255": 0.91346,
+    "changed_pixel_fraction_gt12": 0.0177,
+    "center_change": 0.62466,
+    "left_panel_change": 3.59333,
+    "right_panel_change": 0.01713,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0022.jpg"
+  },
+  {
+    "frame": 648,
+    "seconds": 10.953567,
+    "mean_change_0_255": 2.66854,
+    "changed_pixel_fraction_gt12": 0.06678,
+    "center_change": 0.07572,
+    "left_panel_change": 11.12042,
+    "right_panel_change": 0.24599,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0023.jpg"
+  },
+  {
+    "frame": 667,
+    "seconds": 11.267822,
+    "mean_change_0_255": 0.41528,
+    "changed_pixel_fraction_gt12": 0.00247,
+    "center_change": 0.64468,
+    "left_panel_change": 0.31613,
+    "right_panel_change": 0.22447,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0024.jpg"
+  },
+  {
+    "frame": 701,
+    "seconds": 11.834622,
+    "mean_change_0_255": 21.23328,
+    "changed_pixel_fraction_gt12": 0.39798,
+    "center_change": 33.43036,
+    "left_panel_change": 7.96012,
+    "right_panel_change": 22.02465,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0025.jpg"
+  },
+  {
+    "frame": 717,
+    "seconds": 12.1014,
+    "mean_change_0_255": 9.26176,
+    "changed_pixel_fraction_gt12": 0.17377,
+    "center_change": 14.03746,
+    "left_panel_change": 2.56952,
+    "right_panel_change": 11.12249,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0026.jpg"
+  },
+  {
+    "frame": 768,
+    "seconds": 12.967822,
+    "mean_change_0_255": 18.00281,
+    "changed_pixel_fraction_gt12": 0.36648,
+    "center_change": 26.60426,
+    "left_panel_change": 6.33363,
+    "right_panel_change": 11.72439,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0027.jpg"
+  },
+  {
+    "frame": 771,
+    "seconds": 13.017022,
+    "mean_change_0_255": 17.66239,
+    "changed_pixel_fraction_gt12": 0.35339,
+    "center_change": 24.70354,
+    "left_panel_change": 7.85771,
+    "right_panel_change": 10.904,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0028.jpg"
+  },
+  {
+    "frame": 814,
+    "seconds": 13.7346,
+    "mean_change_0_255": 28.88489,
+    "changed_pixel_fraction_gt12": 0.35361,
+    "center_change": 24.45354,
+    "left_panel_change": 3.76967,
+    "right_panel_change": 96.76557,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0029.jpg"
+  },
+  {
+    "frame": 855,
+    "seconds": 14.417822,
+    "mean_change_0_255": 0.68881,
+    "changed_pixel_fraction_gt12": 0.00314,
+    "center_change": 1.01029,
+    "left_panel_change": 0.52565,
+    "right_panel_change": 0.39481,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0030.jpg"
+  },
+  {
+    "frame": 885,
+    "seconds": 14.918278,
+    "mean_change_0_255": 1.96957,
+    "changed_pixel_fraction_gt12": 0.02534,
+    "center_change": 1.32812,
+    "left_panel_change": 0.95158,
+    "right_panel_change": 5.88607,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0031.jpg"
+  },
+  {
+    "frame": 890,
+    "seconds": 15.003633,
+    "mean_change_0_255": 1.02655,
+    "changed_pixel_fraction_gt12": 0.02227,
+    "center_change": 0.333,
+    "left_panel_change": 0.01229,
+    "right_panel_change": 5.0224,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0032.jpg"
+  },
+  {
+    "frame": 944,
+    "seconds": 15.904344,
+    "mean_change_0_255": 0.96258,
+    "changed_pixel_fraction_gt12": 0.00206,
+    "center_change": 0.85963,
+    "left_panel_change": 0.80551,
+    "right_panel_change": 1.52107,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0033.jpg"
+  },
+  {
+    "frame": 970,
+    "seconds": 16.334556,
+    "mean_change_0_255": 1.4258,
+    "changed_pixel_fraction_gt12": 0.03555,
+    "center_change": 0.3912,
+    "left_panel_change": 0.02396,
+    "right_panel_change": 7.1547,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0034.jpg"
+  },
+  {
+    "frame": 1003,
+    "seconds": 16.8842,
+    "mean_change_0_255": 0.90882,
+    "changed_pixel_fraction_gt12": 0.00195,
+    "center_change": 0.84231,
+    "left_panel_change": 0.77622,
+    "right_panel_change": 1.34939,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0035.jpg"
+  },
+  {
+    "frame": 1021,
+    "seconds": 17.185411,
+    "mean_change_0_255": 0.75867,
+    "changed_pixel_fraction_gt12": 0.00272,
+    "center_change": 0.56477,
+    "left_panel_change": 0.52336,
+    "right_panel_change": 1.60883,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0036.jpg"
+  },
+  {
+    "frame": 1062,
+    "seconds": 17.867822,
+    "mean_change_0_255": 1.04577,
+    "changed_pixel_fraction_gt12": 0.00248,
+    "center_change": 1.06148,
+    "left_panel_change": 0.91777,
+    "right_panel_change": 1.32172,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0037.jpg"
+  },
+  {
+    "frame": 1085,
+    "seconds": 18.251278,
+    "mean_change_0_255": 0.37165,
+    "changed_pixel_fraction_gt12": 0.00491,
+    "center_change": 0.53307,
+    "left_panel_change": 0.01613,
+    "right_panel_change": 0.88044,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0038.jpg"
+  },
+  {
+    "frame": 1121,
+    "seconds": 18.851967,
+    "mean_change_0_255": 2.35351,
+    "changed_pixel_fraction_gt12": 0.03636,
+    "center_change": 1.36642,
+    "left_panel_change": 0.885,
+    "right_panel_change": 8.16785,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0039.jpg"
+  },
+  {
+    "frame": 1130,
+    "seconds": 19.004822,
+    "mean_change_0_255": 1.46355,
+    "changed_pixel_fraction_gt12": 0.03386,
+    "center_change": 0.38907,
+    "left_panel_change": 0.0,
+    "right_panel_change": 7.44839,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0040.jpg"
+  },
+  {
+    "frame": 1163,
+    "seconds": 19.554111,
+    "mean_change_0_255": 1.38268,
+    "changed_pixel_fraction_gt12": 0.03264,
+    "center_change": 0.50538,
+    "left_panel_change": 0.0072,
+    "right_panel_change": 6.69541,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0041.jpg"
+  },
+  {
+    "frame": 1207,
+    "seconds": 20.284756,
+    "mean_change_0_255": 1.66965,
+    "changed_pixel_fraction_gt12": 0.0367,
+    "center_change": 0.46047,
+    "left_panel_change": 0.0,
+    "right_panel_change": 8.45621,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0042.jpg"
+  },
+  {
+    "frame": 1235,
+    "seconds": 20.753689,
+    "mean_change_0_255": 2.01772,
+    "changed_pixel_fraction_gt12": 0.04064,
+    "center_change": 2.62689,
+    "left_panel_change": 0.00411,
+    "right_panel_change": 5.54871,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0043.jpg"
+  },
+  {
+    "frame": 1270,
+    "seconds": 21.334433,
+    "mean_change_0_255": 15.43745,
+    "changed_pixel_fraction_gt12": 0.28369,
+    "center_change": 23.65155,
+    "left_panel_change": 9.0897,
+    "right_panel_change": 3.51579,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0044.jpg"
+  },
+  {
+    "frame": 1298,
+    "seconds": 21.801744,
+    "mean_change_0_255": 2.35365,
+    "changed_pixel_fraction_gt12": 0.00428,
+    "center_change": 2.87687,
+    "left_panel_change": 2.00818,
+    "right_panel_change": 1.75941,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0045.jpg"
+  },
+  {
+    "frame": 1321,
+    "seconds": 22.185033,
+    "mean_change_0_255": 0.9167,
+    "changed_pixel_fraction_gt12": 0.00506,
+    "center_change": 1.1642,
+    "left_panel_change": 0.63997,
+    "right_panel_change": 0.78776,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0046.jpg"
+  },
+  {
+    "frame": 1368,
+    "seconds": 22.967756,
+    "mean_change_0_255": 15.25401,
+    "changed_pixel_fraction_gt12": 0.29909,
+    "center_change": 22.90376,
+    "left_panel_change": 8.44768,
+    "right_panel_change": 4.17381,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0047.jpg"
+  },
+  {
+    "frame": 1372,
+    "seconds": 23.034578,
+    "mean_change_0_255": 13.96144,
+    "changed_pixel_fraction_gt12": 0.2698,
+    "center_change": 21.57145,
+    "left_panel_change": 7.41092,
+    "right_panel_change": 5.39129,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0048.jpg"
+  },
+  {
+    "frame": 1416,
+    "seconds": 23.767656,
+    "mean_change_0_255": 2.00682,
+    "changed_pixel_fraction_gt12": 0.00527,
+    "center_change": 2.89764,
+    "left_panel_change": 1.49003,
+    "right_panel_change": 1.30296,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0049.jpg"
+  },
+  {
+    "frame": 1446,
+    "seconds": 24.2678,
+    "mean_change_0_255": 23.37491,
+    "changed_pixel_fraction_gt12": 0.47397,
+    "center_change": 34.50079,
+    "left_panel_change": 12.15491,
+    "right_panel_change": 7.57416,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0050.jpg"
+  },
+  {
+    "frame": 1475,
+    "seconds": 24.753644,
+    "mean_change_0_255": 4.1757,
+    "changed_pixel_fraction_gt12": 0.04466,
+    "center_change": 5.56502,
+    "left_panel_change": 3.26646,
+    "right_panel_change": 2.83769,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0051.jpg"
+  },
+  {
+    "frame": 1503,
+    "seconds": 25.2176,
+    "mean_change_0_255": 12.72133,
+    "changed_pixel_fraction_gt12": 0.23545,
+    "center_change": 20.58906,
+    "left_panel_change": 5.58574,
+    "right_panel_change": 6.29609,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0052.jpg"
+  },
+  {
+    "frame": 1539,
+    "seconds": 25.8177,
+    "mean_change_0_255": 19.84877,
+    "changed_pixel_fraction_gt12": 0.30197,
+    "center_change": 22.6981,
+    "left_panel_change": 1.89813,
+    "right_panel_change": 54.02539,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0053.jpg"
+  },
+  {
+    "frame": 1567,
+    "seconds": 26.284289,
+    "mean_change_0_255": 12.90803,
+    "changed_pixel_fraction_gt12": 0.23591,
+    "center_change": 17.45741,
+    "left_panel_change": 5.83491,
+    "right_panel_change": 12.00847,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0054.jpg"
+  },
+  {
+    "frame": 1609,
+    "seconds": 26.984333,
+    "mean_change_0_255": 18.08895,
+    "changed_pixel_fraction_gt12": 0.311,
+    "center_change": 27.20447,
+    "left_panel_change": 5.20807,
+    "right_panel_change": 17.97668,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0055.jpg"
+  },
+  {
+    "frame": 1610,
+    "seconds": 27.003311,
+    "mean_change_0_255": 12.98394,
+    "changed_pixel_fraction_gt12": 0.21433,
+    "center_change": 19.62523,
+    "left_panel_change": 2.28824,
+    "right_panel_change": 16.60246,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0056.jpg"
+  },
+  {
+    "frame": 1665,
+    "seconds": 27.917611,
+    "mean_change_0_255": 13.66622,
+    "changed_pixel_fraction_gt12": 0.23125,
+    "center_change": 20.69878,
+    "left_panel_change": 2.98086,
+    "right_panel_change": 17.77031,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0057.jpg"
+  },
+  {
+    "frame": 1689,
+    "seconds": 28.317667,
+    "mean_change_0_255": 15.09623,
+    "changed_pixel_fraction_gt12": 0.2627,
+    "center_change": 23.91207,
+    "left_panel_change": 2.58277,
+    "right_panel_change": 18.51852,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0058.jpg"
+  },
+  {
+    "frame": 1717,
+    "seconds": 28.784478,
+    "mean_change_0_255": 9.40029,
+    "changed_pixel_fraction_gt12": 0.17581,
+    "center_change": 14.54659,
+    "left_panel_change": 2.97601,
+    "right_panel_change": 11.5467,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0059.jpg"
+  },
+  {
+    "frame": 1730,
+    "seconds": 29.004744,
+    "mean_change_0_255": 2.06291,
+    "changed_pixel_fraction_gt12": 0.0398,
+    "center_change": 3.00309,
+    "left_panel_change": 0.56071,
+    "right_panel_change": 2.98521,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0060.jpg"
+  },
+  {
+    "frame": 1784,
+    "seconds": 29.899978,
+    "mean_change_0_255": 11.45759,
+    "changed_pixel_fraction_gt12": 0.17406,
+    "center_change": 4.35652,
+    "left_panel_change": 0.27827,
+    "right_panel_change": 54.06874,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0061.jpg"
+  },
+  {
+    "frame": 1805,
+    "seconds": 30.253122,
+    "mean_change_0_255": 0.4418,
+    "changed_pixel_fraction_gt12": 0.00228,
+    "center_change": 0.40479,
+    "left_panel_change": 0.24536,
+    "right_panel_change": 0.84041,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0062.jpg"
+  },
+  {
+    "frame": 1842,
+    "seconds": 30.867511,
+    "mean_change_0_255": 16.8374,
+    "changed_pixel_fraction_gt12": 0.29398,
+    "center_change": 20.43306,
+    "left_panel_change": 8.44533,
+    "right_panel_change": 5.34803,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0063.jpg"
+  },
+  {
+    "frame": 1865,
+    "seconds": 31.253356,
+    "mean_change_0_255": 1.12572,
+    "changed_pixel_fraction_gt12": 0.01623,
+    "center_change": 2.34353,
+    "left_panel_change": 0.03717,
+    "right_panel_change": 0.94107,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0064.jpg"
+  },
+  {
+    "frame": 1888,
+    "seconds": 31.633922,
+    "mean_change_0_255": 1.11206,
+    "changed_pixel_fraction_gt12": 0.00186,
+    "center_change": 1.37833,
+    "left_panel_change": 1.06015,
+    "right_panel_change": 0.76089,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0065.jpg"
+  },
+  {
+    "frame": 1934,
+    "seconds": 32.400522,
+    "mean_change_0_255": 25.12167,
+    "changed_pixel_fraction_gt12": 0.50878,
+    "center_change": 47.02845,
+    "left_panel_change": 15.55185,
+    "right_panel_change": 13.48151,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0066.jpg"
+  },
+  {
+    "frame": 1947,
+    "seconds": 32.615689,
+    "mean_change_0_255": 1.77337,
+    "changed_pixel_fraction_gt12": 0.00441,
+    "center_change": 1.93318,
+    "left_panel_change": 1.96327,
+    "right_panel_change": 1.79327,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0067.jpg"
+  },
+  {
+    "frame": 1983,
+    "seconds": 33.217,
+    "mean_change_0_255": 12.54829,
+    "changed_pixel_fraction_gt12": 0.26881,
+    "center_change": 21.61293,
+    "left_panel_change": 2.01057,
+    "right_panel_change": 9.54104,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0068.jpg"
+  },
+  {
+    "frame": 2023,
+    "seconds": 33.883978,
+    "mean_change_0_255": 8.93013,
+    "changed_pixel_fraction_gt12": 0.16811,
+    "center_change": 17.64083,
+    "left_panel_change": 5.48301,
+    "right_panel_change": 3.00329,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0069.jpg"
+  },
+  {
+    "frame": 2033,
+    "seconds": 34.053767,
+    "mean_change_0_255": 4.86578,
+    "changed_pixel_fraction_gt12": 0.10469,
+    "center_change": 10.78149,
+    "left_panel_change": 1.89863,
+    "right_panel_change": 0.54874,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0070.jpg"
+  },
+  {
+    "frame": 2065,
+    "seconds": 34.584178,
+    "mean_change_0_255": 1.50294,
+    "changed_pixel_fraction_gt12": 0.00167,
+    "center_change": 1.88244,
+    "left_panel_change": 1.5297,
+    "right_panel_change": 1.1357,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0071.jpg"
+  },
+  {
+    "frame": 2100,
+    "seconds": 35.166933,
+    "mean_change_0_255": 0.59508,
+    "changed_pixel_fraction_gt12": 0.00302,
+    "center_change": 0.41659,
+    "left_panel_change": 0.34604,
+    "right_panel_change": 1.67876,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0072.jpg"
+  },
+  {
+    "frame": 2132,
+    "seconds": 35.702811,
+    "mean_change_0_255": 5.83701,
+    "changed_pixel_fraction_gt12": 0.13039,
+    "center_change": 2.13519,
+    "left_panel_change": 0.0,
+    "right_panel_change": 28.27828,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0073.jpg"
+  },
+  {
+    "frame": 2178,
+    "seconds": 36.467156,
+    "mean_change_0_255": 4.4191,
+    "changed_pixel_fraction_gt12": 0.0975,
+    "center_change": 6.55285,
+    "left_panel_change": 1.3517,
+    "right_panel_change": 6.75298,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0074.jpg"
+  },
+  {
+    "frame": 2209,
+    "seconds": 36.983911,
+    "mean_change_0_255": 11.57119,
+    "changed_pixel_fraction_gt12": 0.21509,
+    "center_change": 19.41744,
+    "left_panel_change": 2.52711,
+    "right_panel_change": 18.06083,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0075.jpg"
+  },
+  {
+    "frame": 2212,
+    "seconds": 37.034089,
+    "mean_change_0_255": 10.96517,
+    "changed_pixel_fraction_gt12": 0.21116,
+    "center_change": 17.08745,
+    "left_panel_change": 2.60899,
+    "right_panel_change": 18.77736,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0076.jpg"
+  },
+  {
+    "frame": 2261,
+    "seconds": 37.849367,
+    "mean_change_0_255": 5.32562,
+    "changed_pixel_fraction_gt12": 0.11884,
+    "center_change": 9.1159,
+    "left_panel_change": 0.06777,
+    "right_panel_change": 6.49665,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0077.jpg"
+  },
+  {
+    "frame": 2270,
+    "seconds": 38.000356,
+    "mean_change_0_255": 1.47878,
+    "changed_pixel_fraction_gt12": 0.03189,
+    "center_change": 2.56297,
+    "left_panel_change": 0.15551,
+    "right_panel_change": 2.01692,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0078.jpg"
+  },
+  {
+    "frame": 2301,
+    "seconds": 38.5167,
+    "mean_change_0_255": 1.60603,
+    "changed_pixel_fraction_gt12": 0.00367,
+    "center_change": 1.84206,
+    "left_panel_change": 1.19545,
+    "right_panel_change": 1.39849,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0079.jpg"
+  },
+  {
+    "frame": 2340,
+    "seconds": 39.1667,
+    "mean_change_0_255": 0.26265,
+    "changed_pixel_fraction_gt12": 0.0003,
+    "center_change": 0.32162,
+    "left_panel_change": 0.1836,
+    "right_panel_change": 0.30444,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0080.jpg"
+  },
+  {
+    "frame": 2360,
+    "seconds": 39.500078,
+    "mean_change_0_255": 0.70499,
+    "changed_pixel_fraction_gt12": 0.00052,
+    "center_change": 0.8527,
+    "left_panel_change": 0.64304,
+    "right_panel_change": 0.59633,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0081.jpg"
+  },
+  {
+    "frame": 2419,
+    "seconds": 40.484,
+    "mean_change_0_255": 0.58731,
+    "changed_pixel_fraction_gt12": 0.00038,
+    "center_change": 0.69945,
+    "left_panel_change": 0.54899,
+    "right_panel_change": 0.50824,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0082.jpg"
+  },
+  {
+    "frame": 2421,
+    "seconds": 40.517233,
+    "mean_change_0_255": 0.07837,
+    "changed_pixel_fraction_gt12": 0.00034,
+    "center_change": 0.08516,
+    "left_panel_change": 0.05958,
+    "right_panel_change": 0.06142,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0083.jpg"
+  },
+  {
+    "frame": 2478,
+    "seconds": 41.467144,
+    "mean_change_0_255": 0.53085,
+    "changed_pixel_fraction_gt12": 0.00023,
+    "center_change": 0.63074,
+    "left_panel_change": 0.47321,
+    "right_panel_change": 0.46421,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0084.jpg"
+  },
+  {
+    "frame": 2495,
+    "seconds": 41.753644,
+    "mean_change_0_255": 0.68921,
+    "changed_pixel_fraction_gt12": 0.00639,
+    "center_change": 1.7285,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0085.jpg"
+  },
+  {
+    "frame": 2537,
+    "seconds": 42.449222,
+    "mean_change_0_255": 0.76247,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.87643,
+    "left_panel_change": 0.7669,
+    "right_panel_change": 0.68136,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0086.jpg"
+  },
+  {
+    "frame": 2552,
+    "seconds": 42.700667,
+    "mean_change_0_255": 0.05817,
+    "changed_pixel_fraction_gt12": 0.00091,
+    "center_change": 0.08745,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.00732,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0087.jpg"
+  },
+  {
+    "frame": 2596,
+    "seconds": 43.434078,
+    "mean_change_0_255": 1.4062,
+    "changed_pixel_fraction_gt12": 0.01859,
+    "center_change": 1.35895,
+    "left_panel_change": 0.54988,
+    "right_panel_change": 2.66361,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0088.jpg"
+  },
+  {
+    "frame": 2624,
+    "seconds": 43.901033,
+    "mean_change_0_255": 0.3271,
+    "changed_pixel_fraction_gt12": 0.00309,
+    "center_change": 0.15836,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0421,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0089.jpg"
+  },
+  {
+    "frame": 2655,
+    "seconds": 44.417178,
+    "mean_change_0_255": 0.68439,
+    "changed_pixel_fraction_gt12": 0.00223,
+    "center_change": 0.90119,
+    "left_panel_change": 0.51562,
+    "right_panel_change": 0.59887,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0090.jpg"
+  },
+  {
+    "frame": 2682,
+    "seconds": 44.867022,
+    "mean_change_0_255": 3.56834,
+    "changed_pixel_fraction_gt12": 0.08563,
+    "center_change": 6.26041,
+    "left_panel_change": 0.26449,
+    "right_panel_change": 4.84575,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0091.jpg"
+  },
+  {
+    "frame": 2714,
+    "seconds": 45.403244,
+    "mean_change_0_255": 1.68261,
+    "changed_pixel_fraction_gt12": 0.00487,
+    "center_change": 2.12494,
+    "left_panel_change": 1.45598,
+    "right_panel_change": 1.6995,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0092.jpg"
+  },
+  {
+    "frame": 2732,
+    "seconds": 45.700411,
+    "mean_change_0_255": 2.12066,
+    "changed_pixel_fraction_gt12": 0.04944,
+    "center_change": 3.56127,
+    "left_panel_change": 0.18476,
+    "right_panel_change": 2.40441,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0093.jpg"
+  },
+  {
+    "frame": 2762,
+    "seconds": 46.200911,
+    "mean_change_0_255": 5.40832,
+    "changed_pixel_fraction_gt12": 0.10536,
+    "center_change": 8.65375,
+    "left_panel_change": 1.82479,
+    "right_panel_change": 6.10015,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0094.jpg"
+  },
+  {
+    "frame": 2787,
+    "seconds": 46.617,
+    "mean_change_0_255": 12.61292,
+    "changed_pixel_fraction_gt12": 0.25116,
+    "center_change": 15.82953,
+    "left_panel_change": 7.56039,
+    "right_panel_change": 19.04978,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0095.jpg"
+  },
+  {
+    "frame": 2820,
+    "seconds": 47.169089,
+    "mean_change_0_255": 13.53993,
+    "changed_pixel_fraction_gt12": 0.29089,
+    "center_change": 15.8256,
+    "left_panel_change": 4.88128,
+    "right_panel_change": 14.35517,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0096.jpg"
+  },
+  {
+    "frame": 2843,
+    "seconds": 47.552933,
+    "mean_change_0_255": 10.11936,
+    "changed_pixel_fraction_gt12": 0.20189,
+    "center_change": 15.12897,
+    "left_panel_change": 4.09262,
+    "right_panel_change": 9.91677,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0097.jpg"
+  },
+  {
+    "frame": 2891,
+    "seconds": 48.3537,
+    "mean_change_0_255": 1.23047,
+    "changed_pixel_fraction_gt12": 0.00544,
+    "center_change": 1.44596,
+    "left_panel_change": 1.20446,
+    "right_panel_change": 0.83997,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0098.jpg"
+  },
+  {
+    "frame": 2918,
+    "seconds": 48.803744,
+    "mean_change_0_255": 12.45394,
+    "changed_pixel_fraction_gt12": 0.26952,
+    "center_change": 15.37018,
+    "left_panel_change": 2.91827,
+    "right_panel_change": 12.25713,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0099.jpg"
+  },
+  {
+    "frame": 2958,
+    "seconds": 49.466711,
+    "mean_change_0_255": 5.28725,
+    "changed_pixel_fraction_gt12": 0.10847,
+    "center_change": 6.60465,
+    "left_panel_change": 1.25274,
+    "right_panel_change": 6.27105,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0100.jpg"
+  },
+  {
+    "frame": 2978,
+    "seconds": 49.803833,
+    "mean_change_0_255": 6.05263,
+    "changed_pixel_fraction_gt12": 0.11861,
+    "center_change": 8.27385,
+    "left_panel_change": 1.22155,
+    "right_panel_change": 8.03804,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0101.jpg"
+  },
+  {
+    "frame": 3018,
+    "seconds": 50.466611,
+    "mean_change_0_255": 2.55349,
+    "changed_pixel_fraction_gt12": 0.05503,
+    "center_change": 3.70283,
+    "left_panel_change": 0.36024,
+    "right_panel_change": 4.30744,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0102.jpg"
+  },
+  {
+    "frame": 3026,
+    "seconds": 50.602356,
+    "mean_change_0_255": 4.83653,
+    "changed_pixel_fraction_gt12": 0.09788,
+    "center_change": 7.31511,
+    "left_panel_change": 0.62143,
+    "right_panel_change": 6.96379,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0103.jpg"
+  },
+  {
+    "frame": 3056,
+    "seconds": 51.099967,
+    "mean_change_0_255": 2.05758,
+    "changed_pixel_fraction_gt12": 0.04531,
+    "center_change": 2.87725,
+    "left_panel_change": 0.37107,
+    "right_panel_change": 2.68071,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0104.jpg"
+  },
+  {
+    "frame": 3104,
+    "seconds": 51.903444,
+    "mean_change_0_255": 0.42378,
+    "changed_pixel_fraction_gt12": 0.00041,
+    "center_change": 0.55438,
+    "left_panel_change": 0.37747,
+    "right_panel_change": 0.32273,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0105.jpg"
+  },
+  {
+    "frame": 3127,
+    "seconds": 52.284878,
+    "mean_change_0_255": 1.38631,
+    "changed_pixel_fraction_gt12": 0.00511,
+    "center_change": 1.73926,
+    "left_panel_change": 1.16571,
+    "right_panel_change": 1.41505,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0106.jpg"
+  },
+  {
+    "frame": 3144,
+    "seconds": 52.567122,
+    "mean_change_0_255": 0.11834,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.19585,
+    "left_panel_change": 0.10333,
+    "right_panel_change": 0.0496,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0107.jpg"
+  },
+  {
+    "frame": 3186,
+    "seconds": 53.2669,
+    "mean_change_0_255": 0.89699,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 1.12146,
+    "left_panel_change": 0.83062,
+    "right_panel_change": 0.75259,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0108.jpg"
+  },
+  {
+    "frame": 3204,
+    "seconds": 53.566967,
+    "mean_change_0_255": 0.28052,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.36801,
+    "left_panel_change": 0.25527,
+    "right_panel_change": 0.17861,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0109.jpg"
+  },
+  {
+    "frame": 3245,
+    "seconds": 54.252078,
+    "mean_change_0_255": 0.68958,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.87054,
+    "left_panel_change": 0.62104,
+    "right_panel_change": 0.59055,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0110.jpg"
+  },
+  {
+    "frame": 3265,
+    "seconds": 54.583356,
+    "mean_change_0_255": 5.4932,
+    "changed_pixel_fraction_gt12": 0.11081,
+    "center_change": 9.63585,
+    "left_panel_change": 1.19324,
+    "right_panel_change": 4.79781,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0111.jpg"
+  },
+  {
+    "frame": 3294,
+    "seconds": 55.066567,
+    "mean_change_0_255": 6.92656,
+    "changed_pixel_fraction_gt12": 0.13937,
+    "center_change": 14.23781,
+    "left_panel_change": 0.89232,
+    "right_panel_change": 5.07188,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0112.jpg"
+  },
+  {
+    "frame": 3321,
+    "seconds": 55.516622,
+    "mean_change_0_255": 1.09675,
+    "changed_pixel_fraction_gt12": 0.02433,
+    "center_change": 1.96849,
+    "left_panel_change": 0.16256,
+    "right_panel_change": 0.70655,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0113.jpg"
+  },
+  {
+    "frame": 3363,
+    "seconds": 56.216422,
+    "mean_change_0_255": 1.29243,
+    "changed_pixel_fraction_gt12": 9e-05,
+    "center_change": 1.5182,
+    "left_panel_change": 1.32435,
+    "right_panel_change": 1.09336,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0114.jpg"
+  },
+  {
+    "frame": 3380,
+    "seconds": 56.500222,
+    "mean_change_0_255": 1.79693,
+    "changed_pixel_fraction_gt12": 0.04008,
+    "center_change": 0.95004,
+    "left_panel_change": 0.10366,
+    "right_panel_change": 7.40364,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0115.jpg"
+  },
+  {
+    "frame": 3421,
+    "seconds": 57.185044,
+    "mean_change_0_255": 1.67557,
+    "changed_pixel_fraction_gt12": 0.02467,
+    "center_change": 2.65152,
+    "left_panel_change": 0.91429,
+    "right_panel_change": 1.27763,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0116.jpg"
+  },
+  {
+    "frame": 3469,
+    "seconds": 57.983344,
+    "mean_change_0_255": 1.12894,
+    "changed_pixel_fraction_gt12": 0.0133,
+    "center_change": 2.40631,
+    "left_panel_change": 0.13759,
+    "right_panel_change": 0.38839,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0117.jpg"
+  },
+  {
+    "frame": 3481,
+    "seconds": 58.185133,
+    "mean_change_0_255": 1.47796,
+    "changed_pixel_fraction_gt12": 0.00961,
+    "center_change": 2.03087,
+    "left_panel_change": 1.07783,
+    "right_panel_change": 1.07778,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0118.jpg"
+  },
+  {
+    "frame": 3502,
+    "seconds": 58.533667,
+    "mean_change_0_255": 22.70872,
+    "changed_pixel_fraction_gt12": 0.41406,
+    "center_change": 39.93697,
+    "left_panel_change": 12.84821,
+    "right_panel_change": 16.46403,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0119.jpg"
+  },
+  {
+    "frame": 3540,
+    "seconds": 59.166511,
+    "mean_change_0_255": 0.51229,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.55796,
+    "left_panel_change": 0.52274,
+    "right_panel_change": 0.41079,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0120.jpg"
+  },
+  {
+    "frame": 3570,
+    "seconds": 59.666533,
+    "mean_change_0_255": 0.64416,
+    "changed_pixel_fraction_gt12": 0.00356,
+    "center_change": 0.94756,
+    "left_panel_change": 0.45693,
+    "right_panel_change": 0.64542,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0121.jpg"
+  },
+  {
+    "frame": 3618,
+    "seconds": 60.4661,
+    "mean_change_0_255": 0.62842,
+    "changed_pixel_fraction_gt12": 0.00997,
+    "center_change": 1.45248,
+    "left_panel_change": 0.07307,
+    "right_panel_change": 0.11677,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0122.jpg"
+  },
+  {
+    "frame": 3624,
+    "seconds": 60.565989,
+    "mean_change_0_255": 0.39619,
+    "changed_pixel_fraction_gt12": 0.00267,
+    "center_change": 0.99543,
+    "left_panel_change": 0.0014,
+    "right_panel_change": 0.00495,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0123.jpg"
+  },
+  {
+    "frame": 3658,
+    "seconds": 61.132556,
+    "mean_change_0_255": 0.43067,
+    "changed_pixel_fraction_gt12": 0.0015,
+    "center_change": 0.55506,
+    "left_panel_change": 0.38277,
+    "right_panel_change": 0.29961,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0124.jpg"
+  },
+  {
+    "frame": 3709,
+    "seconds": 61.984989,
+    "mean_change_0_255": 0.66779,
+    "changed_pixel_fraction_gt12": 0.0098,
+    "center_change": 1.68381,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.00056,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0125.jpg"
+  },
+  {
+    "frame": 3721,
+    "seconds": 62.184689,
+    "mean_change_0_255": 0.86482,
+    "changed_pixel_fraction_gt12": 0.00145,
+    "center_change": 1.06496,
+    "left_panel_change": 0.8178,
+    "right_panel_change": 0.66201,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0126.jpg"
+  },
+  {
+    "frame": 3755,
+    "seconds": 62.749744,
+    "mean_change_0_255": 0.32167,
+    "changed_pixel_fraction_gt12": 0.00794,
+    "center_change": 0.66196,
+    "left_panel_change": 0.33723,
+    "right_panel_change": 0.00068,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0127.jpg"
+  },
+  {
+    "frame": 3791,
+    "seconds": 63.349844,
+    "mean_change_0_255": 19.23784,
+    "changed_pixel_fraction_gt12": 0.35737,
+    "center_change": 33.16401,
+    "left_panel_change": 11.24012,
+    "right_panel_change": 14.54741,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0128.jpg"
+  },
+  {
+    "frame": 3822,
+    "seconds": 63.8662,
+    "mean_change_0_255": 0.40021,
+    "changed_pixel_fraction_gt12": 0.00347,
+    "center_change": 0.77771,
+    "left_panel_change": 0.17375,
+    "right_panel_change": 0.12951,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0129.jpg"
+  },
+  {
+    "frame": 3835,
+    "seconds": 64.085756,
+    "mean_change_0_255": 0.73589,
+    "changed_pixel_fraction_gt12": 0.00186,
+    "center_change": 1.02922,
+    "left_panel_change": 0.66107,
+    "right_panel_change": 0.49316,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0130.jpg"
+  },
+  {
+    "frame": 3883,
+    "seconds": 64.8829,
+    "mean_change_0_255": 1.76858,
+    "changed_pixel_fraction_gt12": 0.02025,
+    "center_change": 3.95882,
+    "left_panel_change": 0.11244,
+    "right_panel_change": 1.0123,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0131.jpg"
+  },
+  {
+    "frame": 3894,
+    "seconds": 65.066167,
+    "mean_change_0_255": 0.72039,
+    "changed_pixel_fraction_gt12": 0.00086,
+    "center_change": 0.90684,
+    "left_panel_change": 0.73265,
+    "right_panel_change": 0.5691,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0132.jpg"
+  },
+  {
+    "frame": 3923,
+    "seconds": 65.553067,
+    "mean_change_0_255": 0.07882,
+    "changed_pixel_fraction_gt12": 0.00038,
+    "center_change": 0.1269,
+    "left_panel_change": 0.05223,
+    "right_panel_change": 0.04548,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0133.jpg"
+  },
+  {
+    "frame": 3953,
+    "seconds": 66.052844,
+    "mean_change_0_255": 0.64316,
+    "changed_pixel_fraction_gt12": 0.00084,
+    "center_change": 0.75387,
+    "left_panel_change": 0.58887,
+    "right_panel_change": 0.73947,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0134.jpg"
+  },
+  {
+    "frame": 3996,
+    "seconds": 66.765778,
+    "mean_change_0_255": 2.71631,
+    "changed_pixel_fraction_gt12": 0.03242,
+    "center_change": 6.13568,
+    "left_panel_change": 0.03211,
+    "right_panel_change": 1.58145,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0135.jpg"
+  },
+  {
+    "frame": 4012,
+    "seconds": 67.032644,
+    "mean_change_0_255": 0.55669,
+    "changed_pixel_fraction_gt12": 0.00123,
+    "center_change": 0.71643,
+    "left_panel_change": 0.52217,
+    "right_panel_change": 0.48681,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0136.jpg"
+  },
+  {
+    "frame": 4063,
+    "seconds": 67.882978,
+    "mean_change_0_255": 0.37427,
+    "changed_pixel_fraction_gt12": 0.00706,
+    "center_change": 0.85193,
+    "left_panel_change": 0.00396,
+    "right_panel_change": 0.19087,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0137.jpg"
+  },
+  {
+    "frame": 4071,
+    "seconds": 68.014989,
+    "mean_change_0_255": 1.0444,
+    "changed_pixel_fraction_gt12": 0.00384,
+    "center_change": 1.44001,
+    "left_panel_change": 0.89289,
+    "right_panel_change": 0.81001,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0138.jpg"
+  },
+  {
+    "frame": 4116,
+    "seconds": 68.765756,
+    "mean_change_0_255": 0.94752,
+    "changed_pixel_fraction_gt12": 0.0087,
+    "center_change": 2.33959,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.11327,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0139.jpg"
+  },
+  {
+    "frame": 4160,
+    "seconds": 69.4991,
+    "mean_change_0_255": 0.27111,
+    "changed_pixel_fraction_gt12": 0.00309,
+    "center_change": 0.65152,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.07277,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0140.jpg"
+  },
+  {
+    "frame": 4189,
+    "seconds": 69.984833,
+    "mean_change_0_255": 3.71824,
+    "changed_pixel_fraction_gt12": 0.08023,
+    "center_change": 6.53046,
+    "left_panel_change": 1.8003,
+    "right_panel_change": 2.39994,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0141.jpg"
+  },
+  {
+    "frame": 4191,
+    "seconds": 70.015522,
+    "mean_change_0_255": 3.91478,
+    "changed_pixel_fraction_gt12": 0.09388,
+    "center_change": 7.59226,
+    "left_panel_change": 0.83652,
+    "right_panel_change": 2.66284,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0142.jpg"
+  },
+  {
+    "frame": 4248,
+    "seconds": 70.965433,
+    "mean_change_0_255": 2.20395,
+    "changed_pixel_fraction_gt12": 0.03261,
+    "center_change": 3.48064,
+    "left_panel_change": 1.21345,
+    "right_panel_change": 1.89212,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0143.jpg"
+  },
+  {
+    "frame": 4273,
+    "seconds": 71.381967,
+    "mean_change_0_255": 2.45039,
+    "changed_pixel_fraction_gt12": 0.05867,
+    "center_change": 4.73663,
+    "left_panel_change": 0.44426,
+    "right_panel_change": 1.37668,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0144.jpg"
+  },
+  {
+    "frame": 4284,
+    "seconds": 71.565289,
+    "mean_change_0_255": 3.02236,
+    "changed_pixel_fraction_gt12": 0.07056,
+    "center_change": 5.76095,
+    "left_panel_change": 0.57866,
+    "right_panel_change": 1.65102,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0145.jpg"
+  },
+  {
+    "frame": 4340,
+    "seconds": 72.497811,
+    "mean_change_0_255": 1.84922,
+    "changed_pixel_fraction_gt12": 0.04131,
+    "center_change": 3.54931,
+    "left_panel_change": 0.1625,
+    "right_panel_change": 1.72101,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0146.jpg"
+  },
+  {
+    "frame": 4346,
+    "seconds": 72.599056,
+    "mean_change_0_255": 1.82453,
+    "changed_pixel_fraction_gt12": 0.04055,
+    "center_change": 3.44921,
+    "left_panel_change": 0.27128,
+    "right_panel_change": 1.83114,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0147.jpg"
+  },
+  {
+    "frame": 4381,
+    "seconds": 73.182189,
+    "mean_change_0_255": 0.9021,
+    "changed_pixel_fraction_gt12": 0.01472,
+    "center_change": 1.63109,
+    "left_panel_change": 0.03354,
+    "right_panel_change": 1.17437,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0148.jpg"
+  },
+  {
+    "frame": 4425,
+    "seconds": 73.915433,
+    "mean_change_0_255": 1.1574,
+    "changed_pixel_fraction_gt12": 0.00036,
+    "center_change": 1.49726,
+    "left_panel_change": 1.09911,
+    "right_panel_change": 0.96439,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0149.jpg"
+  },
+  {
+    "frame": 4449,
+    "seconds": 74.315444,
+    "mean_change_0_255": 0.38088,
+    "changed_pixel_fraction_gt12": 0.00184,
+    "center_change": 0.69856,
+    "left_panel_change": 0.2033,
+    "right_panel_change": 0.18033,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0150.jpg"
+  },
+  {
+    "frame": 4466,
+    "seconds": 74.598689,
+    "mean_change_0_255": 12.22754,
+    "changed_pixel_fraction_gt12": 0.23211,
+    "center_change": 20.02299,
+    "left_panel_change": 6.45923,
+    "right_panel_change": 14.83381,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0151.jpg"
+  },
+  {
+    "frame": 4505,
+    "seconds": 75.248744,
+    "mean_change_0_255": 0.59416,
+    "changed_pixel_fraction_gt12": 0.0028,
+    "center_change": 0.85023,
+    "left_panel_change": 0.42714,
+    "right_panel_change": 0.47336,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0152.jpg"
+  },
+  {
+    "frame": 4531,
+    "seconds": 75.682411,
+    "mean_change_0_255": 14.87702,
+    "changed_pixel_fraction_gt12": 0.28202,
+    "center_change": 24.19225,
+    "left_panel_change": 3.77235,
+    "right_panel_change": 13.71292,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0153.jpg"
+  },
+  {
+    "frame": 4579,
+    "seconds": 76.485411,
+    "mean_change_0_255": 7.02631,
+    "changed_pixel_fraction_gt12": 0.14311,
+    "center_change": 10.56024,
+    "left_panel_change": 2.05807,
+    "right_panel_change": 4.83206,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0154.jpg"
+  },
+  {
+    "frame": 4583,
+    "seconds": 76.548611,
+    "mean_change_0_255": 7.82153,
+    "changed_pixel_fraction_gt12": 0.15616,
+    "center_change": 12.0846,
+    "left_panel_change": 1.82446,
+    "right_panel_change": 4.36939,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0155.jpg"
+  },
+  {
+    "frame": 4640,
+    "seconds": 77.498533,
+    "mean_change_0_255": 3.42034,
+    "changed_pixel_fraction_gt12": 0.07013,
+    "center_change": 5.04891,
+    "left_panel_change": 1.54786,
+    "right_panel_change": 2.91576,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0156.jpg"
+  },
+  {
+    "frame": 4661,
+    "seconds": 77.848533,
+    "mean_change_0_255": 4.23129,
+    "changed_pixel_fraction_gt12": 0.0658,
+    "center_change": 5.29219,
+    "left_panel_change": 2.4825,
+    "right_panel_change": 4.52385,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0157.jpg"
+  },
+  {
+    "frame": 4671,
+    "seconds": 78.015178,
+    "mean_change_0_255": 2.0957,
+    "changed_pixel_fraction_gt12": 0.04038,
+    "center_change": 3.27507,
+    "left_panel_change": 0.4244,
+    "right_panel_change": 2.06258,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0158.jpg"
+  },
+  {
+    "frame": 4708,
+    "seconds": 78.631789,
+    "mean_change_0_255": 2.36947,
+    "changed_pixel_fraction_gt12": 0.04838,
+    "center_change": 3.9917,
+    "left_panel_change": 0.0744,
+    "right_panel_change": 1.86092,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0159.jpg"
+  },
+  {
+    "frame": 4751,
+    "seconds": 79.348478,
+    "mean_change_0_255": 12.12517,
+    "changed_pixel_fraction_gt12": 0.22909,
+    "center_change": 17.43976,
+    "left_panel_change": 5.00167,
+    "right_panel_change": 12.08913,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0160.jpg"
+  },
+  {
+    "frame": 4765,
+    "seconds": 79.582289,
+    "mean_change_0_255": 8.93621,
+    "changed_pixel_fraction_gt12": 0.16877,
+    "center_change": 13.15389,
+    "left_panel_change": 2.55676,
+    "right_panel_change": 8.22607,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0161.jpg"
+  },
+  {
+    "frame": 4818,
+    "seconds": 80.464989,
+    "mean_change_0_255": 19.02426,
+    "changed_pixel_fraction_gt12": 0.38402,
+    "center_change": 27.4043,
+    "left_panel_change": 9.35497,
+    "right_panel_change": 5.68836,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0162.jpg"
+  },
+  {
+    "frame": 4827,
+    "seconds": 80.615011,
+    "mean_change_0_255": 13.36614,
+    "changed_pixel_fraction_gt12": 0.28163,
+    "center_change": 22.6496,
+    "left_panel_change": 3.23482,
+    "right_panel_change": 6.29544,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0163.jpg"
+  },
+  {
+    "frame": 4853,
+    "seconds": 81.048289,
+    "mean_change_0_255": 0.88844,
+    "changed_pixel_fraction_gt12": 0.00664,
+    "center_change": 1.30621,
+    "left_panel_change": 0.50592,
+    "right_panel_change": 0.49573,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0164.jpg"
+  },
+  {
+    "frame": 4897,
+    "seconds": 81.781511,
+    "mean_change_0_255": 1.04894,
+    "changed_pixel_fraction_gt12": 0.00278,
+    "center_change": 1.25343,
+    "left_panel_change": 0.89521,
+    "right_panel_change": 0.79754,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0165.jpg"
+  },
+  {
+    "frame": 4921,
+    "seconds": 82.183522,
+    "mean_change_0_255": 0.65127,
+    "changed_pixel_fraction_gt12": 0.00291,
+    "center_change": 0.86169,
+    "left_panel_change": 0.39137,
+    "right_panel_change": 0.62756,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0166.jpg"
+  },
+  {
+    "frame": 4956,
+    "seconds": 82.763711,
+    "mean_change_0_255": 0.99271,
+    "changed_pixel_fraction_gt12": 0.00292,
+    "center_change": 1.25302,
+    "left_panel_change": 0.84259,
+    "right_panel_change": 0.77215,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0167.jpg"
+  },
+  {
+    "frame": 4980,
+    "seconds": 83.163611,
+    "mean_change_0_255": 0.21504,
+    "changed_pixel_fraction_gt12": 0.00205,
+    "center_change": 0.3847,
+    "left_panel_change": 0.07771,
+    "right_panel_change": 0.11852,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0168.jpg"
+  },
+  {
+    "frame": 5015,
+    "seconds": 83.748311,
+    "mean_change_0_255": 5.98891,
+    "changed_pixel_fraction_gt12": 0.10444,
+    "center_change": 9.64084,
+    "left_panel_change": 2.3583,
+    "right_panel_change": 1.74797,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0169.jpg"
+  },
+  {
+    "frame": 5059,
+    "seconds": 84.484067,
+    "mean_change_0_255": 2.24355,
+    "changed_pixel_fraction_gt12": 0.04562,
+    "center_change": 3.75467,
+    "left_panel_change": 0.16217,
+    "right_panel_change": 0.33093,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0170.jpg"
+  },
+  {
+    "frame": 5061,
+    "seconds": 84.514667,
+    "mean_change_0_255": 2.36034,
+    "changed_pixel_fraction_gt12": 0.04766,
+    "center_change": 3.93046,
+    "left_panel_change": 0.32961,
+    "right_panel_change": 0.26193,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0171.jpg"
+  },
+  {
+    "frame": 5113,
+    "seconds": 85.381456,
+    "mean_change_0_255": 1.3217,
+    "changed_pixel_fraction_gt12": 0.02559,
+    "center_change": 2.07117,
+    "left_panel_change": 0.15759,
+    "right_panel_change": 0.21236,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0172.jpg"
+  },
+  {
+    "frame": 5133,
+    "seconds": 85.714611,
+    "mean_change_0_255": 1.33539,
+    "changed_pixel_fraction_gt12": 0.00187,
+    "center_change": 1.682,
+    "left_panel_change": 1.11098,
+    "right_panel_change": 0.93422,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0173.jpg"
+  },
+  {
+    "frame": 5160,
+    "seconds": 86.164444,
+    "mean_change_0_255": 0.33755,
+    "changed_pixel_fraction_gt12": 2e-05,
+    "center_change": 0.41659,
+    "left_panel_change": 0.27015,
+    "right_panel_change": 0.27117,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0174.jpg"
+  },
+  {
+    "frame": 5192,
+    "seconds": 86.697789,
+    "mean_change_0_255": 0.86924,
+    "changed_pixel_fraction_gt12": 0.00228,
+    "center_change": 0.90269,
+    "left_panel_change": 0.74503,
+    "right_panel_change": 0.71452,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0175.jpg"
+  },
+  {
+    "frame": 5238,
+    "seconds": 87.468178,
+    "mean_change_0_255": 0.53458,
+    "changed_pixel_fraction_gt12": 0.01073,
+    "center_change": 1.32561,
+    "left_panel_change": 0.01902,
+    "right_panel_change": 0.01799,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0176.jpg"
+  },
+  {
+    "frame": 5251,
+    "seconds": 87.683833,
+    "mean_change_0_255": 1.04776,
+    "changed_pixel_fraction_gt12": 0.0025,
+    "center_change": 1.29643,
+    "left_panel_change": 0.90509,
+    "right_panel_change": 0.81265,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0177.jpg"
+  },
+  {
+    "frame": 5271,
+    "seconds": 88.014533,
+    "mean_change_0_255": 0.81998,
+    "changed_pixel_fraction_gt12": 0.0165,
+    "center_change": 2.05199,
+    "left_panel_change": 0.02235,
+    "right_panel_change": 0.00785,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0178.jpg"
+  },
+  {
+    "frame": 5310,
+    "seconds": 88.664678,
+    "mean_change_0_255": 9.16518,
+    "changed_pixel_fraction_gt12": 0.19267,
+    "center_change": 14.70619,
+    "left_panel_change": 2.62518,
+    "right_panel_change": 3.13979,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0179.jpg"
+  },
+  {
+    "frame": 5333,
+    "seconds": 89.047878,
+    "mean_change_0_255": 11.7034,
+    "changed_pixel_fraction_gt12": 0.23419,
+    "center_change": 18.77448,
+    "left_panel_change": 5.6469,
+    "right_panel_change": 2.59354,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0180.jpg"
+  },
+  {
+    "frame": 5369,
+    "seconds": 89.648233,
+    "mean_change_0_255": 1.77579,
+    "changed_pixel_fraction_gt12": 0.00144,
+    "center_change": 2.15394,
+    "left_panel_change": 1.64312,
+    "right_panel_change": 1.38299,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0181.jpg"
+  },
+  {
+    "frame": 5413,
+    "seconds": 90.381067,
+    "mean_change_0_255": 0.37106,
+    "changed_pixel_fraction_gt12": 0.00677,
+    "center_change": 0.47676,
+    "left_panel_change": 0.51098,
+    "right_panel_change": 0.01404,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0182.jpg"
+  },
+  {
+    "frame": 5436,
+    "seconds": 90.764256,
+    "mean_change_0_255": 1.77168,
+    "changed_pixel_fraction_gt12": 0.01961,
+    "center_change": 3.70773,
+    "left_panel_change": 0.42018,
+    "right_panel_change": 0.00027,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0183.jpg"
+  },
+  {
+    "frame": 5460,
+    "seconds": 91.164267,
+    "mean_change_0_255": 0.22799,
+    "changed_pixel_fraction_gt12": 0.00137,
+    "center_change": 0.17851,
+    "left_panel_change": 0.39574,
+    "right_panel_change": 0.14104,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0184.jpg"
+  },
+  {
+    "frame": 5487,
+    "seconds": 91.614178,
+    "mean_change_0_255": 0.85468,
+    "changed_pixel_fraction_gt12": 0.00256,
+    "center_change": 0.85621,
+    "left_panel_change": 1.09979,
+    "right_panel_change": 0.64655,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0185.jpg"
+  },
+  {
+    "frame": 5521,
+    "seconds": 92.184078,
+    "mean_change_0_255": 0.78125,
+    "changed_pixel_fraction_gt12": 0.00034,
+    "center_change": 0.79754,
+    "left_panel_change": 0.63813,
+    "right_panel_change": 0.73636,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0186.jpg"
+  },
+  {
+    "frame": 5546,
+    "seconds": 92.597733,
+    "mean_change_0_255": 0.96184,
+    "changed_pixel_fraction_gt12": 2e-05,
+    "center_change": 1.13725,
+    "left_panel_change": 0.91699,
+    "right_panel_change": 0.79084,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0187.jpg"
+  },
+  {
+    "frame": 5580,
+    "seconds": 93.164156,
+    "mean_change_0_255": 0.30298,
+    "changed_pixel_fraction_gt12": 0.0005,
+    "center_change": 0.3866,
+    "left_panel_change": 0.19568,
+    "right_panel_change": 0.26963,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0188.jpg"
+  },
+  {
+    "frame": 5602,
+    "seconds": 93.531067,
+    "mean_change_0_255": 2.34943,
+    "changed_pixel_fraction_gt12": 0.0232,
+    "center_change": 5.84624,
+    "left_panel_change": 0.00101,
+    "right_panel_change": 0.13656,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0189.jpg"
+  },
+  {
+    "frame": 5640,
+    "seconds": 94.163989,
+    "mean_change_0_255": 0.17863,
+    "changed_pixel_fraction_gt12": 0.00102,
+    "center_change": 0.26948,
+    "left_panel_change": 0.03524,
+    "right_panel_change": 0.24622,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0190.jpg"
+  },
+  {
+    "frame": 5664,
+    "seconds": 94.563822,
+    "mean_change_0_255": 0.71768,
+    "changed_pixel_fraction_gt12": 0.00042,
+    "center_change": 0.83899,
+    "left_panel_change": 0.62952,
+    "right_panel_change": 0.71843,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0191.jpg"
+  },
+  {
+    "frame": 5700,
+    "seconds": 95.1642,
+    "mean_change_0_255": 0.18506,
+    "changed_pixel_fraction_gt12": 0.00011,
+    "center_change": 0.19505,
+    "left_panel_change": 0.13652,
+    "right_panel_change": 0.2491,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0192.jpg"
+  },
+  {
+    "frame": 5723,
+    "seconds": 95.547667,
+    "mean_change_0_255": 0.67053,
+    "changed_pixel_fraction_gt12": 8e-05,
+    "center_change": 0.80657,
+    "left_panel_change": 0.61003,
+    "right_panel_change": 0.59804,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0193.jpg"
+  },
+  {
+    "frame": 5777,
+    "seconds": 96.447767,
+    "mean_change_0_255": 0.19542,
+    "changed_pixel_fraction_gt12": 0.00455,
+    "center_change": 0.43863,
+    "left_panel_change": 0.00488,
+    "right_panel_change": 0.01019,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0194.jpg"
+  },
+  {
+    "frame": 5782,
+    "seconds": 96.534422,
+    "mean_change_0_255": 0.69995,
+    "changed_pixel_fraction_gt12": 0.00209,
+    "center_change": 0.9398,
+    "left_panel_change": 0.56911,
+    "right_panel_change": 0.56359,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0195.jpg"
+  },
+  {
+    "frame": 5821,
+    "seconds": 97.181233,
+    "mean_change_0_255": 0.80342,
+    "changed_pixel_fraction_gt12": 0.00067,
+    "center_change": 0.86368,
+    "left_panel_change": 0.70905,
+    "right_panel_change": 0.83007,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0196.jpg"
+  },
+  {
+    "frame": 5855,
+    "seconds": 97.747922,
+    "mean_change_0_255": 4.62572,
+    "changed_pixel_fraction_gt12": 0.03378,
+    "center_change": 11.66263,
+    "left_panel_change": 0.00036,
+    "right_panel_change": 0.00412,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0197.jpg"
+  },
+  {
+    "frame": 5900,
+    "seconds": 98.497778,
+    "mean_change_0_255": 0.69211,
+    "changed_pixel_fraction_gt12": 0.00016,
+    "center_change": 0.82475,
+    "left_panel_change": 0.6733,
+    "right_panel_change": 0.62041,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0198.jpg"
+  },
+  {
+    "frame": 5901,
+    "seconds": 98.514489,
+    "mean_change_0_255": 0.0928,
+    "changed_pixel_fraction_gt12": 0.00014,
+    "center_change": 0.09025,
+    "left_panel_change": 0.07893,
+    "right_panel_change": 0.12385,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0199.jpg"
+  },
+  {
+    "frame": 5942,
+    "seconds": 99.197678,
+    "mean_change_0_255": 3.97417,
+    "changed_pixel_fraction_gt12": 0.032,
+    "center_change": 9.97957,
+    "left_panel_change": 0.00149,
+    "right_panel_change": 0.06053,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0200.jpg"
+  },
+  {
+    "frame": 5990,
+    "seconds": 99.997667,
+    "mean_change_0_255": 0.03686,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.03056,
+    "left_panel_change": 0.01935,
+    "right_panel_change": 0.09001,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0201.jpg"
+  },
+  {
+    "frame": 6005,
+    "seconds": 100.247833,
+    "mean_change_0_255": 0.74347,
+    "changed_pixel_fraction_gt12": 0.00609,
+    "center_change": 1.8301,
+    "left_panel_change": 0.00042,
+    "right_panel_change": 0.06782,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0202.jpg"
+  },
+  {
+    "frame": 6035,
+    "seconds": 100.747733,
+    "mean_change_0_255": 0.86923,
+    "changed_pixel_fraction_gt12": 0.00894,
+    "center_change": 2.159,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.02065,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0203.jpg"
+  },
+  {
+    "frame": 6077,
+    "seconds": 101.447622,
+    "mean_change_0_255": 0.61211,
+    "changed_pixel_fraction_gt12": 8e-05,
+    "center_change": 0.72851,
+    "left_panel_change": 0.52598,
+    "right_panel_change": 0.60305,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0204.jpg"
+  },
+  {
+    "frame": 6108,
+    "seconds": 101.964511,
+    "mean_change_0_255": 0.32061,
+    "changed_pixel_fraction_gt12": 0.0063,
+    "center_change": 0.80839,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.00012,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0205.jpg"
+  },
+  {
+    "frame": 6136,
+    "seconds": 102.430789,
+    "mean_change_0_255": 1.02494,
+    "changed_pixel_fraction_gt12": 0.00145,
+    "center_change": 1.27456,
+    "left_panel_change": 0.96057,
+    "right_panel_change": 0.84415,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0206.jpg"
+  },
+  {
+    "frame": 6142,
+    "seconds": 102.533456,
+    "mean_change_0_255": 35.09734,
+    "changed_pixel_fraction_gt12": 0.75498,
+    "center_change": 55.98266,
+    "left_panel_change": 26.02577,
+    "right_panel_change": 24.35099,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0207.jpg"
+  },
+  {
+    "frame": 6195,
+    "seconds": 103.414267,
+    "mean_change_0_255": 0.69366,
+    "changed_pixel_fraction_gt12": 0.00183,
+    "center_change": 0.97389,
+    "left_panel_change": 0.55634,
+    "right_panel_change": 0.52865,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0208.jpg"
+  },
+  {
+    "frame": 6201,
+    "seconds": 103.514511,
+    "mean_change_0_255": 0.12096,
+    "changed_pixel_fraction_gt12": 0.0017,
+    "center_change": 0.30182,
+    "left_panel_change": 0.00036,
+    "right_panel_change": 0.0061,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0209.jpg"
+  },
+  {
+    "frame": 6254,
+    "seconds": 104.397089,
+    "mean_change_0_255": 0.55338,
+    "changed_pixel_fraction_gt12": 0.00195,
+    "center_change": 0.78979,
+    "left_panel_change": 0.41464,
+    "right_panel_change": 0.40809,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0210.jpg"
+  },
+  {
+    "frame": 6261,
+    "seconds": 104.513789,
+    "mean_change_0_255": 0.22258,
+    "changed_pixel_fraction_gt12": 0.00256,
+    "center_change": 0.56126,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0003,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0211.jpg"
+  },
+  {
+    "frame": 6313,
+    "seconds": 105.380567,
+    "mean_change_0_255": 0.8249,
+    "changed_pixel_fraction_gt12": 0.00305,
+    "center_change": 1.24062,
+    "left_panel_change": 0.55176,
+    "right_panel_change": 0.54996,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0212.jpg"
+  },
+  {
+    "frame": 6345,
+    "seconds": 105.913744,
+    "mean_change_0_255": 0.43407,
+    "changed_pixel_fraction_gt12": 0.00283,
+    "center_change": 0.84138,
+    "left_panel_change": 0.14723,
+    "right_panel_change": 0.03849,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0213.jpg"
+  },
+  {
+    "frame": 6372,
+    "seconds": 106.363367,
+    "mean_change_0_255": 0.68067,
+    "changed_pixel_fraction_gt12": 0.00053,
+    "center_change": 0.71478,
+    "left_panel_change": 0.64554,
+    "right_panel_change": 0.61064,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0214.jpg"
+  },
+  {
+    "frame": 6401,
+    "seconds": 106.847089,
+    "mean_change_0_255": 0.48211,
+    "changed_pixel_fraction_gt12": 0.00281,
+    "center_change": 0.37068,
+    "left_panel_change": 0.22655,
+    "right_panel_change": 1.15241,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0215.jpg"
+  },
+  {
+    "frame": 6426,
+    "seconds": 107.265722,
+    "mean_change_0_255": 34.47369,
+    "changed_pixel_fraction_gt12": 0.77752,
+    "center_change": 52.75142,
+    "left_panel_change": 25.13515,
+    "right_panel_change": 26.25935,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0216.jpg"
+  },
+  {
+    "frame": 6446,
+    "seconds": 107.596889,
+    "mean_change_0_255": 1.73789,
+    "changed_pixel_fraction_gt12": 0.0343,
+    "center_change": 3.20816,
+    "left_panel_change": 0.31173,
+    "right_panel_change": 1.15873,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0217.jpg"
+  },
+  {
+    "frame": 6490,
+    "seconds": 108.330589,
+    "mean_change_0_255": 2.4566,
+    "changed_pixel_fraction_gt12": 0.01486,
+    "center_change": 3.27767,
+    "left_panel_change": 1.93351,
+    "right_panel_change": 1.69319,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0218.jpg"
+  },
+  {
+    "frame": 6515,
+    "seconds": 108.746589,
+    "mean_change_0_255": 2.48442,
+    "changed_pixel_fraction_gt12": 0.05242,
+    "center_change": 4.91318,
+    "left_panel_change": 0.41423,
+    "right_panel_change": 0.46495,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0219.jpg"
+  },
+  {
+    "frame": 6560,
+    "seconds": 109.495411,
+    "mean_change_0_255": 13.13406,
+    "changed_pixel_fraction_gt12": 0.24955,
+    "center_change": 21.55019,
+    "left_panel_change": 6.50765,
+    "right_panel_change": 4.02139,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0220.jpg"
+  },
+  {
+    "frame": 6565,
+    "seconds": 109.579378,
+    "mean_change_0_255": 12.24913,
+    "changed_pixel_fraction_gt12": 0.20958,
+    "center_change": 24.68328,
+    "left_panel_change": 5.5714,
+    "right_panel_change": 2.86898,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0221.jpg"
+  },
+  {
+    "frame": 6608,
+    "seconds": 110.296978,
+    "mean_change_0_255": 1.91968,
+    "changed_pixel_fraction_gt12": 0.00827,
+    "center_change": 2.50249,
+    "left_panel_change": 1.86363,
+    "right_panel_change": 1.45375,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0222.jpg"
+  },
+  {
+    "frame": 6635,
+    "seconds": 110.746978,
+    "mean_change_0_255": 1.1862,
+    "changed_pixel_fraction_gt12": 0.01213,
+    "center_change": 2.92192,
+    "left_panel_change": 0.01696,
+    "right_panel_change": 0.02273,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0223.jpg"
+  },
+  {
+    "frame": 6667,
+    "seconds": 111.284878,
+    "mean_change_0_255": 1.20859,
+    "changed_pixel_fraction_gt12": 0.00117,
+    "center_change": 1.65,
+    "left_panel_change": 0.99908,
+    "right_panel_change": 0.92779,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0224.jpg"
+  },
+  {
+    "frame": 6690,
+    "seconds": 111.663633,
+    "mean_change_0_255": 3.03202,
+    "changed_pixel_fraction_gt12": 0.06952,
+    "center_change": 6.89517,
+    "left_panel_change": 0.32497,
+    "right_panel_change": 0.58459,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0225.jpg"
+  },
+  {
+    "frame": 6721,
+    "seconds": 112.183311,
+    "mean_change_0_255": 2.20945,
+    "changed_pixel_fraction_gt12": 0.0295,
+    "center_change": 3.56479,
+    "left_panel_change": 1.28167,
+    "right_panel_change": 1.94895,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0226.jpg"
+  },
+  {
+    "frame": 6770,
+    "seconds": 112.996578,
+    "mean_change_0_255": 2.23329,
+    "changed_pixel_fraction_gt12": 0.04931,
+    "center_change": 5.10903,
+    "left_panel_change": 0.20238,
+    "right_panel_change": 0.5168,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0227.jpg"
+  },
+  {
+    "frame": 6774,
+    "seconds": 113.063744,
+    "mean_change_0_255": 3.49416,
+    "changed_pixel_fraction_gt12": 0.07802,
+    "center_change": 8.23002,
+    "left_panel_change": 0.26259,
+    "right_panel_change": 0.54276,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0228.jpg"
+  },
+  {
+    "frame": 6820,
+    "seconds": 113.832867,
+    "mean_change_0_255": 3.50768,
+    "changed_pixel_fraction_gt12": 0.07842,
+    "center_change": 6.94146,
+    "left_panel_change": 0.30378,
+    "right_panel_change": 1.46095,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0229.jpg"
+  },
+  {
+    "frame": 6831,
+    "seconds": 114.013111,
+    "mean_change_0_255": 1.56328,
+    "changed_pixel_fraction_gt12": 0.03386,
+    "center_change": 2.89546,
+    "left_panel_change": 0.26357,
+    "right_panel_change": 0.68041,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0230.jpg"
+  },
+  {
+    "frame": 6877,
+    "seconds": 114.784022,
+    "mean_change_0_255": 0.54984,
+    "changed_pixel_fraction_gt12": 0.00273,
+    "center_change": 0.78567,
+    "left_panel_change": 0.96467,
+    "right_panel_change": 0.29911,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0231.jpg"
+  },
+  {
+    "frame": 6903,
+    "seconds": 115.213844,
+    "mean_change_0_255": 1.09068,
+    "changed_pixel_fraction_gt12": 0.00028,
+    "center_change": 1.43468,
+    "left_panel_change": 0.93039,
+    "right_panel_change": 0.95333,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0232.jpg"
+  },
+  {
+    "frame": 6944,
+    "seconds": 115.896833,
+    "mean_change_0_255": 0.56305,
+    "changed_pixel_fraction_gt12": 0.00539,
+    "center_change": 1.04194,
+    "left_panel_change": 0.66179,
+    "right_panel_change": 0.07052,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0233.jpg"
+  },
+  {
+    "frame": 6962,
+    "seconds": 116.196678,
+    "mean_change_0_255": 1.29364,
+    "changed_pixel_fraction_gt12": 0.00247,
+    "center_change": 1.91733,
+    "left_panel_change": 0.92333,
+    "right_panel_change": 1.0176,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0234.jpg"
+  },
+  {
+    "frame": 6998,
+    "seconds": 116.796389,
+    "mean_change_0_255": 0.507,
+    "changed_pixel_fraction_gt12": 0.00413,
+    "center_change": 1.15916,
+    "left_panel_change": 0.01548,
+    "right_panel_change": 0.08785,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0235.jpg"
+  },
+  {
+    "frame": 7030,
+    "seconds": 117.332267,
+    "mean_change_0_255": 2.42365,
+    "changed_pixel_fraction_gt12": 0.04681,
+    "center_change": 1.17597,
+    "left_panel_change": 0.01262,
+    "right_panel_change": 11.00053,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0236.jpg"
+  },
+  {
+    "frame": 7063,
+    "seconds": 117.880356,
+    "mean_change_0_255": 2.76247,
+    "changed_pixel_fraction_gt12": 0.05156,
+    "center_change": 1.59132,
+    "left_panel_change": 0.02768,
+    "right_panel_change": 11.94447,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0237.jpg"
+  },
+  {
+    "frame": 7080,
+    "seconds": 118.163656,
+    "mean_change_0_255": 1.4343,
+    "changed_pixel_fraction_gt12": 0.0062,
+    "center_change": 2.11871,
+    "left_panel_change": 0.94063,
+    "right_panel_change": 1.24619,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0238.jpg"
+  },
+  {
+    "frame": 7112,
+    "seconds": 118.696956,
+    "mean_change_0_255": 2.39728,
+    "changed_pixel_fraction_gt12": 0.04734,
+    "center_change": 1.36473,
+    "left_panel_change": 0.02771,
+    "right_panel_change": 10.4496,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0239.jpg"
+  },
+  {
+    "frame": 7139,
+    "seconds": 119.147,
+    "mean_change_0_255": 1.21117,
+    "changed_pixel_fraction_gt12": 0.00028,
+    "center_change": 1.59099,
+    "left_panel_change": 0.9258,
+    "right_panel_change": 1.21837,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0240.jpg"
+  },
+  {
+    "frame": 7167,
+    "seconds": 119.613589,
+    "mean_change_0_255": 0.47495,
+    "changed_pixel_fraction_gt12": 0.00434,
+    "center_change": 1.10648,
+    "left_panel_change": 0.02872,
+    "right_panel_change": 0.04539,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0241.jpg"
+  },
+  {
+    "frame": 7198,
+    "seconds": 120.130322,
+    "mean_change_0_255": 1.05965,
+    "changed_pixel_fraction_gt12": 6e-05,
+    "center_change": 1.3021,
+    "left_panel_change": 0.93765,
+    "right_panel_change": 0.98196,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0242.jpg"
+  },
+  {
+    "frame": 7249,
+    "seconds": 120.980311,
+    "mean_change_0_255": 0.50158,
+    "changed_pixel_fraction_gt12": 0.00489,
+    "center_change": 1.16193,
+    "left_panel_change": 0.02622,
+    "right_panel_change": 0.04604,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0243.jpg"
+  },
+  {
+    "frame": 7257,
+    "seconds": 121.1138,
+    "mean_change_0_255": 1.1162,
+    "changed_pixel_fraction_gt12": 0.00159,
+    "center_change": 1.56692,
+    "left_panel_change": 0.82366,
+    "right_panel_change": 0.9267,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0244.jpg"
+  },
+  {
+    "frame": 7300,
+    "seconds": 121.833311,
+    "mean_change_0_255": 21.10371,
+    "changed_pixel_fraction_gt12": 0.49538,
+    "center_change": 27.48129,
+    "left_panel_change": 11.12592,
+    "right_panel_change": 27.89911,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0245.jpg"
+  },
+  {
+    "frame": 7311,
+    "seconds": 122.0134,
+    "mean_change_0_255": 9.19563,
+    "changed_pixel_fraction_gt12": 0.191,
+    "center_change": 14.89747,
+    "left_panel_change": 4.25536,
+    "right_panel_change": 8.04441,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0246.jpg"
+  },
+  {
+    "frame": 7361,
+    "seconds": 122.846611,
+    "mean_change_0_255": 0.64811,
+    "changed_pixel_fraction_gt12": 0.00278,
+    "center_change": 0.87754,
+    "left_panel_change": 0.59247,
+    "right_panel_change": 0.49194,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0247.jpg"
+  },
+  {
+    "frame": 7375,
+    "seconds": 123.080733,
+    "mean_change_0_255": 0.98301,
+    "changed_pixel_fraction_gt12": 0.00153,
+    "center_change": 1.12159,
+    "left_panel_change": 0.99622,
+    "right_panel_change": 0.85941,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0248.jpg"
+  },
+  {
+    "frame": 7427,
+    "seconds": 123.947133,
+    "mean_change_0_255": 0.48037,
+    "changed_pixel_fraction_gt12": 0.00394,
+    "center_change": 1.21138,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0249.jpg"
+  },
+  {
+    "frame": 7450,
+    "seconds": 124.332456,
+    "mean_change_0_255": 16.38146,
+    "changed_pixel_fraction_gt12": 0.36478,
+    "center_change": 28.33934,
+    "left_panel_change": 5.79824,
+    "right_panel_change": 13.53564,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0250.jpg"
+  },
+  {
+    "frame": 7461,
+    "seconds": 124.513511,
+    "mean_change_0_255": 7.39503,
+    "changed_pixel_fraction_gt12": 0.14433,
+    "center_change": 11.31159,
+    "left_panel_change": 3.61634,
+    "right_panel_change": 5.19843,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0251.jpg"
+  },
+  {
+    "frame": 7493,
+    "seconds": 125.046633,
+    "mean_change_0_255": 3.27319,
+    "changed_pixel_fraction_gt12": 0.01547,
+    "center_change": 3.8492,
+    "left_panel_change": 3.24988,
+    "right_panel_change": 2.84231,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0252.jpg"
+  },
+  {
+    "frame": 7550,
+    "seconds": 125.9964,
+    "mean_change_0_255": 10.57392,
+    "changed_pixel_fraction_gt12": 0.20669,
+    "center_change": 19.26014,
+    "left_panel_change": 3.32063,
+    "right_panel_change": 2.82616,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0253.jpg"
+  },
+  {
+    "frame": 7552,
+    "seconds": 126.032722,
+    "mean_change_0_255": 11.42906,
+    "changed_pixel_fraction_gt12": 0.20086,
+    "center_change": 19.68625,
+    "left_panel_change": 7.25848,
+    "right_panel_change": 2.45357,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0254.jpg"
+  },
+  {
+    "frame": 7602,
+    "seconds": 126.863133,
+    "mean_change_0_255": 15.33076,
+    "changed_pixel_fraction_gt12": 0.3323,
+    "center_change": 25.28071,
+    "left_panel_change": 7.95568,
+    "right_panel_change": 9.50773,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0255.jpg"
+  },
+  {
+    "frame": 7611,
+    "seconds": 127.013033,
+    "mean_change_0_255": 5.31671,
+    "changed_pixel_fraction_gt12": 0.07077,
+    "center_change": 6.30056,
+    "left_panel_change": 3.72399,
+    "right_panel_change": 2.9069,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0256.jpg"
+  },
+  {
+    "frame": 7670,
+    "seconds": 127.996311,
+    "mean_change_0_255": 1.01091,
+    "changed_pixel_fraction_gt12": 0.00227,
+    "center_change": 1.24449,
+    "left_panel_change": 0.89872,
+    "right_panel_change": 0.79262,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0257.jpg"
+  },
+  {
+    "frame": 7686,
+    "seconds": 128.265722,
+    "mean_change_0_255": 0.41833,
+    "changed_pixel_fraction_gt12": 0.00375,
+    "center_change": 0.82948,
+    "left_panel_change": 0.01878,
+    "right_panel_change": 0.07846,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0258.jpg"
+  },
+  {
+    "frame": 7718,
+    "seconds": 128.7983,
+    "mean_change_0_255": 4.65595,
+    "changed_pixel_fraction_gt12": 0.1002,
+    "center_change": 11.54312,
+    "left_panel_change": 0.0028,
+    "right_panel_change": 0.0,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0259.jpg"
+  },
+  {
+    "frame": 7745,
+    "seconds": 129.246467,
+    "mean_change_0_255": 0.3662,
+    "changed_pixel_fraction_gt12": 0.00189,
+    "center_change": 0.55084,
+    "left_panel_change": 0.22753,
+    "right_panel_change": 0.21087,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0260.jpg"
+  },
+  {
+    "frame": 7766,
+    "seconds": 129.596656,
+    "mean_change_0_255": 2.223,
+    "changed_pixel_fraction_gt12": 0.04689,
+    "center_change": 5.43509,
+    "left_panel_change": 0.34387,
+    "right_panel_change": 0.00498,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0261.jpg"
+  },
+  {
+    "frame": 7800,
+    "seconds": 130.165311,
+    "mean_change_0_255": 0.47026,
+    "changed_pixel_fraction_gt12": 0.00336,
+    "center_change": 0.96152,
+    "left_panel_change": 0.10443,
+    "right_panel_change": 0.13022,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0262.jpg"
+  },
+  {
+    "frame": 7847,
+    "seconds": 130.9463,
+    "mean_change_0_255": 11.90373,
+    "changed_pixel_fraction_gt12": 0.22834,
+    "center_change": 15.99443,
+    "left_panel_change": 6.30271,
+    "right_panel_change": 7.01093,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0263.jpg"
+  },
+  {
+    "frame": 7852,
+    "seconds": 131.029744,
+    "mean_change_0_255": 6.1168,
+    "changed_pixel_fraction_gt12": 0.11403,
+    "center_change": 10.35733,
+    "left_panel_change": 2.5686,
+    "right_panel_change": 2.87218,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0264.jpg"
+  },
+  {
+    "frame": 7884,
+    "seconds": 131.561656,
+    "mean_change_0_255": 14.18516,
+    "changed_pixel_fraction_gt12": 0.26919,
+    "center_change": 24.38862,
+    "left_panel_change": 3.95732,
+    "right_panel_change": 6.96788,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0265.jpg"
+  },
+  {
+    "frame": 7914,
+    "seconds": 132.065211,
+    "mean_change_0_255": 9.06104,
+    "changed_pixel_fraction_gt12": 0.17377,
+    "center_change": 18.62668,
+    "left_panel_change": 0.91896,
+    "right_panel_change": 2.59401,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0266.jpg"
+  },
+  {
+    "frame": 7965,
+    "seconds": 132.912833,
+    "mean_change_0_255": 12.48261,
+    "changed_pixel_fraction_gt12": 0.22709,
+    "center_change": 19.35387,
+    "left_panel_change": 4.85452,
+    "right_panel_change": 7.86222,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0267.jpg"
+  },
+  {
+    "frame": 7972,
+    "seconds": 133.029456,
+    "mean_change_0_255": 5.68497,
+    "changed_pixel_fraction_gt12": 0.12097,
+    "center_change": 8.51262,
+    "left_panel_change": 3.07917,
+    "right_panel_change": 1.1595,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0268.jpg"
+  },
+  {
+    "frame": 8024,
+    "seconds": 133.896211,
+    "mean_change_0_255": 1.61595,
+    "changed_pixel_fraction_gt12": 0.00233,
+    "center_change": 1.60791,
+    "left_panel_change": 1.73875,
+    "right_panel_change": 1.50101,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0269.jpg"
+  },
+  {
+    "frame": 8040,
+    "seconds": 134.165278,
+    "mean_change_0_255": 0.44243,
+    "changed_pixel_fraction_gt12": 0.00241,
+    "center_change": 0.71853,
+    "left_panel_change": 0.21205,
+    "right_panel_change": 0.25156,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0270.jpg"
+  },
+  {
+    "frame": 8075,
+    "seconds": 134.745944,
+    "mean_change_0_255": 13.91437,
+    "changed_pixel_fraction_gt12": 0.28269,
+    "center_change": 24.51563,
+    "left_panel_change": 5.73113,
+    "right_panel_change": 5.38083,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0271.jpg"
+  },
+  {
+    "frame": 8091,
+    "seconds": 135.015933,
+    "mean_change_0_255": 4.0895,
+    "changed_pixel_fraction_gt12": 0.0902,
+    "center_change": 6.87387,
+    "left_panel_change": 0.96824,
+    "right_panel_change": 2.91535,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0272.jpg"
+  },
+  {
+    "frame": 8142,
+    "seconds": 135.862711,
+    "mean_change_0_255": 1.20536,
+    "changed_pixel_fraction_gt12": 0.00147,
+    "center_change": 1.56904,
+    "left_panel_change": 1.13039,
+    "right_panel_change": 0.8368,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0273.jpg"
+  },
+  {
+    "frame": 8169,
+    "seconds": 136.314722,
+    "mean_change_0_255": 13.04378,
+    "changed_pixel_fraction_gt12": 0.28758,
+    "center_change": 22.31448,
+    "left_panel_change": 2.85321,
+    "right_panel_change": 7.40948,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0274.jpg"
+  },
+  {
+    "frame": 8181,
+    "seconds": 136.515833,
+    "mean_change_0_255": 7.92069,
+    "changed_pixel_fraction_gt12": 0.15377,
+    "center_change": 14.92156,
+    "left_panel_change": 1.05836,
+    "right_panel_change": 3.90468,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0275.jpg"
+  },
+  {
+    "frame": 8221,
+    "seconds": 137.179733,
+    "mean_change_0_255": 1.20408,
+    "changed_pixel_fraction_gt12": 0.00325,
+    "center_change": 1.68652,
+    "left_panel_change": 0.84092,
+    "right_panel_change": 0.91588,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0276.jpg"
+  },
+  {
+    "frame": 8249,
+    "seconds": 137.645744,
+    "mean_change_0_255": 5.55819,
+    "changed_pixel_fraction_gt12": 0.11147,
+    "center_change": 8.00558,
+    "left_panel_change": 2.31054,
+    "right_panel_change": 4.37461,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0277.jpg"
+  },
+  {
+    "frame": 8272,
+    "seconds": 138.029256,
+    "mean_change_0_255": 3.82845,
+    "changed_pixel_fraction_gt12": 0.074,
+    "center_change": 5.03228,
+    "left_panel_change": 2.3881,
+    "right_panel_change": 2.32646,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0278.jpg"
+  },
+  {
+    "frame": 8313,
+    "seconds": 138.716033,
+    "mean_change_0_255": 3.48482,
+    "changed_pixel_fraction_gt12": 0.07312,
+    "center_change": 5.33637,
+    "left_panel_change": 0.95503,
+    "right_panel_change": 1.72548,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0279.jpg"
+  },
+  {
+    "frame": 8338,
+    "seconds": 139.129189,
+    "mean_change_0_255": 7.4734,
+    "changed_pixel_fraction_gt12": 0.16831,
+    "center_change": 10.40311,
+    "left_panel_change": 3.13265,
+    "right_panel_change": 6.2931,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0280.jpg"
+  },
+  {
+    "frame": 8378,
+    "seconds": 139.795878,
+    "mean_change_0_255": 1.15401,
+    "changed_pixel_fraction_gt12": 0.00164,
+    "center_change": 1.34326,
+    "left_panel_change": 1.03214,
+    "right_panel_change": 1.07289,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0281.jpg"
+  },
+  {
+    "frame": 8402,
+    "seconds": 140.195733,
+    "mean_change_0_255": 8.67577,
+    "changed_pixel_fraction_gt12": 0.1957,
+    "center_change": 12.50405,
+    "left_panel_change": 2.78214,
+    "right_panel_change": 7.11464,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0282.jpg"
+  },
+  {
+    "frame": 8421,
+    "seconds": 140.514467,
+    "mean_change_0_255": 5.20091,
+    "changed_pixel_fraction_gt12": 0.09245,
+    "center_change": 7.60762,
+    "left_panel_change": 2.2,
+    "right_panel_change": 2.86234,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0283.jpg"
+  },
+  {
+    "frame": 8452,
+    "seconds": 141.029133,
+    "mean_change_0_255": 7.38764,
+    "changed_pixel_fraction_gt12": 0.1467,
+    "center_change": 16.1386,
+    "left_panel_change": 1.41179,
+    "right_panel_change": 1.10483,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0284.jpg"
+  },
+  {
+    "frame": 8496,
+    "seconds": 141.764989,
+    "mean_change_0_255": 1.10383,
+    "changed_pixel_fraction_gt12": 0.00267,
+    "center_change": 1.39938,
+    "left_panel_change": 0.97854,
+    "right_panel_change": 0.88596,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0285.jpg"
+  },
+  {
+    "frame": 8529,
+    "seconds": 142.314778,
+    "mean_change_0_255": 1.51425,
+    "changed_pixel_fraction_gt12": 0.03209,
+    "center_change": 2.89955,
+    "left_panel_change": 2.03545,
+    "right_panel_change": 0.04453,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0286.jpg"
+  },
+  {
+    "frame": 8555,
+    "seconds": 142.746578,
+    "mean_change_0_255": 1.93327,
+    "changed_pixel_fraction_gt12": 0.02341,
+    "center_change": 2.08876,
+    "left_panel_change": 4.13771,
+    "right_panel_change": 0.94578,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0287.jpg"
+  },
+  {
+    "frame": 8580,
+    "seconds": 143.165144,
+    "mean_change_0_255": 0.46307,
+    "changed_pixel_fraction_gt12": 0.00413,
+    "center_change": 0.98146,
+    "left_panel_change": 0.12259,
+    "right_panel_change": 0.13837,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0288.jpg"
+  },
+  {
+    "frame": 8614,
+    "seconds": 143.729,
+    "mean_change_0_255": 0.63586,
+    "changed_pixel_fraction_gt12": 0.00016,
+    "center_change": 0.65261,
+    "left_panel_change": 0.72628,
+    "right_panel_change": 0.64542,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0289.jpg"
+  },
+  {
+    "frame": 8640,
+    "seconds": 144.164867,
+    "mean_change_0_255": 0.16852,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.2212,
+    "left_panel_change": 0.15036,
+    "right_panel_change": 0.13858,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0290.jpg"
+  },
+  {
+    "frame": 8673,
+    "seconds": 144.715344,
+    "mean_change_0_255": 0.61391,
+    "changed_pixel_fraction_gt12": 0.00187,
+    "center_change": 0.78883,
+    "left_panel_change": 0.59286,
+    "right_panel_change": 0.54705,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0291.jpg"
+  },
+  {
+    "frame": 8719,
+    "seconds": 145.479267,
+    "mean_change_0_255": 3.90799,
+    "changed_pixel_fraction_gt12": 0.0695,
+    "center_change": 5.87748,
+    "left_panel_change": 1.82018,
+    "right_panel_change": 2.07704,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0292.jpg"
+  },
+  {
+    "frame": 8732,
+    "seconds": 145.695433,
+    "mean_change_0_255": 6.32406,
+    "changed_pixel_fraction_gt12": 0.09258,
+    "center_change": 8.73918,
+    "left_panel_change": 4.37872,
+    "right_panel_change": 2.37004,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0293.jpg"
+  },
+  {
+    "frame": 8758,
+    "seconds": 146.1283,
+    "mean_change_0_255": 2.26515,
+    "changed_pixel_fraction_gt12": 0.04648,
+    "center_change": 3.57846,
+    "left_panel_change": 4.03753,
+    "right_panel_change": 0.66394,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0294.jpg"
+  },
+  {
+    "frame": 8791,
+    "seconds": 146.678833,
+    "mean_change_0_255": 1.37846,
+    "changed_pixel_fraction_gt12": 0.00063,
+    "center_change": 1.44951,
+    "left_panel_change": 1.55411,
+    "right_panel_change": 1.40367,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0295.jpg"
+  },
+  {
+    "frame": 8821,
+    "seconds": 147.177878,
+    "mean_change_0_255": 1.09993,
+    "changed_pixel_fraction_gt12": 0.00311,
+    "center_change": 1.1871,
+    "left_panel_change": 0.82253,
+    "right_panel_change": 1.31538,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0296.jpg"
+  },
+  {
+    "frame": 8850,
+    "seconds": 147.665111,
+    "mean_change_0_255": 0.88466,
+    "changed_pixel_fraction_gt12": 2e-05,
+    "center_change": 0.92586,
+    "left_panel_change": 1.04262,
+    "right_panel_change": 0.85022,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0297.jpg"
+  },
+  {
+    "frame": 8880,
+    "seconds": 148.162756,
+    "mean_change_0_255": 0.25544,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.27917,
+    "left_panel_change": 0.17634,
+    "right_panel_change": 0.27671,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0298.jpg"
+  },
+  {
+    "frame": 8909,
+    "seconds": 148.645378,
+    "mean_change_0_255": 0.80032,
+    "changed_pixel_fraction_gt12": 0.00177,
+    "center_change": 1.06095,
+    "left_panel_change": 0.72387,
+    "right_panel_change": 0.65594,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0299.jpg"
+  },
+  {
+    "frame": 8940,
+    "seconds": 149.165144,
+    "mean_change_0_255": 0.16903,
+    "changed_pixel_fraction_gt12": 2e-05,
+    "center_change": 0.18037,
+    "left_panel_change": 0.12348,
+    "right_panel_change": 0.18907,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0300.jpg"
+  },
+  {
+    "frame": 8968,
+    "seconds": 149.629289,
+    "mean_change_0_255": 0.54829,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 0.59376,
+    "left_panel_change": 0.56467,
+    "right_panel_change": 0.56738,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0301.jpg"
+  },
+  {
+    "frame": 9000,
+    "seconds": 150.162322,
+    "mean_change_0_255": 0.27979,
+    "changed_pixel_fraction_gt12": 0.00198,
+    "center_change": 0.51649,
+    "left_panel_change": 0.10348,
+    "right_panel_change": 0.11881,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0302.jpg"
+  },
+  {
+    "frame": 9027,
+    "seconds": 150.613989,
+    "mean_change_0_255": 0.70485,
+    "changed_pixel_fraction_gt12": 0.00322,
+    "center_change": 0.93671,
+    "left_panel_change": 0.63646,
+    "right_panel_change": 0.5619,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0303.jpg"
+  },
+  {
+    "frame": 9055,
+    "seconds": 151.079656,
+    "mean_change_0_255": 11.51948,
+    "changed_pixel_fraction_gt12": 0.24433,
+    "center_change": 20.65922,
+    "left_panel_change": 10.78699,
+    "right_panel_change": 3.1747,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0304.jpg"
+  },
+  {
+    "frame": 9100,
+    "seconds": 151.831011,
+    "mean_change_0_255": 6.04267,
+    "changed_pixel_fraction_gt12": 0.12306,
+    "center_change": 10.52433,
+    "left_panel_change": 1.76402,
+    "right_panel_change": 2.69941,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0305.jpg"
+  },
+  {
+    "frame": 9121,
+    "seconds": 152.1797,
+    "mean_change_0_255": 8.26569,
+    "changed_pixel_fraction_gt12": 0.16516,
+    "center_change": 12.9371,
+    "left_panel_change": 2.97771,
+    "right_panel_change": 4.17159,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0306.jpg"
+  },
+  {
+    "frame": 9159,
+    "seconds": 152.812344,
+    "mean_change_0_255": 9.59462,
+    "changed_pixel_fraction_gt12": 0.19847,
+    "center_change": 15.28127,
+    "left_panel_change": 3.07036,
+    "right_panel_change": 4.25849,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0307.jpg"
+  },
+  {
+    "frame": 9186,
+    "seconds": 153.264789,
+    "mean_change_0_255": 0.43566,
+    "changed_pixel_fraction_gt12": 0.00217,
+    "center_change": 0.65818,
+    "left_panel_change": 0.33024,
+    "right_panel_change": 0.30062,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0308.jpg"
+  },
+  {
+    "frame": 9218,
+    "seconds": 153.795444,
+    "mean_change_0_255": 6.38693,
+    "changed_pixel_fraction_gt12": 0.12448,
+    "center_change": 11.20431,
+    "left_panel_change": 1.3606,
+    "right_panel_change": 2.29627,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0309.jpg"
+  },
+  {
+    "frame": 9256,
+    "seconds": 154.429111,
+    "mean_change_0_255": 17.09971,
+    "changed_pixel_fraction_gt12": 0.31938,
+    "center_change": 34.41533,
+    "left_panel_change": 3.08643,
+    "right_panel_change": 3.55416,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0310.jpg"
+  },
+  {
+    "frame": 9261,
+    "seconds": 154.512356,
+    "mean_change_0_255": 16.89597,
+    "changed_pixel_fraction_gt12": 0.30883,
+    "center_change": 34.64838,
+    "left_panel_change": 4.44432,
+    "right_panel_change": 10.31914,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0311.jpg"
+  },
+  {
+    "frame": 9320,
+    "seconds": 155.495611,
+    "mean_change_0_255": 5.52972,
+    "changed_pixel_fraction_gt12": 0.12075,
+    "center_change": 10.32298,
+    "left_panel_change": 2.3442,
+    "right_panel_change": 4.48756,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0312.jpg"
+  },
+  {
+    "frame": 9328,
+    "seconds": 155.629411,
+    "mean_change_0_255": 10.80095,
+    "changed_pixel_fraction_gt12": 0.19966,
+    "center_change": 20.33815,
+    "left_panel_change": 1.97646,
+    "right_panel_change": 8.22527,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0313.jpg"
+  },
+  {
+    "frame": 9352,
+    "seconds": 156.028978,
+    "mean_change_0_255": 6.21118,
+    "changed_pixel_fraction_gt12": 0.11345,
+    "center_change": 7.89026,
+    "left_panel_change": 2.83792,
+    "right_panel_change": 2.54599,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0314.jpg"
+  },
+  {
+    "frame": 9407,
+    "seconds": 156.945456,
+    "mean_change_0_255": 9.29213,
+    "changed_pixel_fraction_gt12": 0.17806,
+    "center_change": 13.75144,
+    "left_panel_change": 4.38735,
+    "right_panel_change": 5.48969,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0315.jpg"
+  },
+  {
+    "frame": 9411,
+    "seconds": 157.015011,
+    "mean_change_0_255": 5.14242,
+    "changed_pixel_fraction_gt12": 0.10003,
+    "center_change": 9.09844,
+    "left_panel_change": 3.6847,
+    "right_panel_change": 2.60418,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0316.jpg"
+  },
+  {
+    "frame": 9453,
+    "seconds": 157.715433,
+    "mean_change_0_255": 0.3109,
+    "changed_pixel_fraction_gt12": 0.00219,
+    "center_change": 0.5643,
+    "left_panel_change": 0.17738,
+    "right_panel_change": 0.10951,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0317.jpg"
+  },
+  {
+    "frame": 9499,
+    "seconds": 158.478956,
+    "mean_change_0_255": 0.6491,
+    "changed_pixel_fraction_gt12": 0.00202,
+    "center_change": 0.85798,
+    "left_panel_change": 0.57628,
+    "right_panel_change": 0.58841,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0318.jpg"
+  },
+  {
+    "frame": 9529,
+    "seconds": 158.979022,
+    "mean_change_0_255": 5.68976,
+    "changed_pixel_fraction_gt12": 0.10725,
+    "center_change": 8.73356,
+    "left_panel_change": 2.7892,
+    "right_panel_change": 1.99084,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0319.jpg"
+  },
+  {
+    "frame": 9533,
+    "seconds": 159.045778,
+    "mean_change_0_255": 6.40491,
+    "changed_pixel_fraction_gt12": 0.12525,
+    "center_change": 9.771,
+    "left_panel_change": 4.51685,
+    "right_panel_change": 3.03357,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0320.jpg"
+  },
+  {
+    "frame": 9561,
+    "seconds": 159.512722,
+    "mean_change_0_255": 4.05398,
+    "changed_pixel_fraction_gt12": 0.08081,
+    "center_change": 8.72,
+    "left_panel_change": 1.50881,
+    "right_panel_change": 0.29778,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0321.jpg"
+  },
+  {
+    "frame": 9617,
+    "seconds": 160.445544,
+    "mean_change_0_255": 0.93197,
+    "changed_pixel_fraction_gt12": 0.0,
+    "center_change": 1.07056,
+    "left_panel_change": 0.95955,
+    "right_panel_change": 0.82773,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0322.jpg"
+  },
+  {
+    "frame": 9646,
+    "seconds": 160.929489,
+    "mean_change_0_255": 0.21764,
+    "changed_pixel_fraction_gt12": 0.00236,
+    "center_change": 0.15699,
+    "left_panel_change": 0.02131,
+    "right_panel_change": 0.07081,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0323.jpg"
+  },
+  {
+    "frame": 9676,
+    "seconds": 161.428267,
+    "mean_change_0_255": 0.72427,
+    "changed_pixel_fraction_gt12": 0.00144,
+    "center_change": 1.02212,
+    "left_panel_change": 0.56682,
+    "right_panel_change": 0.52978,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0324.jpg"
+  },
+  {
+    "frame": 9697,
+    "seconds": 161.777389,
+    "mean_change_0_255": 0.22912,
+    "changed_pixel_fraction_gt12": 0.00375,
+    "center_change": 0.49534,
+    "left_panel_change": 0.0,
+    "right_panel_change": 0.0,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0325.jpg"
+  },
+  {
+    "frame": 9735,
+    "seconds": 162.412289,
+    "mean_change_0_255": 0.82763,
+    "changed_pixel_fraction_gt12": 9e-05,
+    "center_change": 0.97118,
+    "left_panel_change": 0.84494,
+    "right_panel_change": 0.71393,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0326.jpg"
+  },
+  {
+    "frame": 9741,
+    "seconds": 162.514122,
+    "mean_change_0_255": 0.01478,
+    "changed_pixel_fraction_gt12": 6e-05,
+    "center_change": 0.02056,
+    "left_panel_change": 0.01875,
+    "right_panel_change": 0.00664,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0327.jpg"
+  },
+  {
+    "frame": 9759,
+    "seconds": 163.399211,
+    "mean_change_0_255": 79.80627,
+    "changed_pixel_fraction_gt12": 0.97494,
+    "center_change": 102.32565,
+    "left_panel_change": 37.29515,
+    "right_panel_change": 83.56489,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0328.jpg"
+  },
+  {
+    "frame": 9794,
+    "seconds": 163.978922,
+    "mean_change_0_255": 1.17712,
+    "changed_pixel_fraction_gt12": 0.00142,
+    "center_change": 1.42229,
+    "left_panel_change": 0.9458,
+    "right_panel_change": 1.03099,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0329.jpg"
+  },
+  {
+    "frame": 9824,
+    "seconds": 164.479322,
+    "mean_change_0_255": 20.75652,
+    "changed_pixel_fraction_gt12": 0.43097,
+    "center_change": 33.634,
+    "left_panel_change": 6.15801,
+    "right_panel_change": 9.24693,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0330.jpg"
+  },
+  {
+    "frame": 9834,
+    "seconds": 164.645878,
+    "mean_change_0_255": 22.30416,
+    "changed_pixel_fraction_gt12": 0.38067,
+    "center_change": 33.64658,
+    "left_panel_change": 9.01137,
+    "right_panel_change": 8.11873,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0331.jpg"
+  },
+  {
+    "frame": 9857,
+    "seconds": 165.028667,
+    "mean_change_0_255": 0.53048,
+    "changed_pixel_fraction_gt12": 0.00838,
+    "center_change": 0.88567,
+    "left_panel_change": 0.13208,
+    "right_panel_change": 0.09662,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0332.jpg"
+  },
+  {
+    "frame": 9913,
+    "seconds": 165.964189,
+    "mean_change_0_255": 23.23533,
+    "changed_pixel_fraction_gt12": 0.282,
+    "center_change": 34.33035,
+    "left_panel_change": 0.00205,
+    "right_panel_change": 53.84862,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0333.jpg"
+  },
+  {
+    "frame": 9916,
+    "seconds": 166.014144,
+    "mean_change_0_255": 15.8266,
+    "changed_pixel_fraction_gt12": 0.25288,
+    "center_change": 27.59049,
+    "left_panel_change": 3.67774,
+    "right_panel_change": 16.84062,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0334.jpg"
+  },
+  {
+    "frame": 9964,
+    "seconds": 166.814167,
+    "mean_change_0_255": 25.25391,
+    "changed_pixel_fraction_gt12": 0.47008,
+    "center_change": 42.58387,
+    "left_panel_change": 9.91946,
+    "right_panel_change": 15.37393,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0335.jpg"
+  },
+  {
+    "frame": 9977,
+    "seconds": 167.028856,
+    "mean_change_0_255": 12.72107,
+    "changed_pixel_fraction_gt12": 0.21981,
+    "center_change": 20.08899,
+    "left_panel_change": 2.54851,
+    "right_panel_change": 11.15025,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0336.jpg"
+  },
+  {
+    "frame": 10030,
+    "seconds": 167.911489,
+    "mean_change_0_255": 1.85281,
+    "changed_pixel_fraction_gt12": 0.00198,
+    "center_change": 1.9891,
+    "left_panel_change": 2.17199,
+    "right_panel_change": 1.56616,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0337.jpg"
+  },
+  {
+    "frame": 10046,
+    "seconds": 168.177733,
+    "mean_change_0_255": 0.93105,
+    "changed_pixel_fraction_gt12": 0.01806,
+    "center_change": 0.17427,
+    "left_panel_change": 4.62961,
+    "right_panel_change": 0.11979,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0338.jpg"
+  },
+  {
+    "frame": 10089,
+    "seconds": 168.895089,
+    "mean_change_0_255": 1.1261,
+    "changed_pixel_fraction_gt12": 0.00063,
+    "center_change": 1.23724,
+    "left_panel_change": 1.20935,
+    "right_panel_change": 0.97834,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0339.jpg"
+  },
+  {
+    "frame": 10118,
+    "seconds": 169.378911,
+    "mean_change_0_255": 0.89723,
+    "changed_pixel_fraction_gt12": 0.02131,
+    "center_change": 0.03092,
+    "left_panel_change": 4.82679,
+    "right_panel_change": 0.10779,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0340.jpg"
+  },
+  {
+    "frame": 10148,
+    "seconds": 169.878478,
+    "mean_change_0_255": 0.85632,
+    "changed_pixel_fraction_gt12": 0.00122,
+    "center_change": 0.86413,
+    "left_panel_change": 1.23283,
+    "right_panel_change": 0.68824,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0341.jpg"
+  },
+  {
+    "frame": 10179,
+    "seconds": 170.395067,
+    "mean_change_0_255": 0.44442,
+    "changed_pixel_fraction_gt12": 0.00708,
+    "center_change": 0.04353,
+    "left_panel_change": 2.3389,
+    "right_panel_change": 0.00178,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0342.jpg"
+  },
+  {
+    "frame": 10207,
+    "seconds": 170.867189,
+    "mean_change_0_255": 0.92852,
+    "changed_pixel_fraction_gt12": 0.00211,
+    "center_change": 0.87321,
+    "left_panel_change": 1.48369,
+    "right_panel_change": 0.6736,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0343.jpg"
+  },
+  {
+    "frame": 10243,
+    "seconds": 171.464844,
+    "mean_change_0_255": 0.92167,
+    "changed_pixel_fraction_gt12": 0.0177,
+    "center_change": 0.62589,
+    "left_panel_change": 3.62702,
+    "right_panel_change": 0.01769,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0344.jpg"
+  },
+  {
+    "frame": 10266,
+    "seconds": 171.845567,
+    "mean_change_0_255": 1.0563,
+    "changed_pixel_fraction_gt12": 0.00303,
+    "center_change": 0.87806,
+    "left_panel_change": 2.13622,
+    "right_panel_change": 0.70791,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0345.jpg"
+  },
+  {
+    "frame": 10286,
+    "seconds": 172.178822,
+    "mean_change_0_255": 2.65602,
+    "changed_pixel_fraction_gt12": 0.06692,
+    "center_change": 0.06206,
+    "left_panel_change": 11.10818,
+    "right_panel_change": 0.23668,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0346.jpg"
+  },
+  {
+    "frame": 10335,
+    "seconds": 172.9951,
+    "mean_change_0_255": 4.72045,
+    "changed_pixel_fraction_gt12": 0.10652,
+    "center_change": 7.97306,
+    "left_panel_change": 0.82283,
+    "right_panel_change": 5.74136,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0347.jpg"
+  },
+  {
+    "frame": 10339,
+    "seconds": 173.061856,
+    "mean_change_0_255": 21.24927,
+    "changed_pixel_fraction_gt12": 0.3992,
+    "center_change": 33.40468,
+    "left_panel_change": 8.12631,
+    "right_panel_change": 22.0005,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0348.jpg"
+  },
+  {
+    "frame": 10384,
+    "seconds": 173.811878,
+    "mean_change_0_255": 3.85897,
+    "changed_pixel_fraction_gt12": 0.03222,
+    "center_change": 4.21496,
+    "left_panel_change": 3.53461,
+    "right_panel_change": 3.68116,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0349.jpg"
+  },
+  {
+    "frame": 10406,
+    "seconds": 174.178944,
+    "mean_change_0_255": 17.97359,
+    "changed_pixel_fraction_gt12": 0.36709,
+    "center_change": 26.45001,
+    "left_panel_change": 6.45128,
+    "right_panel_change": 11.73111,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0350.jpg"
+  },
+  {
+    "frame": 10452,
+    "seconds": 174.945289,
+    "mean_change_0_255": 28.91601,
+    "changed_pixel_fraction_gt12": 0.35342,
+    "center_change": 24.62453,
+    "left_panel_change": 3.97545,
+    "right_panel_change": 96.10824,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0351.jpg"
+  },
+  {
+    "frame": 10456,
+    "seconds": 175.014589,
+    "mean_change_0_255": 2.46098,
+    "changed_pixel_fraction_gt12": 0.0462,
+    "center_change": 4.23368,
+    "left_panel_change": 0.92577,
+    "right_panel_change": 0.39467,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0352.jpg"
+  },
+  {
+    "frame": 10502,
+    "seconds": 175.778644,
+    "mean_change_0_255": 1.48509,
+    "changed_pixel_fraction_gt12": 0.00347,
+    "center_change": 1.898,
+    "left_panel_change": 1.33423,
+    "right_panel_change": 1.02326,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0353.jpg"
+  },
+  {
+    "frame": 10518,
+    "seconds": 176.045289,
+    "mean_change_0_255": 1.22651,
+    "changed_pixel_fraction_gt12": 0.02725,
+    "center_change": 0.42367,
+    "left_panel_change": 0.0,
+    "right_panel_change": 6.01366,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0354.jpg"
+  },
+  {
+    "frame": 10561,
+    "seconds": 176.764944,
+    "mean_change_0_255": 1.03627,
+    "changed_pixel_fraction_gt12": 0.00187,
+    "center_change": 0.99012,
+    "left_panel_change": 0.90357,
+    "right_panel_change": 1.41126,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0355.jpg"
+  },
+  {
+    "frame": 10576,
+    "seconds": 177.011878,
+    "mean_change_0_255": 0.22516,
+    "changed_pixel_fraction_gt12": 0.003,
+    "center_change": 0.11984,
+    "left_panel_change": 0.01658,
+    "right_panel_change": 0.93612,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0356.jpg"
+  },
+  {
+    "frame": 10608,
+    "seconds": 177.545111,
+    "mean_change_0_255": 1.43623,
+    "changed_pixel_fraction_gt12": 0.03577,
+    "center_change": 0.40123,
+    "left_panel_change": 0.0306,
+    "right_panel_change": 7.17307,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0357.jpg"
+  },
+  {
+    "frame": 10659,
+    "seconds": 178.395133,
+    "mean_change_0_255": 1.38444,
+    "changed_pixel_fraction_gt12": 0.00286,
+    "center_change": 1.22932,
+    "left_panel_change": 1.15667,
+    "right_panel_change": 2.12228,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0358.jpg"
+  },
+  {
+    "frame": 10679,
+    "seconds": 178.728344,
+    "mean_change_0_255": 1.26619,
+    "changed_pixel_fraction_gt12": 0.00145,
+    "center_change": 1.34493,
+    "left_panel_change": 1.21378,
+    "right_panel_change": 1.19713,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0359.jpg"
+  },
+  {
+    "frame": 10702,
+    "seconds": 179.114244,
+    "mean_change_0_255": 0.50336,
+    "changed_pixel_fraction_gt12": 0.00222,
+    "center_change": 0.55217,
+    "left_panel_change": 0.40015,
+    "right_panel_change": 0.59973,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0360.jpg"
+  },
+  {
+    "frame": 10738,
+    "seconds": 179.711567,
+    "mean_change_0_255": 0.74554,
+    "changed_pixel_fraction_gt12": 0.00019,
+    "center_change": 0.76744,
+    "left_panel_change": 0.71051,
+    "right_panel_change": 0.79239,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0361.jpg"
+  },
+  {
+    "frame": 10761,
+    "seconds": 180.094633,
+    "mean_change_0_255": 1.82534,
+    "changed_pixel_fraction_gt12": 0.038,
+    "center_change": 0.5056,
+    "left_panel_change": 0.0,
+    "right_panel_change": 9.23831,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0362.jpg"
+  },
+  {
+    "frame": 10801,
+    "seconds": 180.764933,
+    "mean_change_0_255": 1.37241,
+    "changed_pixel_fraction_gt12": 0.03227,
+    "center_change": 0.49163,
+    "left_panel_change": 0.00217,
+    "right_panel_change": 6.664,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0363.jpg"
+  },
+  {
+    "frame": 10845,
+    "seconds": 181.495278,
+    "mean_change_0_255": 1.68296,
+    "changed_pixel_fraction_gt12": 0.03659,
+    "center_change": 0.47108,
+    "left_panel_change": 0.0,
+    "right_panel_change": 8.50948,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0364.jpg"
+  },
+  {
+    "frame": 10860,
+    "seconds": 181.7504,
+    "mean_change_0_255": 3.53028,
+    "changed_pixel_fraction_gt12": 0.08508,
+    "center_change": 0.30609,
+    "left_panel_change": 0.13375,
+    "right_panel_change": 0.09422,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0365.jpg"
+  },
+  {
+    "frame": 10902,
+    "seconds": 182.448233,
+    "mean_change_0_255": 13.93342,
+    "changed_pixel_fraction_gt12": 0.23903,
+    "center_change": 25.00363,
+    "left_panel_change": 4.79848,
+    "right_panel_change": 5.48116,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0366.jpg"
+  },
+  {
+    "frame": 10908,
+    "seconds": 182.547933,
+    "mean_change_0_255": 14.75142,
+    "changed_pixel_fraction_gt12": 0.26766,
+    "center_change": 23.58805,
+    "left_panel_change": 8.66545,
+    "right_panel_change": 3.45256,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0367.jpg"
+  },
+  {
+    "frame": 10957,
+    "seconds": 183.362333,
+    "mean_change_0_255": 3.75287,
+    "changed_pixel_fraction_gt12": 0.06923,
+    "center_change": 0.86026,
+    "left_panel_change": 0.13494,
+    "right_panel_change": 0.02785,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0368.jpg"
+  },
+  {
+    "frame": 10974,
+    "seconds": 183.6449,
+    "mean_change_0_255": 1.29949,
+    "changed_pixel_fraction_gt12": 0.00122,
+    "center_change": 1.54774,
+    "left_panel_change": 1.17095,
+    "right_panel_change": 1.00053,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0369.jpg"
+  },
+  {
+    "frame": 11006,
+    "seconds": 184.177989,
+    "mean_change_0_255": 14.90781,
+    "changed_pixel_fraction_gt12": 0.29308,
+    "center_change": 22.85454,
+    "left_panel_change": 7.76887,
+    "right_panel_change": 3.68281,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0370.jpg"
+  },
+  {
+    "frame": 11033,
+    "seconds": 184.6281,
+    "mean_change_0_255": 3.43955,
+    "changed_pixel_fraction_gt12": 0.01316,
+    "center_change": 3.94655,
+    "left_panel_change": 3.39988,
+    "right_panel_change": 2.85105,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0371.jpg"
+  },
+  {
+    "frame": 11084,
+    "seconds": 185.477967,
+    "mean_change_0_255": 23.04414,
+    "changed_pixel_fraction_gt12": 0.46627,
+    "center_change": 34.48011,
+    "left_panel_change": 11.88836,
+    "right_panel_change": 7.49822,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0372.jpg"
+  },
+  {
+    "frame": 11111,
+    "seconds": 185.931467,
+    "mean_change_0_255": 30.75016,
+    "changed_pixel_fraction_gt12": 0.80444,
+    "center_change": 39.06651,
+    "left_panel_change": 21.99315,
+    "right_panel_change": 25.28563,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0373.jpg"
+  },
+  {
+    "frame": 11132,
+    "seconds": 186.283978,
+    "mean_change_0_255": 3.82719,
+    "changed_pixel_fraction_gt12": 0.06797,
+    "center_change": 3.96634,
+    "left_panel_change": 5.06735,
+    "right_panel_change": 5.25582,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0374.jpg"
+  },
+  {
+    "frame": 11151,
+    "seconds": 186.602233,
+    "mean_change_0_255": 2.46694,
+    "changed_pixel_fraction_gt12": 0.02181,
+    "center_change": 2.51137,
+    "left_panel_change": 2.69604,
+    "right_panel_change": 2.6685,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0375.jpg"
+  },
+  {
+    "frame": 11195,
+    "seconds": 187.3891,
+    "mean_change_0_255": 15.49294,
+    "changed_pixel_fraction_gt12": 0.31553,
+    "center_change": 16.61842,
+    "left_panel_change": 15.11482,
+    "right_panel_change": 18.44809,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0376.jpg"
+  },
+  {
+    "frame": 11210,
+    "seconds": 187.635267,
+    "mean_change_0_255": 9.27056,
+    "changed_pixel_fraction_gt12": 0.1858,
+    "center_change": 9.63672,
+    "left_panel_change": 6.24057,
+    "right_panel_change": 10.02323,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0377.jpg"
+  },
+  {
+    "frame": 11219,
+    "seconds": 187.786056,
+    "mean_change_0_255": 0.82626,
+    "changed_pixel_fraction_gt12": 0.01453,
+    "center_change": 0.24342,
+    "left_panel_change": 0.1922,
+    "right_panel_change": 0.02566,
+    "image": "/Users/gewenfei/Documents/agent-forge/docs/artifacts/video-gap-2026-09-11/frames/0378.jpg"
+  }
+]

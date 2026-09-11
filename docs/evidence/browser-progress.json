@@ -1,0 +1,202 @@
+[
+  {
+    "name": "登录与初始化，无前端运行错误",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "验证环境标识可见，未伪装真实模型",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "WebGL真实渲染 / SwiftShader软件GPU",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "3D人物画布拾取→成员详情",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "Esc关闭弹窗并返回工作台",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "3D拖拽旋转，不误触成员弹窗",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "滚轮缩放改变相机状态",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "相机复位",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "相机键盘操作及Home复位",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "日夜切换改变实际渲染结果",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "布局切换移动模型，界面注明不是实际会议",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "聚焦已选成员",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "非法GLB拒绝且界面可继续操作",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "静态GLB解析、替换与渲染",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "恢复默认人物，不丢失WebGL上下文",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "GLB错误头、截断、超限、版本验证",
+    "status": "passed",
+    "details": "[{\"name\": \"bad-magic\", \"rejected\": true}, {\"name\": \"truncated\", \"rejected\": true}, {\"name\": \"oversized\", \"rejected\": true}, {\"name\": \"old-version\", \"rejected\": true}]"
+  },
+  {
+    "name": "任务图真实依赖节点与缩放复位",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "任务节点打开契约、依赖和上游交付",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "反复切换3D／任务图，不重复标签或丢失上下文",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "配置JSON错误显示，不提交损坏配置",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "Agent参数从表单保存至后端",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "平台运行参数可修改并持久化",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "供应商连接可视化新增",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "界面连通测试调用真实HTTP协议服务",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "新建任务预览跨供应商配置与字段来源",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "浏览器创建真实持久化运行",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "负责人自动规划、拆分依赖并等待审批",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "暂停在安全边界生效，暂停期间无新模型请求",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "继续执行→并行任务→集成→测试→独立审查",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "4条Agent消息真实送入上下文，2个供应商参与同一运行",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "2条依赖交接及上游产物进入下游契约",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "协作消息与交接可视化同步",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "16次脚本化模型调用，真实Git修改及3项固定单测通过",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "产物HTTP下载、补丁与源码有效，原项目未修改，秘密文件未导出",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "人工验收后运行完成，而非Agent自行判定完成",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "运行快照保留覆盖值且不泄漏凭据",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "10成员分页显示8＋2，模型位置不重叠复用",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "1024px工作台不发生水平溢出",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "审计事件展开读取",
+    "status": "passed",
+    "details": ""
+  },
+  {
+    "name": "全部上述交互无未捕获前端异常",
+    "status": "passed",
+    "details": ""
+  }
+]

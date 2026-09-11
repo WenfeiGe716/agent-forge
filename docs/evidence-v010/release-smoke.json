@@ -1,0 +1,56 @@
+{
+  "method": "Actual release ZIP extraction, fresh offline install, actual HTTP service and authentication. No browser, model or Docker calls. Repackaging after this test adds only the smoke evidence and documentation; source and built frontend unchanged.",
+  "input_archive_sha256": "b6f710a64236eb8e46b940702c827eca5e45bc6de7e079a994b140c99c4bfaf5",
+  "frontend_sha256": "d4e5124405d9f591082ae20a4582984c556229261e45355640a844b959a514d2",
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "name": "交付ZIP无虚拟环境、用户配置、数据库及默认演示入口",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "压缩包内完整SHA256清单校验通过",
+      "status": "passed",
+      "detail": {
+        "files": 553
+      }
+    },
+    {
+      "name": "从无.venv目录执行start.sh自动离线安装并启动0.10.0",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "安装依赖一致性复核",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "HTTP主页为压缩包内实际正式构建字节",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "未登录业务接口拒绝访问",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "新生成管理员可正常登录且空白实例无伪造业务",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "OpenAPI版本与当前发布一致",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "无演示页面路由，默认正式入口",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

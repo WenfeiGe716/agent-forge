@@ -1,0 +1,356 @@
+{
+  "tested": 70,
+  "unreachable": [],
+  "routes": [
+    {
+      "agent": "route-0",
+      "slot": "water:0",
+      "waypoints": 9
+    },
+    {
+      "agent": "route-0",
+      "slot": "water:1",
+      "waypoints": 9
+    },
+    {
+      "agent": "route-0",
+      "slot": "sofa:0",
+      "waypoints": 7
+    },
+    {
+      "agent": "route-0",
+      "slot": "sofa:1",
+      "waypoints": 7
+    },
+    {
+      "agent": "route-0",
+      "slot": "wc:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-1",
+      "slot": "water:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-1",
+      "slot": "water:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-1",
+      "slot": "sofa:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-1",
+      "slot": "sofa:1",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-1",
+      "slot": "wc:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-2",
+      "slot": "water:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-2",
+      "slot": "water:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-2",
+      "slot": "sofa:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-2",
+      "slot": "sofa:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-2",
+      "slot": "wc:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-3",
+      "slot": "water:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-3",
+      "slot": "water:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-3",
+      "slot": "sofa:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-3",
+      "slot": "sofa:1",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-3",
+      "slot": "wc:0",
+      "waypoints": 4
+    },
+    {
+      "agent": "route-4",
+      "slot": "water:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-4",
+      "slot": "water:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-4",
+      "slot": "sofa:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-4",
+      "slot": "sofa:1",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-4",
+      "slot": "wc:0",
+      "waypoints": 6
+    },
+    {
+      "agent": "route-5",
+      "slot": "water:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-5",
+      "slot": "water:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-5",
+      "slot": "sofa:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-5",
+      "slot": "sofa:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-5",
+      "slot": "wc:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-6",
+      "slot": "water:0",
+      "waypoints": 14
+    },
+    {
+      "agent": "route-6",
+      "slot": "water:1",
+      "waypoints": 14
+    },
+    {
+      "agent": "route-6",
+      "slot": "sofa:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-6",
+      "slot": "sofa:1",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-6",
+      "slot": "wc:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-7",
+      "slot": "water:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-7",
+      "slot": "water:1",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-7",
+      "slot": "sofa:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-7",
+      "slot": "sofa:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-7",
+      "slot": "wc:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-8",
+      "slot": "water:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-8",
+      "slot": "water:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-8",
+      "slot": "sofa:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-8",
+      "slot": "sofa:1",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-8",
+      "slot": "wc:0",
+      "waypoints": 8
+    },
+    {
+      "agent": "route-9",
+      "slot": "water:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-9",
+      "slot": "water:1",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-9",
+      "slot": "sofa:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-9",
+      "slot": "sofa:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-9",
+      "slot": "wc:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-10",
+      "slot": "water:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-10",
+      "slot": "water:1",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-10",
+      "slot": "sofa:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-10",
+      "slot": "sofa:1",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-10",
+      "slot": "wc:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-11",
+      "slot": "water:0",
+      "waypoints": 14
+    },
+    {
+      "agent": "route-11",
+      "slot": "water:1",
+      "waypoints": 14
+    },
+    {
+      "agent": "route-11",
+      "slot": "sofa:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-11",
+      "slot": "sofa:1",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-11",
+      "slot": "wc:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-12",
+      "slot": "water:0",
+      "waypoints": 10
+    },
+    {
+      "agent": "route-12",
+      "slot": "water:1",
+      "waypoints": 9
+    },
+    {
+      "agent": "route-12",
+      "slot": "sofa:0",
+      "waypoints": 9
+    },
+    {
+      "agent": "route-12",
+      "slot": "sofa:1",
+      "waypoints": 9
+    },
+    {
+      "agent": "route-12",
+      "slot": "wc:0",
+      "waypoints": 12
+    },
+    {
+      "agent": "route-13",
+      "slot": "water:0",
+      "waypoints": 4
+    },
+    {
+      "agent": "route-13",
+      "slot": "water:1",
+      "waypoints": 4
+    },
+    {
+      "agent": "route-13",
+      "slot": "sofa:0",
+      "waypoints": 4
+    },
+    {
+      "agent": "route-13",
+      "slot": "sofa:1",
+      "waypoints": 4
+    },
+    {
+      "agent": "route-13",
+      "slot": "wc:0",
+      "waypoints": 4
+    }
+  ]
+}

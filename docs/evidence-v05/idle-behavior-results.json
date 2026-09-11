@@ -1,0 +1,147 @@
+{
+  "suite": "deterministic office behavior",
+  "passed": 35,
+  "failed": 0,
+  "results": [
+    {
+      "name": "没有占用快照时，所有角色都安全等待",
+      "status": "passed"
+    },
+    {
+      "name": "任务抢占空闲动作：drink",
+      "status": "passed"
+    },
+    {
+      "name": "任务抢占空闲动作：phone",
+      "status": "passed"
+    },
+    {
+      "name": "任务抢占空闲动作：restroom",
+      "status": "passed"
+    },
+    {
+      "name": "任务抢占空闲动作：nap",
+      "status": "passed"
+    },
+    {
+      "name": "任务抢占空闲动作：stretch",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：waiting",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：approval",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：paused",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：attention",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：reading",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：writing",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：testing",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：reviewing",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：thinking",
+      "status": "passed"
+    },
+    {
+      "name": "执行阶段严格映射：reserved",
+      "status": "passed"
+    },
+    {
+      "name": "无当前任务但另一个运行占用时，不进入空闲",
+      "status": "passed"
+    },
+    {
+      "name": "设施容量与固定队列仲裁",
+      "status": "passed"
+    },
+    {
+      "name": "空闲宽限期",
+      "status": "passed"
+    },
+    {
+      "name": "任务结束后重新计算宽限期",
+      "status": "passed"
+    },
+    {
+      "name": "失联立即中止摸鱼，不把未知误判为闲置",
+      "status": "passed"
+    },
+    {
+      "name": "快照超时保护",
+      "status": "passed"
+    },
+    {
+      "name": "缺少个别成员的快照时，只有该成员保持未知",
+      "status": "passed"
+    },
+    {
+      "name": "不完整事件页不能当作同步成功",
+      "status": "passed"
+    },
+    {
+      "name": "旧HTTP响应不能覆盖新占用",
+      "status": "passed"
+    },
+    {
+      "name": "相同事件与模拟时钟输入得到相同动作和因果记录",
+      "status": "passed"
+    },
+    {
+      "name": "任务状态机从不调用随机数",
+      "status": "passed"
+    },
+    {
+      "name": "重复消息事件只产生一次效果",
+      "status": "passed"
+    },
+    {
+      "name": "断线补发的旧消息不冒充此刻的新对话",
+      "status": "passed"
+    },
+    {
+      "name": "关闭空闲演绎释放设施，回到待命",
+      "status": "passed"
+    },
+    {
+      "name": "非法配置失败关闭，不产生失控动作",
+      "status": "passed"
+    },
+    {
+      "name": "个人工位手机动作不占公共设施",
+      "status": "passed"
+    },
+    {
+      "name": "寻路为固定次序，绕过桌面",
+      "status": "passed"
+    },
+    {
+      "name": "十四名成员工位和设施位置唯一",
+      "status": "passed"
+    },
+    {
+      "name": "十四工位至五个设施槽位的70条路线均可达",
+      "status": "passed"
+    }
+  ]
+}

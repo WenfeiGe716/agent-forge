@@ -1,0 +1,344 @@
+{
+  "base_commit": "ed47280b732367acd71c9830ec26c2f08411cdf3",
+  "checks": {
+    "commands": [
+      {
+        "command": "python -m unittest discover -s tests",
+        "exit_code": 0,
+        "fixture_only": true,
+        "sandbox_verified": false,
+        "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+        "stdout": "",
+        "timed_out": false
+      }
+    ],
+    "tracked_files_modified": false,
+    "verification": "passed"
+  },
+  "config_snapshot": {
+    "3f6d4bc5693a4dda8e19bc4ecf1605d9": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 3072
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Nova",
+      "role": "developer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "5d7fcf2104b24b9e97ba93d824c6a5a4": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Echo",
+      "role": "tester",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "67828b7e9ab0449598af068e8ac833d1": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 3072
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Atlas",
+      "role": "planner",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "a1afda07c3734806a49ebae944ec7cd3": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Sage",
+      "role": "reviewer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    }
+  },
+  "discussion": [
+    {
+      "agent_id": "3f6d4bc5693a4dda8e19bc4ecf1605d9",
+      "key": "discussion_1_0",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "open_issues": [
+        "边界方案缺少确认"
+      ],
+      "order": 0,
+      "ready": true,
+      "round": 1,
+      "status": "done",
+      "summary": "第1轮：已读取0份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+      "key": "discussion_1_1",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "open_issues": [
+        "边界方案缺少确认"
+      ],
+      "order": 1,
+      "ready": true,
+      "round": 1,
+      "status": "done",
+      "summary": "第1轮：已读取0份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "3f6d4bc5693a4dda8e19bc4ecf1605d9",
+      "key": "discussion_2_0",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "open_issues": [],
+      "order": 0,
+      "ready": true,
+      "round": 2,
+      "status": "done",
+      "summary": "第2轮：已读取2份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+      "key": "discussion_2_1",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "open_issues": [],
+      "order": 1,
+      "ready": true,
+      "round": 2,
+      "status": "done",
+      "summary": "第2轮：已读取2份先前发言，明确需求边界和验证条件。"
+    }
+  ],
+  "goal_checkpoint": {
+    "assessor_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+    "best_met_count": 2,
+    "code_tests": "not_executed_in_read_only_discussion",
+    "criteria": [
+      {
+        "description": "形成可执行方案并说明关键取舍",
+        "errors": [],
+        "evidence": [
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_1_0"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_1_1"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_2_0"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_2_1"
+          }
+        ],
+        "evidence_type": "decision",
+        "file_receipts": [],
+        "id": "solution",
+        "rationale": "已具备候选证据",
+        "status": "met"
+      },
+      {
+        "description": "明确验证步骤和风险处理方式",
+        "errors": [],
+        "evidence": [
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_1_0"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_1_1"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_2_0"
+          },
+          {
+            "explanation": "关联已完成的实际贡献，脚本化证据示例",
+            "path": "",
+            "sha256": "",
+            "task_key": "discussion_2_1"
+          }
+        ],
+        "evidence_type": "decision",
+        "file_receipts": [],
+        "id": "validation",
+        "rationale": "已具备候选证据",
+        "status": "met"
+      }
+    ],
+    "cycle": 2,
+    "met_count": 2,
+    "open_issues": [],
+    "outcome": "goal_satisfied",
+    "seen_progress": [
+      "4266ed231cb7408cd15f66fe3fd3c7ae5407efe2781f16601abbb9b57e278135",
+      "1515d901b5ac7104aabe9143f2d70a098049fa7decaf4666e7520ebc03f1666e"
+    ],
+    "semantic_verification": "model_assessed; human acceptance required",
+    "stagnation_count": 0,
+    "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力",
+    "total_count": 2,
+    "transcript_digest": "55afefba9cf03643536eefde87ced6af2768685bfa116f398b8cee807a1374b3"
+  },
+  "input_tokens": 2330,
+  "limitations": [
+    "Imported files are a snapshot; original Git history is not imported.",
+    "No automatic merge, push or production deployment.",
+    "Missing checks are UNVERIFIED, not passed."
+  ],
+  "model_calls": 22,
+  "orchestration": {
+    "assessor_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+    "criteria": [
+      {
+        "description": "形成可执行方案并说明关键取舍",
+        "evidence_type": "decision",
+        "id": "solution"
+      },
+      {
+        "description": "明确验证步骤和风险处理方式",
+        "evidence_type": "decision",
+        "id": "validation"
+      }
+    ],
+    "legacy_stop_migrated": false,
+    "mode": "development",
+    "participants": [
+      "3f6d4bc5693a4dda8e19bc4ecf1605d9",
+      "5d7fcf2104b24b9e97ba93d824c6a5a4"
+    ],
+    "prompt": "核对需求接口与测试边界，明确分歧。",
+    "stagnation_checks": 3,
+    "stop_when": "goal_satisfied",
+    "strategy": "parallel"
+  },
+  "output_tokens": 945,
+  "plan": {
+    "summary": "修复加法、并行维护文档，随后补充边界测试，最后独立审查。",
+    "tasks": [
+      {
+        "acceptance": "add(2,3)==5",
+        "agent_id": "3f6d4bc5693a4dda8e19bc4ecf1605d9",
+        "depends_on": [],
+        "description": "检查calc.py，将错误减法改为加法。",
+        "key": "fix_add",
+        "title": "修复加法函数"
+      },
+      {
+        "acceptance": "文档包含验收命令",
+        "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+        "depends_on": [],
+        "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+        "key": "document",
+        "title": "整理验收说明"
+      },
+      {
+        "acceptance": "负数与零值测试通过",
+        "agent_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+        "depends_on": [
+          "fix_add",
+          "document"
+        ],
+        "description": "依据已集成代码补充tests/test_edges.py。",
+        "key": "edge_tests",
+        "title": "补充边界测试"
+      }
+    ]
+  },
+  "review": {
+    "issues": [],
+    "summary": "已读取实现与测试，并核对平台提供的验收报告。结论由脚本化验证服务生成。",
+    "verdict": "pass"
+  },
+  "run_id": "530d75a81c1844bd9fbb74b4009e5c43",
+  "title": "HTTP目标后开发"
+}

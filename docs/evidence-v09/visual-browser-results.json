@@ -1,0 +1,103 @@
+{
+  "passed": 15,
+  "failed": 0,
+  "errors": [],
+  "results": [
+    {
+      "name": "正式入口仍是登录页，没有供应商配置门禁或演示推进按钮",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实空白实例4名成员，零供应商零任务也能渲染精修模型",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "默认均衡画质实际生效",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "精细档实际分配2048阴影缓冲",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "节能档实际切换渲染资源，任务状态不变",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "聚焦转到成员正面近景，可查看脸部服装和座椅",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "外观面板提供真实人物细节入口，保留静态GLB边界提示",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "选择另一成员后近景和模型随实际成员变化",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "夜间材质与光照切换，不生成业务活动",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "从人物细节恢复办公室全景",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "原城市全景和交通仍可使用",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实WebGL渲染观测（非硬件帧率承诺）",
+      "status": "passed",
+      "detail": {
+        "instanced": "true",
+        "dynamic-triangles": "102764",
+        "static-triangles": "238752",
+        "draw-calls": "13",
+        "fps": "2",
+        "render-quality": "balanced",
+        "samples": [
+          {
+            "ms": 10000.200000000186,
+            "frames": 17,
+            "fps": 1.6999660006799548,
+            "quality": "balanced"
+          },
+          {
+            "ms": 10000.200000000186,
+            "frames": 26,
+            "fps": 2.5999480010399307,
+            "quality": "economy"
+          }
+        ]
+      }
+    },
+    {
+      "name": "本轮无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "全部视觉操作没有创建供应商、任务或模型调用",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "退出仍回到登录页",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

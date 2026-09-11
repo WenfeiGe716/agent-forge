@@ -1,0 +1,13 @@
+{
+  "passed": 5,
+  "failed": 0,
+  "checks": [
+    "normal launcher starts local API",
+    "normal mode does not enable scripted validation services",
+    "actual HTTP root serves exact built UI bytes",
+    "installation-level active-run cap exposed",
+    "no fake model supplier seeded in real workspace"
+  ],
+  "ui_sha256": "b186d248dc4665d13ebe2c2cf285ed97f9ea4a6c4baa65d167bc7c739ee36cf8",
+  "model_invocation_or_sandbox_tested": false
+}

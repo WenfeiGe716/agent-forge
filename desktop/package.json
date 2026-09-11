@@ -1,0 +1,17 @@
+{
+  "name": "agent-forge-desktop",
+  "productName": "Agent Forge",
+  "version": "0.15.9",
+  "private": true,
+  "description": "Agent Forge macOS desktop client",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "build": "node ../scripts/build-desktop.mjs"
+  },
+  "devDependencies": {
+    "electron": "44.3.0",
+    "@electron/packager": "20.3.0"
+  }
+}

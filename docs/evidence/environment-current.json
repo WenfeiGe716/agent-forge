@@ -1,0 +1,38 @@
+{
+  "python": "3.13.5 (main, Jun 25 2025, 18:55:22) [GCC 14.2.0]",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "tools": {
+    "node": "/opt/nvm/versions/node/v22.16.0/bin/node",
+    "npm": "/opt/nvm/versions/node/v22.16.0/bin/npm",
+    "docker": null,
+    "runsc": null,
+    "chromium": "/usr/bin/chromium"
+  },
+  "packages": {
+    "fastapi": "0.128.2",
+    "uvicorn": "0.48.0",
+    "sqlalchemy": "2.0.50",
+    "pydantic": "2.13.4",
+    "httpx": "0.28.1",
+    "cryptography": "46.0.4",
+    "temporalio": null,
+    "psycopg": null
+  },
+  "network": {
+    "npm": {
+      "returncode": 6,
+      "stdout": "",
+      "stderr": "curl: (6) Could not resolve host: registry.npmjs.org\n"
+    },
+    "pypi": {
+      "returncode": 28,
+      "stdout": "",
+      "stderr": "curl: (28) Resolving timed out after 5001 milliseconds\n"
+    }
+  },
+  "offline": {
+    "wheel_count": 27,
+    "frontend_built": true,
+    "temporal_and_docker_included": false
+  }
+}

@@ -1,0 +1,1 @@
+import {React} from "./react-runtime.js"; export default React; export const {useState,useEffect,useMemo,useCallback,useRef,useReducer,useLayoutEffect,createElement,Fragment,StrictMode,Component,createContext,useContext,useSyncExternalStore}=React;

@@ -1,0 +1,99 @@
+{
+  "transport": "Real Chromium DOM/WebGL. Live tests use constrained local HTTP bridge, not normal URL navigation.",
+  "models": "Explicit scripted HTTP fixtures, not LLM quality verification.",
+  "results": [
+    {
+      "name": "实际登录→全屏办公室→全局占用接口联动",
+      "status": "passed"
+    },
+    {
+      "name": "无任务的实际配置成员进入喝水，饮水机最多2个占位",
+      "status": "passed"
+    },
+    {
+      "name": "空闲动作不产生模型调用或业务任务",
+      "status": "passed"
+    },
+    {
+      "name": "右侧模型与运行参数编辑保留，真实API持久化",
+      "status": "passed"
+    },
+    {
+      "name": "真实任务创建后，全队停止喝水/空闲；等待审批也不会摸鱼",
+      "status": "passed"
+    },
+    {
+      "name": "办公室→批准计划→办公室，后台执行不等待角色回到工位",
+      "status": "passed"
+    },
+    {
+      "name": "双协议脚本模型、4条真实工具消息、Git修改与固定单测仍通过",
+      "status": "passed"
+    },
+    {
+      "name": "动作因果日志与后台事件分开，可查看真实占用依据",
+      "status": "passed"
+    },
+    {
+      "name": "实际人工验收释放任务，空闲状态由后端重新确认",
+      "status": "passed"
+    },
+    {
+      "name": "查看已完成任务时，另一个运行仍保持所有相关Agent占用",
+      "status": "passed"
+    },
+    {
+      "name": "真实页面占用接口故障时停止空闲演绎，不伪造无任务状态",
+      "status": "passed"
+    },
+    {
+      "name": "网络恢复后重读快照，恢复真实任务动作",
+      "status": "passed"
+    },
+    {
+      "name": "14成员独立预览明确标为示例，不访问模型服务",
+      "status": "passed"
+    },
+    {
+      "name": "手机、喝水、小憩等姿态实际渲染，工作成员不参与",
+      "status": "passed"
+    },
+    {
+      "name": "卫生间只有一个占位，人物进门后隐藏，门牌显示使用状态",
+      "status": "passed"
+    },
+    {
+      "name": "厕所在用时收到任务也会立即退出空闲，不等如厕计时结束",
+      "status": "passed"
+    },
+    {
+      "name": "只有明确消息输入才出现带事件ID的气泡和连线",
+      "status": "passed"
+    },
+    {
+      "name": "预览断线保护可复现，中断时清除对话效果",
+      "status": "passed"
+    },
+    {
+      "name": "可关闭空闲演绎，已有动作终止；业务状态保持不变",
+      "status": "passed"
+    },
+    {
+      "name": "日夜、选人、平滑聚焦在新状态机下保持可用",
+      "status": "passed"
+    },
+    {
+      "name": "成员和详情浮层可收起，不影响执行/空闲状态",
+      "status": "passed"
+    },
+    {
+      "name": "1100px视口无水平溢出",
+      "status": "passed"
+    },
+    {
+      "name": "上述交互无未捕获前端异常",
+      "status": "passed"
+    }
+  ],
+  "page_errors": []
+}

@@ -1,0 +1,115 @@
+{
+  "method": "real local launcher + API + browser DOM/WebGL through restricted HTTP bridge + scripted protocol probe. No real LLM/Docker or normal URL navigation claim.",
+  "passed": 19,
+  "failed": 0,
+  "pageerrors": [],
+  "model_requests": [
+    {
+      "path": "/v1/chat/completions",
+      "model": "fixture-onboarding-model",
+      "has_tools": true
+    },
+    {
+      "path": "/v1/chat/completions",
+      "model": "fixture-onboarding-model",
+      "has_tools": false
+    }
+  ],
+  "results": [
+    {
+      "name": "正式单命令启动v0.8.1，无预设供应商或项目",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "未登录的模型/Agent接口保持鉴权",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "未登录默认展示平台登录页，不出现API Key或供应商向导",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "密码错误停留登录页，不进入工作台",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "零供应商登录后直接进入真实办公室，4名未绑定成员可见，无假任务或配置门禁",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "有效会话刷新直接恢复办公室，不因零模型重新要求接入",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "添加供应商是管理页内可关闭弹窗，关闭后留在列表",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "实际页面添加两个协议的独立供应商，不自动调用模型或绑定全体成员",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "一家供应商可保存多个模型，型号不会混入另一供应商",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "模型列表可按供应商筛选与恢复全部",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "3位Agent分别绑定两家供应商和三个模型，未配置的第4位不影响管理",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "可选连接测试经过两次真实HTTP工具往返，默认不改变任何成员或Skill；错误JSON不触发请求",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "完成后可继续添加，关闭后仍在管理列表且已保存记录不丢失",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "全部供应商停用后仍能重新登录办公室；退出时服务端会话失效",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "只读账号同样登录后进入办公室，可读列表但无供应商写入按钮或权限",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "实际服务重启后会话和多个供应商/独立绑定保持，仍直接恢复工作台",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "正式页面继续无演示控制、无示例注入器或预览路由",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "760px视口下管理页与登录页无文档水平溢出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "浏览器未捕获异常为0",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

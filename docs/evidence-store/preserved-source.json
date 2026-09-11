@@ -1,0 +1,131 @@
+{
+  "files": [
+    {
+      "path": "backend/forge/engagement.py",
+      "sha256": "6599f5b5ae0ace4725c97216e0051ebf154abc3901e592f00ff9ac9b09071868",
+      "baseline_sha256": "6599f5b5ae0ace4725c97216e0051ebf154abc3901e592f00ff9ac9b09071868",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/engine.py",
+      "sha256": "e6173d91d054eae1f7f197fd3c8245e0d52309f2a15a18830c64ec5c0030b7ab",
+      "baseline_sha256": "e6173d91d054eae1f7f197fd3c8245e0d52309f2a15a18830c64ec5c0030b7ab",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/providers.py",
+      "sha256": "d54f092042f8439cdaadee489d55f638aa1ff0b24f391ec797e30c2f4ae62622",
+      "baseline_sha256": "d54f092042f8439cdaadee489d55f638aa1ff0b24f391ec797e30c2f4ae62622",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/skills.py",
+      "sha256": "d5f6c2085c954e18d02be1c55fe0ac6e18d857bec42b8658b228e9add111f641",
+      "baseline_sha256": "d5f6c2085c954e18d02be1c55fe0ac6e18d857bec42b8658b228e9add111f641",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/snapshots.py",
+      "sha256": "3189c4b55b39335d4d3d2da7a46f7d8b761614905c4b5abacd938874d9ce8e61",
+      "baseline_sha256": "3189c4b55b39335d4d3d2da7a46f7d8b761614905c4b5abacd938874d9ce8e61",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/tools.py",
+      "sha256": "d5c5d1d12d236aa2b6193b54a2984ae4fa6d97d688d090854939a3cf6e4b907c",
+      "baseline_sha256": "d5c5d1d12d236aa2b6193b54a2984ae4fa6d97d688d090854939a3cf6e4b907c",
+      "identical": true
+    },
+    {
+      "path": "backend/forge/workflow_core.py",
+      "sha256": "ef9c0a4e716e846d1b483b2bcbb87fd122f6f7f0741ff7106674a7d96f94287f",
+      "baseline_sha256": "ef9c0a4e716e846d1b483b2bcbb87fd122f6f7f0741ff7106674a7d96f94287f",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/characters.ts",
+      "sha256": "965d046605d38926de67e61a942ae65889921ea88d34e2c2b2ce967b470541d8",
+      "baseline_sha256": "965d046605d38926de67e61a942ae65889921ea88d34e2c2b2ce967b470541d8",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/cityAssets.ts",
+      "sha256": "14a8dbe5740760f41eb679b86b4be57c278bd5fb27309730dd92b98edd4030d2",
+      "baseline_sha256": "14a8dbe5740760f41eb679b86b4be57c278bd5fb27309730dd92b98edd4030d2",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/cityWorld.ts",
+      "sha256": "7758104bc2e07ada6906125b9baf5720050ac117e77c207a94e54db5b0211309",
+      "baseline_sha256": "7758104bc2e07ada6906125b9baf5720050ac117e77c207a94e54db5b0211309",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/furniture.ts",
+      "sha256": "1f8cc57197feb987bb6729f4f7566ee3b5ee857f2b740d7be23881606867c93c",
+      "baseline_sha256": "1f8cc57197feb987bb6729f4f7566ee3b5ee857f2b740d7be23881606867c93c",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/officeRenderer.ts",
+      "sha256": "dd0c507992901f4acdfb427bf0133928c4868de9fc2e17bf46ac12982051a3ad",
+      "baseline_sha256": "dd0c507992901f4acdfb427bf0133928c4868de9fc2e17bf46ac12982051a3ad",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/officeWorld.ts",
+      "sha256": "abcca256fd4a2828c6209f69d9fdc3b3feb9ffc726c77e4cf3a3c991e1a9d6a0",
+      "baseline_sha256": "abcca256fd4a2828c6209f69d9fdc3b3feb9ffc726c77e4cf3a3c991e1a9d6a0",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/scene.ts",
+      "sha256": "565bbf0c9fbeb5cf38e6d6a330b899752deba2b63f7f502094174f5114a330c3",
+      "baseline_sha256": "565bbf0c9fbeb5cf38e6d6a330b899752deba2b63f7f502094174f5114a330c3",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/graphics/visualMeshes.ts",
+      "sha256": "c1d1bfea6cf7520a32eba68a1ac8fe84cbbeb2c88fa55068a557297ffa613d1b",
+      "baseline_sha256": "c1d1bfea6cf7520a32eba68a1ac8fe84cbbeb2c88fa55068a557297ffa613d1b",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/ambientEnvironment.ts",
+      "sha256": "2c3a09555c39f5e1598eb69b94bd587a66c52a34d80b4ef86342dfe2a2351655",
+      "baseline_sha256": "2c3a09555c39f5e1598eb69b94bd587a66c52a34d80b4ef86342dfe2a2351655",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/behavior.ts",
+      "sha256": "97eb20432a2c500462819690249c0804d4c6e219df10af2d87410db200be53fd",
+      "baseline_sha256": "97eb20432a2c500462819690249c0804d4c6e219df10af2d87410db200be53fd",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/cityTraffic.ts",
+      "sha256": "8dd15e7177896ee265ee0aea8b4ef5df67dfd48b490b82b22c2032eb3b91cd0c",
+      "baseline_sha256": "8dd15e7177896ee265ee0aea8b4ef5df67dfd48b490b82b22c2032eb3b91cd0c",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/etiquette.ts",
+      "sha256": "fafc2d61b65fb1a537cbb50ce5ddd37a92a826d649e2514f5d63076989a55e75",
+      "baseline_sha256": "fafc2d61b65fb1a537cbb50ce5ddd37a92a826d649e2514f5d63076989a55e75",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/meetings.ts",
+      "sha256": "587503eacffdaa6d77d0cb599bcedc427e0231ef3514a381cb4057c9101ac972",
+      "baseline_sha256": "587503eacffdaa6d77d0cb599bcedc427e0231ef3514a381cb4057c9101ac972",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/office/useOfficeFeed.ts",
+      "sha256": "d5c173857c61cf61320178897aa89d0ddc9076bc46abed5e4a254c35fca28f35",
+      "baseline_sha256": "d5c173857c61cf61320178897aa89d0ddc9076bc46abed5e4a254c35fca28f35",
+      "identical": true
+    }
+  ],
+  "identical": 21
+}

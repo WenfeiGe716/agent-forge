@@ -1,0 +1,122 @@
+{
+  "passed": 29,
+  "failed": 0,
+  "results": [
+    {
+      "name": "无登录时不会启动后台环境计时器",
+      "status": "passed"
+    },
+    {
+      "name": "固定时钟推进与渲染帧率无关",
+      "status": "passed"
+    },
+    {
+      "name": "未创建任何WebGL画布时城市仍推进",
+      "status": "passed"
+    },
+    {
+      "name": "再次进入同一会话不会重置计时或车辆",
+      "status": "passed"
+    },
+    {
+      "name": "同一环境对象多次配置视图不重建车辆",
+      "status": "passed"
+    },
+    {
+      "name": "办公室/城市视角对应同一环境，无镜头参数影响交通",
+      "status": "passed"
+    },
+    {
+      "name": "画质切换改变自动密度但不重置相位和保留车辆",
+      "status": "passed"
+    },
+    {
+      "name": "用户显式密度选择优先于画质自动策略",
+      "status": "passed"
+    },
+    {
+      "name": "静止景观保留人车，恢复时不会补跳暂停时间",
+      "status": "passed"
+    },
+    {
+      "name": "日夜变化不改交通状态或生成业务事件",
+      "status": "passed"
+    },
+    {
+      "name": "长帧以固定步长消化积压，不跳过交通信号",
+      "status": "passed"
+    },
+    {
+      "name": "倒退或NaN时钟不产生重复运行时间",
+      "status": "passed"
+    },
+    {
+      "name": "检查点恢复保留相位、时刻、车辆与行人坐标",
+      "status": "passed"
+    },
+    {
+      "name": "损坏或伪造的缓存降级为空环境，不阻止登录",
+      "status": "passed"
+    },
+    {
+      "name": "未授权的旧city.enabled=false不再隐藏正式城市",
+      "status": "passed"
+    },
+    {
+      "name": "换账号只恢复各自本地环境，不复用业务数据",
+      "status": "passed"
+    },
+    {
+      "name": "停止应用释放计时器但不销毁环境状态",
+      "status": "passed"
+    },
+    {
+      "name": "扩建办公区重新布局保留交通时间和相位",
+      "status": "passed"
+    },
+    {
+      "name": "动态降低密度不会删除正在路口穿行的人车",
+      "status": "passed"
+    },
+    {
+      "name": "1200秒反复增减密度：红灯禁入、跟车间距与过街互斥",
+      "status": "passed"
+    },
+    {
+      "name": "无storage权限时依然可配置和推进环境",
+      "status": "passed"
+    },
+    {
+      "name": "风格化汽车具有圆轮、轮毂、窗、灯与后视镜",
+      "status": "passed"
+    },
+    {
+      "name": "车轮与路面接触，车身长度与2.8碰撞合同一致",
+      "status": "passed"
+    },
+    {
+      "name": "停车位是场景实体，不混入道路车辆调度",
+      "status": "passed"
+    },
+    {
+      "name": "街道交叉区域没有抬高路面或穿路的人行道条带",
+      "status": "passed"
+    },
+    {
+      "name": "城市夜间灯光单独开关，不改室内灯光和任务数据",
+      "status": "passed"
+    },
+    {
+      "name": "行人不是换皮Agent，独立几何有身体、脚、包及定向步态",
+      "status": "passed"
+    },
+    {
+      "name": "人行道散步者在端点回转，不跳跃循环至另一端",
+      "status": "passed"
+    },
+    {
+      "name": "环境源代码不引入API、Agent或业务事件系统",
+      "status": "passed"
+    }
+  ]
+}

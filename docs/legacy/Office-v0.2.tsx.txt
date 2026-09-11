@@ -1,0 +1,85 @@
+import {useEffect,useRef,useState} from 'react';
+import {Agent,Task,ForgeEvent,states,roles} from '../types';
+import {SceneRenderer,DrawObject,V3,parseGLB,MeshData} from '../graphics/scene';
+
+// Model overrides are session-local previews, not persisted agent configuration.
+const previews=new Map<string,{name:string;meshes:MeshData[]}>();
+const colors:V3[]=[[.76,.9,.57],[.48,.72,.84],[.78,.63,.92],[.92,.7,.48],[.61,.79,.68],[.83,.59,.66],[.55,.68,.91],[.8,.79,.53]];
+const rgb=(r:number,g:number,b:number):V3=>[r/255,g/255,b/255];
+export default function Office({agents,tasks,events=[],runStatus='',onSelect}:{agents:Agent[];tasks:Task[];events?:ForgeEvent[];runStatus?:string;onSelect:(id:string)=>void}){
+ const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),renderer=useRef<SceneRenderer|null>(null),upload=useRef<HTMLInputElement>(null);
+ const live=useRef({agents,tasks,events,runStatus,onSelect}),[page,setPage]=useState(0),[selected,setSelected]=useState(''),[day,setDay]=useState(false),[error,setError]=useState(''),[modelVersion,setModelVersion]=useState(0),[cameraText,setCameraText]=useState('默认视角'),[hint,setHint]=useState(''),[layout,setLayout]=useState<'desks'|'meeting'>('desks');
+ const state=useRef({selected,day,layout});state.current={selected,day,layout};live.current={agents,tasks,events,runStatus,onSelect};
+ const pages=Math.max(1,Math.ceil(agents.length/8)),visible=agents.slice(Math.min(page,pages-1)*8,Math.min(page,pages-1)*8+8);
+ const sceneId=visible.map(a=>a.id).join(',');
+ const select=(id:string)=>{setSelected(id);live.current.onSelect(id);};const selector=useRef(select);selector.current=select;
+ useEffect(()=>{if(page>=pages)setPage(pages-1);},[page,pages]);
+ useEffect(()=>{
+  const element=host.current,c=canvas.current;if(!element||!c)return;let scene:SceneRenderer;
+  try{scene=new SceneRenderer(c);renderer.current=scene;setError('');}catch(e){setError((e as Error).message);return;}
+  const ids=sceneId?sceneId.split(','):[],labels=new Map<string,HTMLButtonElement>(),positions=new Map<string,V3>(),pickPositions=new Map<string,V3>();
+  for(const id of ids){const label=document.createElement('button');label.type='button';label.className='office-agent-label';label.dataset.agentId=id;label.addEventListener('click',()=>selector.current(id));element.appendChild(label);labels.set(id,label);const custom=previews.get(id);custom?.meshes.forEach((mesh,i)=>scene.mesh(id+':'+i,mesh.vertices));}
+  const staticObjects:DrawObject[]=[];
+  const add=(p:V3,s:V3,color:V3,mesh='cube',yaw=0)=>staticObjects.push({p,s,color,mesh,yaw});
+  const floor=rgb(53,77,78),wall=rgb(71,95,94),wood=rgb(112,137,115),dark=rgb(29,48,53),metal=rgb(37,57,61),leaf=rgb(115,161,104);
+  add([0,-.25,0],[13,.4,9.5],dark);add([0,-.02,0],[12.7,.07,9.2],floor);add([-6.3,.9,0],[.16,1.85,9.2],wall);add([0,.9,-4.55],[12.7,1.85,.15],wall);
+  for(let i=-6;i<=6;i++)add([i,.025,0],[.017,.02,9],rgb(61,89,88));for(let i=-4;i<=4;i++)add([0,.025,i],[12.5,.02,.017],rgb(61,89,88));
+  for(let i=0;i<4;i++){add([-4.6+i*2.9,1.07,-4.44],[2.3,1.08,.04],rgb(47,72,83));add([-4.6+i*2.9,1.07,-4.4],[.04,1.08,.05],wall);}
+  // Meeting furniture is layout only; work/communication status always comes from API events.
+  add([0,.43,0],[.34,.86,.34],metal);add([0,.91,0],[2.1,.14,1.45],wood);add([.22,1.01,0],[.48,.03,.36],rgb(189,220,155));
+  for(const[x,z]of[[-5.4,3.7],[5.5,3.7],[5.5,-3.7]]){add([x,.25,z],[.54,.5,.54],rgb(94,112,110));add([x,.79,z],[.09,.7,.09],wood);add([x,1.25,z],[.95,1.35,.95],leaf,'sphere');}
+  const desks=ids.map((id,i)=>{const x=[-4.25,-1.45,1.45,4.25][i%4],z=i<4?-2.62:2.25;
+   add([x,.91,z],[1.88,.12,.88],wood);for(const dx of[-.73,.73])add([x+dx,.44,z+.14],[.085,.88,.48],metal);
+   add([x,1.3,z-.22],[.79,.5,.08],dark);add([x,1.03,z-.23],[.09,.25,.09],metal);add([x,.99,z+.15],[.61,.02,.23],dark);add([x+.53,.99,z+.13],[.1,.03,.13],dark);
+   add([x,.42,z+.9],[.58,.13,.58],dark);add([x,.72,z+1.14],[.62,.64,.08],dark);
+   positions.set(id,[x,0,z+.75]);return{id,x,z};});
+  let raf=0,last=0,report=0;
+  const animate=(time:number)=>{raf=requestAnimationFrame(animate);if(document.hidden||time-last<34)return;const dt=Math.min((time-last)/1000,.1);last=time;
+   scene.day=state.current.day;const objects=[...staticObjects];const activeMessages=live.current.events.filter(e=>['agent.message','task.handoff','task.delegated'].includes(e.kind)&&Date.now()-Date.parse(e.created_at)<10000).slice(-3);
+   for(let i=0;i<desks.length;i++){const{id,x,z}=desks[i],agent=live.current.agents.find(a=>a.id===id);if(!agent)continue;const owned=live.current.tasks.filter(t=>t.agent_id===id);const task=owned.find(t=>t.status==='running')||owned.find(t=>['paused','needs_attention'].includes(t.status));const isActive=task?.status==='running'&&!['paused','cancelled','needs_attention','completed'].includes(live.current.runStatus);const hasMessage=activeMessages.some(e=>e.data.from_agent_id===id||e.data.to_agent_id===id);const meet=state.current.layout==='meeting'||hasMessage;
+    const target:V3=meet?[Math.cos(i*Math.PI/4)*1.85,0,Math.sin(i*Math.PI/4)*1.6]:[x,0,z+.75];const pos=positions.get(id)!;for(let k=0;k<3;k++)pos[k]+=(target[k]-pos[k])*Math.min(1,dt*4);const yaw=meet?-i*Math.PI/4:0;const color=colors[i%colors.length];
+    const draw=(p:V3,s:V3,c:V3,mesh='cube',angle=0)=>objects.push({p,s,color:c,mesh,yaw:angle});
+    draw([x,1.3,z-.168],[.69,.39,.012],isActive?rgb(128,207,181):rgb(47,84,89));for(let line=0;line<3;line++)draw([x-.15,1.40-line*.09,z-.151],[.26+line*.08,.018,.012],isActive?rgb(180,243,196):rgb(71,117,114));
+    if(state.current.selected===id){draw([pos[0],.05,pos[2]],[.9,.035,.9],rgb(192,231,147));}
+    const custom=previews.get(id);if(custom){custom.meshes.forEach((mesh,n)=>draw(pos,[1,1,1],mesh.color,id+':'+n,yaw));}else{
+     draw([pos[0],.64,pos[2]],[.45,.65,.36],color,'cube',yaw);draw([pos[0],1.14,pos[2]],[.44,.47,.43],rgb(224,201,173),'sphere');draw([pos[0],1.32,pos[2]+.04],[.44,.18,.43],dark,'sphere');
+     draw([pos[0]-.12,.19,pos[2]],[.16,.36,.22],dark);draw([pos[0]+.12,.19,pos[2]],[.16,.36,.22],dark);
+     const step=isActive?Math.sin(time/160)*.035:0;draw([pos[0]-.30,.64+step,pos[2]-.06],[.13,.45,.15],color);draw([pos[0]+.30,.64-step,pos[2]-.06],[.13,.45,.15],color);
+    }
+    const label=labels.get(id)!;let status=task?states[task.status]||task.status:agent.model_profile_id?'待命':'未绑定模型';if(live.current.runStatus==='paused'&&task)status='已暂停';label.textContent=`${agent.name} · ${status}`;label.classList.toggle('active',!!isActive);label.classList.toggle('selected',state.current.selected===id);label.title=task?.title||roles[agent.role];label.setAttribute('aria-label',`查看成员 ${agent.name}`);pickPositions.set(id,[pos[0],.8,pos[2]]);
+   }
+   for(const e of activeMessages){const a=positions.get(e.data.from_agent_id),b=positions.get(e.data.to_agent_id);if(!a||!b)continue;for(let j=0;j<15;j++){const t=(j/15+(time%1800)/1800)%1;objects.push({p:[a[0]+(b[0]-a[0])*t,1.7+Math.sin(t*Math.PI)*.7,a[2]+(b[2]-a[2])*t],s:[.07,.07,.07],color:rgb(130,218,236),mesh:'sphere'});}}
+   scene.render(objects);
+   for(const[id,p]of positions){const label=labels.get(id)!,point=scene.project([p[0],1.61,p[2]]);label.style.left=point[0]+'px';label.style.top=point[1]+'px';label.hidden=point[2]<-1||point[2]>1||point[0]<0||point[0]>c.clientWidth||point[1]<0||point[1]>c.clientHeight;const pick=scene.project(pickPositions.get(id)!);label.dataset.pickX=String(pick[0]);label.dataset.pickY=String(pick[1]);}
+   if(time-report>700){report=time;setCameraText(`旋转 ${Math.round(scene.yaw*180/Math.PI)}° · 缩放 ${Math.round(scene.zoom*100)}%`);}
+  };raf=requestAnimationFrame(animate);
+  let pointer:{id:number;x:number;y:number;lastX:number;lastY:number;drag:boolean}|null=null;
+  const down=(e:PointerEvent)=>{if(e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,drag:false};c.setPointerCapture(e.pointerId);};
+  const move=(e:PointerEvent)=>{if(!pointer||pointer.id!==e.pointerId)return;const dx=e.clientX-pointer.lastX,dy=e.clientY-pointer.lastY;if(Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>5)pointer.drag=true;if(pointer.drag){scene.yaw-=dx*.008;scene.pitch=Math.max(.32,Math.min(1.36,scene.pitch+dy*.006));}pointer.lastX=e.clientX;pointer.lastY=e.clientY;};
+  const up=(e:PointerEvent)=>{if(!pointer||pointer.id!==e.pointerId)return;const wasDrag=pointer.drag;pointer=null;if(c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);if(wasDrag)return;const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;let best:{id:string;distance:number;depth:number}|null=null;for(const[id,p]of pickPositions){const v=scene.project(p),dist=Math.hypot((x-v[0])/.78,y-v[1]);if(dist<Math.max(18,35*scene.zoom)&&(!best||dist<best.distance))best={id,distance:dist,depth:v[2]};}if(best)selector.current(best.id);};
+  const wheel=(e:WheelEvent)=>{e.preventDefault();scene.zoom=Math.min(2.6,Math.max(.55,scene.zoom*Math.exp(-e.deltaY*.001)));};
+  const key=(e:KeyboardEvent)=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-','Home'].includes(e.key)){e.preventDefault();if(e.key==='ArrowLeft')scene.yaw+=.12;if(e.key==='ArrowRight')scene.yaw-=.12;if(e.key==='ArrowUp')scene.pitch=Math.min(1.36,scene.pitch+.08);if(e.key==='ArrowDown')scene.pitch=Math.max(.32,scene.pitch-.08);if(e.key==='+')scene.zoom=Math.min(2.6,scene.zoom*1.1);if(e.key==='-')scene.zoom=Math.max(.55,scene.zoom/1.1);if(e.key==='Home')scene.reset();}};
+  const cancel=()=>{pointer=null;};
+  const lost=(e:Event)=>{e.preventDefault();setError('3D上下文已中断。切换到任务图后返回可重建；任务执行不受影响。');};
+  c.addEventListener('pointerdown',down);c.addEventListener('pointermove',move);c.addEventListener('pointerup',up);c.addEventListener('pointercancel',cancel);c.addEventListener('wheel',wheel,{passive:false});c.addEventListener('keydown',key);c.addEventListener('webglcontextlost',lost);
+  return()=>{cancelAnimationFrame(raf);for(const label of labels.values())label.remove();c.removeEventListener('pointerdown',down);c.removeEventListener('pointermove',move);c.removeEventListener('pointerup',up);c.removeEventListener('pointercancel',cancel);c.removeEventListener('wheel',wheel);c.removeEventListener('keydown',key);c.removeEventListener('webglcontextlost',lost);scene.dispose();renderer.current=null;};
+ },[sceneId,modelVersion]);
+ const selectedAgent=visible.find(a=>a.id===selected)||visible[0];
+ return <div className="office-viewport" ref={host} data-testid="office-viewport">
+  <canvas ref={canvas} className="native-scene" tabIndex={0} aria-label="3D协作办公室，可拖动旋转、滚轮缩放、点击人物"/>
+  <div className="office-tools" role="toolbar" aria-label="3D场景操作">
+   <button type="button" onClick={()=>{renderer.current?.reset();setHint('相机已复位');}}>复位视角</button>
+   <button type="button" aria-pressed={day} onClick={()=>setDay(v=>!v)}>{day?'切换夜间':'切换日间'}</button>
+   <button type="button" aria-pressed={layout==='meeting'} onClick={()=>setLayout(v=>v==='desks'?'meeting':'desks')}>{layout==='desks'?'会议布局':'工位布局'}</button>
+   <button type="button" disabled={!selectedAgent} onClick={()=>{if(renderer.current&&selectedAgent){const i=visible.findIndex(a=>a.id===selectedAgent.id);if(i>=0){renderer.current.target=[[-4.25,-1.45,1.45,4.25][i%4],.3,i<4?-2:2.6];renderer.current.zoom=1.7;setSelected(selectedAgent.id);}}}}>聚焦成员</button>
+   <button type="button" disabled={!selectedAgent} onClick={()=>upload.current?.click()}>预览GLB</button>
+   {selectedAgent&&previews.has(selectedAgent.id)&&<button type="button" onClick={()=>{previews.delete(selectedAgent.id);setModelVersion(v=>v+1);setHint('已恢复默认人物');}}>恢复人物</button>}
+   {pages>1&&<select aria-label="办公室成员分页" value={Math.min(page,pages-1)} onChange={e=>setPage(Number(e.target.value))}>{Array.from({length:pages},(_,i)=><option value={i} key={i}>成员 {i*8+1}–{Math.min((i+1)*8,agents.length)}</option>)}</select>}
+  </div>
+  <input ref={upload} type="file" hidden accept=".glb" data-testid="glb-upload" onChange={async e=>{const file=e.target.files?.[0];e.target.value='';if(!file||!selectedAgent)return;try{if(file.size>3_000_000)throw Error('模型不能超过3MB');const meshes=parseGLB(await file.arrayBuffer());previews.set(selectedAgent.id,{name:file.name,meshes});setModelVersion(v=>v+1);setHint(`${selectedAgent.name}：${file.name}（仅当前浏览器会话的静态预览）`);setError('');}catch(ex){setHint((ex as Error).message);}}}/>
+  {error&&<div className="scene-error" role="alert">{error}</div>}
+  {!!hint&&<div className="scene-hint" role="status">{hint}<button onClick={()=>setHint('')} aria-label="关闭场景提示">×</button></div>}
+  <div className="office-caption"><i/>真实事件驱动<span>拖动旋转 · 滚轮缩放 · 点击成员 · 布局不代表实际会议</span></div>
+  <output className="camera-status" aria-label="相机状态">{cameraText}</output>
+ </div>;
+}

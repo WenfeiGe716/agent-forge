@@ -1,0 +1,44 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Looking in links: offline/wheelhouse
+Processing ./offline/wheelhouse/annotated_doc-0.0.4-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 1))
+Processing ./offline/wheelhouse/annotated_types-0.7.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 2))
+Processing ./offline/wheelhouse/anyio-4.13.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 3))
+Processing ./offline/wheelhouse/certifi-2026.5.20-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 4))
+Processing ./offline/wheelhouse/cffi-2.0.0-cp313-cp313-manylinux_2_17_x86_64.whl (from -r offline/requirements-linux-cp313.lock (line 5))
+Processing ./offline/wheelhouse/click-8.1.8-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 6))
+Processing ./offline/wheelhouse/cryptography-46.0.4-cp311-abi3-manylinux_2_34_x86_64.whl (from -r offline/requirements-linux-cp313.lock (line 7))
+Processing ./offline/wheelhouse/fastapi-0.128.2-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 8))
+Processing ./offline/wheelhouse/greenlet-3.5.1-cp313-cp313-manylinux_2_24_x86_64.whl (from -r offline/requirements-linux-cp313.lock (line 9))
+Processing ./offline/wheelhouse/h11-0.16.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 10))
+Processing ./offline/wheelhouse/httpcore-1.0.9-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 11))
+Processing ./offline/wheelhouse/httpx-0.28.1-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 12))
+Processing ./offline/wheelhouse/idna-3.17-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 13))
+Processing ./offline/wheelhouse/iniconfig-2.3.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 14))
+Processing ./offline/wheelhouse/packaging-25.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 15))
+Processing ./offline/wheelhouse/pluggy-1.6.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 16))
+Processing ./offline/wheelhouse/pycparser-3.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 17))
+Processing ./offline/wheelhouse/pydantic-2.13.4-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 18))
+Processing ./offline/wheelhouse/pydantic_core-2.46.4-cp313-cp313-manylinux_2_17_x86_64.whl (from -r offline/requirements-linux-cp313.lock (line 19))
+Processing ./offline/wheelhouse/pygments-2.20.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 20))
+Processing ./offline/wheelhouse/pytest-9.0.2-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 21))
+Processing ./offline/wheelhouse/pytest_asyncio-1.3.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 22))
+Processing ./offline/wheelhouse/sqlalchemy-2.0.50-cp313-cp313-manylinux_2_17_x86_64.whl (from -r offline/requirements-linux-cp313.lock (line 23))
+Processing ./offline/wheelhouse/starlette-0.50.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 24))
+Processing ./offline/wheelhouse/typing_extensions-4.16.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 25))
+Processing ./offline/wheelhouse/typing_inspection-0.4.2-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 26))
+Processing ./offline/wheelhouse/uvicorn-0.48.0-py3-none-any.whl (from -r offline/requirements-linux-cp313.lock (line 27))
+Installing collected packages: typing-extensions, pygments, pycparser, pluggy, packaging, iniconfig, idna, h11, greenlet, click, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, pytest, pydantic-core, httpcore, cffi, anyio, starlette, pytest-asyncio, pydantic, httpx, cryptography, fastapi
+
+Successfully installed annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.13.0 certifi-2026.5.20 cffi-2.0.0 click-8.1.8 cryptography-46.0.4 fastapi-0.128.2 greenlet-3.5.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.17 iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pycparser-3.0 pydantic-2.13.4 pydantic-core-2.46.4 pygments-2.20.0 pytest-9.0.2 pytest-asyncio-1.3.0 sqlalchemy-2.0.50 starlette-0.50.0 typing-extensions-4.16.0 typing-inspection-0.4.2 uvicorn-0.48.0
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+No broken requirements found.
+{
+  "compiler": "5.8.3",
+  "mode": "offline-transpile-and-browser-validation",
+  "semantic_typecheck": false,
+  "source_files": 20,
+  "syntax_errors": 0,
+  "react": "18.2.0",
+  "output": "frontend/dist"
+}
+离线依赖安装完成。运行 .venv/bin/python scripts/start-local.py，或使用 scripts/start-validation.sh 启动明确标记的验证夹具。

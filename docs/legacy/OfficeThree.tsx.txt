@@ -1,0 +1,73 @@
+import {useEffect,useRef,useState} from 'react';
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {Agent,Task,roles,states} from '../types';
+
+/** Presentation only: agent activity is derived from persisted task state, never a fake timer. */
+export default function Office({agents,tasks,onSelect}:{agents:Agent[];tasks:Task[];onSelect:(id:string)=>void}){
+ const host=useRef<HTMLDivElement>(null), live=useRef({agents,tasks,onSelect});
+ const [error,setError]=useState('');
+ live.current={agents,tasks,onSelect};
+ useEffect(()=>{
+  if(!host.current)return;
+  const element=host.current;
+  let renderer:THREE.WebGLRenderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch{setError('此浏览器未启用WebGL。任务看板和执行日志仍可完整使用。');return;}
+  const scene=new THREE.Scene();
+  const camera=new THREE.OrthographicCamera(-9,9,6,-6,.1,100);
+  camera.position.set(12,13,14);camera.lookAt(0,0,0);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setClearColor(0x141c20,0);
+  element.appendChild(renderer.domElement);
+  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.enablePan=false;controls.minZoom=.65;controls.maxZoom=1.8;controls.maxPolarAngle=Math.PI/2.5;controls.target.set(0,0,0);
+  scene.add(new THREE.AmbientLight(0xcfe1e9,2.1));
+  const light=new THREE.DirectionalLight(0xffffff,3.5);light.position.set(4,10,4);light.castShadow=true;light.shadow.mapSize.set(2048,2048);Object.assign(light.shadow.camera,{left:-11,right:11,top:11,bottom:-11});scene.add(light);
+  const materials:THREE.Material[]=[];const geometries:THREE.BufferGeometry[]=[];
+  const material=(color:number,extra={})=>{const m=new THREE.MeshStandardMaterial({color,roughness:.65,...extra});materials.push(m);return m;};
+  const floor=material(0x293a3c),edge=material(0x18262a),wood=material(0x536964),leg=material(0x19292c),screen=material(0x1b2b31),wall=material(0x3c5150),accent=material(0xc8ed91),leaf=material(0x708d72),pot=material(0x647575);
+  const box=(w:number,h:number,d:number,m:THREE.Material,x:number,y:number,z:number,parent:THREE.Object3D=scene)=>{const geo=new THREE.BoxGeometry(w,h,d);geometries.push(geo);const mesh=new THREE.Mesh(geo,m);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;};
+  box(12,.28,8.8,edge,0,-.24,0);box(11.7,.10,8.5,floor,0,-.05,0);
+  box(11.7,1.1,.15,wall,0,.50,-4.2);box(.15,1.1,8.4,wall,-5.75,.50,0);
+  for(let i=0;i<12;i++)box(.025,.005,8.4,edge,-5.5+i,.01,0);
+  for(let i=0;i<9;i++)box(11.7,.005,.025,edge,0,.012,-4+i);
+  // A central meeting table is scenery; no fabricated meeting or message generation.
+  const circle=new THREE.CylinderGeometry(1.12,1.12,.10,48);geometries.push(circle);const table=new THREE.Mesh(circle,wood);table.position.set(0,.86,0);table.castShadow=true;scene.add(table);box(.25,.8,.25,leg,0,.4,0);
+  const tableAccent=box(.55,.03,.35,accent,0,.94,0);tableAccent.rotation.y=.2;
+  for(const [x,z] of [[-5,3.3],[4.9,-3.4],[4.9,3.4]]){box(.46,.6,.46,pot,x,.3,z);const geo=new THREE.IcosahedronGeometry(.6,1);geometries.push(geo);const crown=new THREE.Mesh(geo,leaf);crown.position.set(x,1.13,z);crown.scale.set(.72,1.25,.72);crown.castShadow=true;scene.add(crown);}
+  const figures:{group:THREE.Group;label:HTMLButtonElement;screen:THREE.MeshStandardMaterial;light:THREE.MeshStandardMaterial;anchor:THREE.Vector3;id:string}[]=[];
+  const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  const palette=[0xbbd994,0x8fbdd0,0xcab298,0xaba8d4,0x9fbea7,0xd1aeac];
+  live.current.agents.slice(0,12).forEach((agent,index)=>{
+    const row=Math.floor(index/4),col=index%4;const x=[-3.5,-1.25,1.5,3.75][col];const z=row%2===0?-2.6:2.4;
+    const group=new THREE.Group();group.position.set(x,0,z+row*.18);scene.add(group);
+    box(1.65,.13,.82,wood,0,.9,0,group);for(const lx of [-.62,.62])box(.08,.83,.08,leg,lx,.43,.25,group);
+    const display=material(0x243b3f,{emissive:0x102224,emissiveIntensity:.2});
+    box(.67,.46,.07,screen,0,1.21,-.19,group);box(.57,.34,.015,display,0,1.23,-.143,group);box(.09,.18,.09,leg,0,.97,-.18,group);box(.45,.025,.2,leg,0,.986,.17,group);
+    box(.6,.16,.56,leg,0,.40,.84,group);box(.62,.58,.09,leg,0,.7,1.1,group);
+    const body=material(palette[index%palette.length]);
+    const bodyGeo=new THREE.CapsuleGeometry(.20,.32,4,8);geometries.push(bodyGeo);const torso=new THREE.Mesh(bodyGeo,body);torso.position.set(0,.78,.70);torso.castShadow=true;group.add(torso);
+    const headGeo=new THREE.SphereGeometry(.205,16,12);geometries.push(headGeo);const head=new THREE.Mesh(headGeo,material(0xd6cab7));head.position.set(0,1.24,.69);head.castShadow=true;group.add(head);
+    const hairGeo=new THREE.SphereGeometry(.211,16,12,0,Math.PI*2,0,Math.PI*.50);geometries.push(hairGeo);const hair=new THREE.Mesh(hairGeo,leg);hair.position.copy(head.position);group.add(hair);
+    box(.11,.34,.11,body,-.22,.88,.47,group).rotation.x=-.55;box(.11,.34,.11,body,.22,.88,.47,group).rotation.x=-.55;
+    const led=material(0x658071,{emissive:0xaedd8f,emissiveIntensity:0});box(.16,.06,.08,led,.58,1.01,.18,group);
+    group.traverse(object=>object.userData.agentId=agent.id);
+    const label=document.createElement('button');label.className='office-agent-label';label.type='button';label.onclick=()=>live.current.onSelect(agent.id);element.appendChild(label);
+    figures.push({group,label,screen:display,light:led,anchor:new THREE.Vector3(x,1.75,z+row*.18),id:agent.id});
+  });
+  const resize=()=>{const w=element.clientWidth,h=element.clientHeight;renderer.setSize(w,h);camera.left=-6.8*w/h;camera.right=6.8*w/h;camera.top=6.8;camera.bottom=-6.8;camera.updateProjectionMatrix();};
+  const observer=new ResizeObserver(resize);observer.observe(element);resize();
+  let handle=0;
+  const animate=()=>{handle=requestAnimationFrame(animate);controls.update();
+    for(const figure of figures){const agent=live.current.agents.find(a=>a.id===figure.id);const task=live.current.tasks.find(t=>t.agent_id===figure.id&&t.status==='running');
+      const active=!!task;figure.screen.emissiveIntensity=active?.85:.08;figure.light.emissiveIntensity=active?1.1:0;
+      const label=`${agent?.name||'Agent'} · ${active?states[task!.status]||'执行中':agent?.model_profile_id?'待命':'未绑定模型'}`;
+      if(figure.label.textContent!==label)figure.label.textContent=label;
+      figure.label.classList.toggle('active',active);figure.label.title=task?.title||roles[agent?.role||'']||'';
+      const p=figure.anchor.clone().project(camera);figure.label.style.left=`${(p.x*.5+.5)*element.clientWidth}px`;figure.label.style.top=`${(-p.y*.5+.5)*element.clientHeight}px`;
+    }renderer.render(scene,camera);
+  };animate();
+  const pick=(event:MouseEvent)=>{const rect=renderer.domElement.getBoundingClientRect();mouse.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(mouse,camera);const hit=raycaster.intersectObjects(scene.children,true).find(i=>i.object.userData.agentId);if(hit)live.current.onSelect(hit.object.userData.agentId);};
+  renderer.domElement.addEventListener('click',pick);
+  return()=>{cancelAnimationFrame(handle);observer.disconnect();controls.dispose();renderer.domElement.removeEventListener('click',pick);renderer.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());figures.forEach(f=>f.label.remove());renderer.domElement.remove();};
+ },[agents.map(a=>a.id).join(',')]);
+ return <div className="office-viewport" ref={host}>{error&&<div className="empty">{error}</div>}<div className="office-caption"><i/>事件驱动视图<span>拖动旋转 · 滚轮缩放 · 点击成员</span></div></div>;
+}

@@ -1,0 +1,78 @@
+{
+  "method": "actual Chromium/WebGL in-memory preview; no backend/model execution",
+  "passed": 14,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "独立预览加载14成员、WebGL和明确示例标识",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "决策界面可选择和补充，页面内存记录回答",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "示例会议三名参与者走到不同椅子并入座",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "超过旧6秒动画时长仍保持会议，未收到结束状态不散会",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "示例结束事件后返回工位，不再强制继续会议",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "会议决议与两个建议行动项及责任人联动显示",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "行动项可跳到对应公开会话，始终标记为示例",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "决策、Skill和会议事件可以在同一追溯视图查看",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "Skill新建、保存和审批页面可操作，预览不声称后端持久化",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "编辑生成新版本，历史版本仍可查看",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "纯讨论模板自动从授权子团队选择入口，不误带全局负责人",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "目标驱动与小组协作保留，不回到固定轮数停止",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "1100px预览管理界面无文档水平溢出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "全部预览交互无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

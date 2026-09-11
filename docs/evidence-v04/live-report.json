@@ -1,0 +1,179 @@
+{
+  "run_id": "81f56f795b6d4495fb3778675fbdf790",
+  "title": "v0.4空闲抢占验收 1788917187：修复加法，补充说明与边界测试。",
+  "base_commit": "768dd3ba5a69789fffe89377971ee8ab21e293ed",
+  "plan": {
+    "summary": "修复加法、并行维护文档，随后补充边界测试，最后独立审查。",
+    "tasks": [
+      {
+        "key": "fix_add",
+        "title": "修复加法函数",
+        "description": "检查calc.py，将错误减法改为加法。",
+        "agent_id": "bdacef5160624f02a1fc29df80835907",
+        "depends_on": [],
+        "acceptance": "add(2,3)==5"
+      },
+      {
+        "key": "document",
+        "title": "整理验收说明",
+        "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+        "agent_id": "c55bce69ac3c483ca179e61b0b53d18f",
+        "depends_on": [],
+        "acceptance": "文档包含验收命令"
+      },
+      {
+        "key": "edge_tests",
+        "title": "补充边界测试",
+        "description": "依据已集成代码补充tests/test_edges.py。",
+        "agent_id": "c55bce69ac3c483ca179e61b0b53d18f",
+        "depends_on": [
+          "fix_add",
+          "document"
+        ],
+        "acceptance": "负数与零值测试通过"
+      }
+    ]
+  },
+  "checks": {
+    "verification": "passed",
+    "commands": [
+      {
+        "command": "python -m unittest discover -s tests",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+        "timed_out": false,
+        "fixture_only": true,
+        "sandbox_verified": false
+      }
+    ],
+    "tracked_files_modified": false
+  },
+  "review": {
+    "summary": "已读取实现与测试，并核对平台提供的验收报告。结论由脚本化验证服务生成。",
+    "verdict": "pass",
+    "issues": []
+  },
+  "input_tokens": 1690,
+  "output_tokens": 685,
+  "model_calls": 16,
+  "config_snapshot": {
+    "45881c3b259f447bbf9460a96d05ce02": {
+      "name": "Atlas",
+      "role": "planner",
+      "runtime": {
+        "max_steps": 12,
+        "max_agent_messages": 20,
+        "max_model_calls": 100,
+        "task_timeout_s": 3600,
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "max_parallel": 2,
+        "max_tasks": 20,
+        "max_rework_rounds": 2,
+        "cpu": 1.0,
+        "memory_mb": 1024,
+        "max_file_bytes": 200000,
+        "max_context_chars": 120000
+      },
+      "models": [
+        {
+          "provider": "验证连接A / OpenAI协议",
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          }
+        }
+      ]
+    },
+    "bdacef5160624f02a1fc29df80835907": {
+      "name": "Nova",
+      "role": "developer",
+      "runtime": {
+        "max_steps": 17,
+        "max_agent_messages": 20,
+        "max_model_calls": 100,
+        "task_timeout_s": 3600,
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "max_parallel": 2,
+        "max_tasks": 20,
+        "max_rework_rounds": 2,
+        "cpu": 1.0,
+        "memory_mb": 1024,
+        "max_file_bytes": 200000,
+        "max_context_chars": 120000
+      },
+      "models": [
+        {
+          "provider": "验证连接A / OpenAI协议",
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          }
+        }
+      ]
+    },
+    "c55bce69ac3c483ca179e61b0b53d18f": {
+      "name": "Echo",
+      "role": "tester",
+      "runtime": {
+        "max_steps": 12,
+        "max_agent_messages": 20,
+        "max_model_calls": 100,
+        "task_timeout_s": 3600,
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "max_parallel": 2,
+        "max_tasks": 20,
+        "max_rework_rounds": 2,
+        "cpu": 1.0,
+        "memory_mb": 1024,
+        "max_file_bytes": 200000,
+        "max_context_chars": 120000
+      },
+      "models": [
+        {
+          "provider": "验证连接B / Anthropic协议",
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          }
+        }
+      ]
+    },
+    "f8455d04e3d64950b1af9dbcaac6469f": {
+      "name": "Sage",
+      "role": "reviewer",
+      "runtime": {
+        "max_steps": 12,
+        "max_agent_messages": 20,
+        "max_model_calls": 100,
+        "task_timeout_s": 3600,
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "max_parallel": 2,
+        "max_tasks": 20,
+        "max_rework_rounds": 2,
+        "cpu": 1.0,
+        "memory_mb": 1024,
+        "max_file_bytes": 200000,
+        "max_context_chars": 120000
+      },
+      "models": [
+        {
+          "provider": "验证连接B / Anthropic协议",
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          }
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Imported files are a snapshot; original Git history is not imported.",
+    "No automatic merge, push or production deployment.",
+    "Missing checks are UNVERIFIED, not passed."
+  ]
+}

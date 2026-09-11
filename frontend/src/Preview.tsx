@@ -1,0 +1,35 @@
+/** Deliberately separate input simulator. No model/HTTP/workspace execution. */
+import {useEffect,useRef,useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import StudioWorkspace from './components/StudioWorkspace';
+import TaskGraph from './components/TaskGraph';
+import {Modal} from './components/UI';
+import {Agent,Model,Provider,Project,Run,Task} from './types';
+import {Packet,Presence,Config,defaults,Event} from './office/behavior';
+const names=['Atlas','Nova','Vega','Milo','Echo','Sage','Luna','Juno','Kai','Wren','Flint','Pax','Rio','Cade'];
+const roles=['planner','developer','developer','developer','tester','reviewer','tester','reviewer','developer','developer','planner','tester','reviewer','developer'];
+const initial:Agent[]=names.map((name,i)=>({id:'demo-'+name,name,role:roles[i],model_profile_id:['plan','code','local'][i%3],fallback_model_ids:[],instructions:'示例成员，不调用模型',runtime:{max_steps:24,call_timeout_s:120},model_parameters:{},version:1,reports_to:i===0?null:'demo-Atlas',peer_reception:'sit'}));
+const providers:Provider[]=['A','B','Local'].map((name,i)=>({id:'p'+i,name:name==='Local'?'本地服务 · 示例':'供应商 '+name+' · 示例',protocol:i===1?'anthropic_messages':'openai_chat',base_url:'',external:false,enabled:true,has_key:false,revision_id:'preview'}));
+const models:Model[]=['plan','code','local'].map((id,i)=>({id,name:['Planning / 规划','Coding / 开发','Local / 本地'][i],provider_id:'p'+i,model_id:'example-'+id,allowed_parameters:[],parameters:{},supports_tools:true,version:1}));
+const project:Project={id:'demo-project',name:'本地研发团队 · 界面示例',import_path:'preview-only',instructions:'',sandbox_image:'',check_commands:[],allow_external_models:false,runtime:{},members:[],base_commit:'example',owner_id:'preview'};
+const idle=(id:string):Presence=>({agent_id:id,busy:false,phase:'idle',label:'空闲',evidence_ids:[],scope:'global',idle_since:new Date().toISOString()});
+const basePresence=()=>initial.map((a,i)=>i<2?{...idle(a.id),busy:true,phase:i===0?'thinking':'writing',label:i===0?'思考中':'修改代码',run_id:'preview-run',task_key:i===0?'plan':'code',evidence_ids:[i+1]} as Presence:idle(a.id));
+const baseConfig:Config={...defaults,idle_grace_s:1,idle_stagger_s:6,idle_cooldown_s:12,durations_s:{drink:12,phone:16,restroom:12,nap:18,stretch:8},revision:1};
+export default function Preview(){
+ const[agents,setAgents]=useState(initial),[presence,setPresence]=useState(basePresence),[events,setEvents]=useState<Event[]>([]),[config,setConfig]=useState(baseConfig),[online,setOnline]=useState(true),[tick,setTick]=useState(0),[dialog,setDialog]=useState<{kind:string;title:string;item?:any}|null>(null),[name,setName]=useState('');const counter=useRef(3);
+ useEffect(()=>{const timer=setInterval(()=>setTick(t=>t+1),1000);return()=>clearInterval(timer);},[]);
+ const packet:Packet={presence,events,cursor:counter.current,complete:true,settings:config,server_time:new Date().toISOString()};
+ const tasks:Task[]=presence.filter(p=>p.busy).map((p,i)=>({id:'t'+i,key:p.task_key||'work',agent_id:p.agent_id,title:p.label+' · 示例',status:p.phase==='paused'?'paused':'running',kind:p.phase==='reviewing'?'review':'development',spec:{acceptance:'本页仅演示状态输入与交互'},result:{}}));
+ const run:Run={id:'preview-run',project_id:project.id,title:'确定性协作 · 示例输入',request:'运行状态只由下方明确的示例输入改变。',status:tasks.length?'running':'completed',calls:0,input_tokens:0,output_tokens:0,created_at:new Date().toISOString(),updated_at:new Date().toISOString(),error:'',tasks};
+ const emit=(kind:string,data:Record<string,any>)=>{const id=++counter.current;setEvents(old=>[...old,{id,kind,run_id:'preview-run',created_at:new Date().toISOString(),data}].slice(-120));return id;};
+ const action=(kind:string,selected?:string)=>{
+  if(kind==='offline'){setOnline(v=>!v);return;}
+  if(kind==='finish'){const id=selected||presence.find(p=>p.busy)?.agent_id;if(id){emit('task.finished',{agent_id:id,task_key:'code',summary:'示例任务已释放'});setPresence(old=>old.map(p=>p.agent_id===id?idle(id):p));}return;}
+  if(kind==='message'){const from=selected||presence.find(p=>p.busy)?.agent_id||agents[0].id,to=agents.find(a=>a.id!==from)!.id;emit('agent.message',{from_agent_id:from,to_agent_id:to,body:'变更已交接，请检查接口兼容性和测试结果。（示例消息）',message_id:'demo-message-'+counter.current});return;}
+  if(kind==='assign'||kind==='assign-idle'){const dom=typeof document!=='undefined'?document.querySelector<HTMLButtonElement>('.living-label[data-source="idle"][data-stage^="perform:"]'):null;const id=kind==='assign'?selected:dom?.dataset.agentId||presence.find(p=>!p.busy)?.agent_id;if(!id)return;const event=emit('tool.started',{agent_id:id,task_key:'code',tool:'write_file'});setPresence(old=>old.map(p=>p.agent_id===id?{...p,busy:true,phase:'writing',label:'修改代码',run_id:'preview-run',task_key:'code',tool:'write_file',evidence_ids:[event],scope:'authorized'}:p));}
+ };
+ return <><StudioWorkspace preview packet={packet} online={online} agents={agents} models={models} providers={providers} projects={[project]} runs={[run]} detail={run} events={events} selectedRun={run.id} writer admin onPreviewAction={action} onPreviewConfig={setConfig} onBoard={()=>setDialog({kind:'board',title:'任务依赖 · 示例'})} onNavigate={p=>setDialog({kind:p,title:({models:'模型连接',projects:'项目工作区',agents:'团队管理',settings:'运行配置'} as Record<string,string>)[p]+' · 示例'})} onCreateAgent={()=>setDialog({kind:'add',title:'添加示例成员'})} onEditAgent={a=>setDialog({kind:'agent',title:a.name+' · 完整配置',item:a})} onSaveAgent={async(a,patch)=>setAgents(old=>old.map(x=>x.id===a.id?{...x,...patch,version:x.version+1}:x))} onCreateTask={seed=>setDialog({kind:'create',title:'开发需求 · 示例',item:seed})} onSelectRun={()=>{}} onTask={t=>setDialog({kind:'task',title:t.title,item:t})} onRefresh={()=>setTick(t=>t+1)}/>
+ {dialog&&<Modal title={dialog.title} wide={dialog.kind==='board'} onClose={()=>setDialog(null)}><div className="modal-content"><div className="callout">本页是独立的视觉交互预览。示例任务和配置只存在于当前页面，不调用模型，不读写项目文件。</div>{dialog.kind==='board'?<TaskGraph tasks={tasks} onSelect={t=>setDialog({kind:'task',title:t.title,item:t})}/>:dialog.kind==='add'?<form onSubmit={e=>{e.preventDefault();if(!name.trim())return;const id='demo-extra-'+agents.length;setAgents(old=>[...old,{...initial[1],id,name:name.trim()}]);setPresence(old=>[...old,idle(id)]);setName('');setDialog(null);}}><label>成员名称<input aria-label="示例成员名称" value={name} onChange={e=>setName(e.target.value)} required/></label><button className="button primary" style={{marginTop:16}} type="submit">添加示例成员</button></form>:dialog.kind==='models'?<>{providers.map(p=><div className="callout" key={p.id}><b>{p.name}</b><p>{models.find(m=>m.provider_id===p.id)?.name}</p></div>)}</>:dialog.kind==='projects'?<p>{project.name}。真实平台通过项目页导入本地仓库。</p>:dialog.kind==='settings'?<p>选中人物，通过右侧“模型”配置模型与执行参数。空闲动作在场景底部“空闲策略”中配置。</p>:dialog.kind==='agents'?<p>左侧添加成员，点击人物后查看行为依据或修改模型。当前页面的变更不写入正式平台。</p>:<pre>{JSON.stringify(dialog.item,null,2)}</pre>}</div></Modal>}
+ </>;
+}
+export function mountPreview(){createRoot(document.getElementById('root')!).render(<Preview/>);}

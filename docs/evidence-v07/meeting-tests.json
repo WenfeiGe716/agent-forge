@@ -1,0 +1,58 @@
+{
+  "passed": 13,
+  "failed": 0,
+  "results": [
+    {
+      "name": "没有真实会议输入时不创建行走或会议",
+      "status": "passed"
+    },
+    {
+      "name": "真实会议为指定成员分配不同席位，不占用其他成员",
+      "status": "passed"
+    },
+    {
+      "name": "会议持续超过6秒和60秒都不会按动画时长自行结束",
+      "status": "passed"
+    },
+    {
+      "name": "入座后骨盆高度与会议座面对应，使用坐姿几何",
+      "status": "passed"
+    },
+    {
+      "name": "发言者来自后端speaker_ids，其他成员聆听",
+      "status": "passed"
+    },
+    {
+      "name": "真实会议结束才返回工位，后台无需等待回程",
+      "status": "passed"
+    },
+    {
+      "name": "会中请求决策保留席位，不产生假发言",
+      "status": "passed"
+    },
+    {
+      "name": "暂停会议保持席位，恢复后重新读取发言者",
+      "status": "passed"
+    },
+    {
+      "name": "断线不会继续演绎或误报散会",
+      "status": "passed"
+    },
+    {
+      "name": "过期快照进入安全等待，更新后才继续",
+      "status": "passed"
+    },
+    {
+      "name": "六个实体席位满时剩余成员远程加入，不重叠座位",
+      "status": "passed"
+    },
+    {
+      "name": "多个会议争用单个房间时采用确定性租约，其余远程",
+      "status": "passed"
+    },
+    {
+      "name": "相同状态和时钟产生同样的位置，不调用随机数",
+      "status": "passed"
+    }
+  ]
+}

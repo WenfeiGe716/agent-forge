@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+data
+imports
+backups
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.venv
+vendor/typescript.cjs

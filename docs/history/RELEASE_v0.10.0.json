@@ -1,0 +1,32 @@
+{
+  "product": "Agent Forge",
+  "version": "0.10.0",
+  "date": "2026-09-09",
+  "baseline_zip_sha256": "9cd8161237e7b2f8bda67a12b0f26d3f2579eee9c6a16bc3b295e071161184eb",
+  "entrypoint": "bash start.sh",
+  "formal_frontend": "frontend/dist/index.html",
+  "scope": "Preserve v0.9 interior assets and task engine; application-owned persistent ambient city with independent traffic timing, improved vehicle/pedestrian geometry, density controls and passive environment interactions.",
+  "validation": {
+    "backend": 169,
+    "ambient": 29,
+    "browser_api_webgl": 25,
+    "models": 15,
+    "idle": 35,
+    "etiquette": 22,
+    "meetings": 13,
+    "city_regression": 13,
+    "release_smoke": 9
+  },
+  "preservation": {
+    "byte_identical_key_files": 28,
+    "api_changes": "Only two release-version strings; no business-logic changes."
+  },
+  "limits": [
+    "Software GPU sample only; hardware GPU smoothness not verified.",
+    "Browser DOM/WebGL uses existing restricted HTTP bridge; native deployment URL/TLS/storage requires local verification.",
+    "No real LLM, Docker/gVisor or Temporal/PostgreSQL full-stack validation claimed.",
+    "Ambient simulation runs per logged-in browser app, not a 24/7 server-side or multi-client synchronized world.",
+    "Offline wheels target Linux x86_64 / CPython 3.13 compatible system libraries and are repackaged with provenance."
+  ],
+  "contents": "Source, prebuilt formal frontend, offline dependencies, tests, docs and observed evidence. No demo entrypoint, runtime data, keys, fonts or venv."
+}

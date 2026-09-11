@@ -1,0 +1,94 @@
+{
+  "passed": 22,
+  "failed": 0,
+  "results": [
+    {
+      "name": "工位坐姿：idle",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：typing",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：reading",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：thinking",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：testing",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：reviewing",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：paused",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：attention",
+      "status": "passed"
+    },
+    {
+      "name": "工位坐姿：phone",
+      "status": "passed"
+    },
+    {
+      "name": "普通同事来访默认坐着交流",
+      "status": "passed"
+    },
+    {
+      "name": "同事来访可配置站起，站在椅旁",
+      "status": "passed"
+    },
+    {
+      "name": "领导来访覆盖坐姿偏好并站到椅旁",
+      "status": "passed"
+    },
+    {
+      "name": "领导离开后重新入座",
+      "status": "passed"
+    },
+    {
+      "name": "领导关系沿汇报链判断",
+      "status": "passed"
+    },
+    {
+      "name": "没有消息不发生随机来访",
+      "status": "passed"
+    },
+    {
+      "name": "重复事件只产生一个来访",
+      "status": "passed"
+    },
+    {
+      "name": "旧消息不发起来访",
+      "status": "passed"
+    },
+    {
+      "name": "断线中止来访且保持安全来源",
+      "status": "passed"
+    },
+    {
+      "name": "不匹配的运行不会发起来访",
+      "status": "passed"
+    },
+    {
+      "name": "接待位置被占用时其他来访排队",
+      "status": "passed"
+    },
+    {
+      "name": "真实办公室全部座位和接待点可达",
+      "status": "passed"
+    },
+    {
+      "name": "坐姿骨盆贴合座面，脚在地面，站姿头部更高",
+      "status": "passed"
+    }
+  ]
+}

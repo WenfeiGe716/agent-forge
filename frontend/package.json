@@ -1,0 +1,11 @@
+{
+  "name": "agent-forge-workbench",
+  "version": "0.14.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline-vendored React 18.2 runtime and TypeScript 5.8.3; no registry fetch required",
+  "scripts": {
+    "build": "node ../scripts/build-offline.mjs",
+    "check": "node ../scripts/check-source.mjs"
+  }
+}

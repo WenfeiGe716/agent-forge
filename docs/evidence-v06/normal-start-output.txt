@@ -1,0 +1,18 @@
+Agent Forge http://127.0.0.1:8793 | admin密码在 /mnt/data/forge-v06-work/agent-forge/.local/config.json
+未配置真实模型或沙箱时，相关操作会明确失败，不会模拟通过。
+INFO:     Started server process [8763]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8793 (Press CTRL+C to quit)
+INFO:     127.0.0.1:42784 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /api/runs HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:42784 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET / HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8763]

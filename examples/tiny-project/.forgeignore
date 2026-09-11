@@ -1,0 +1,3 @@
+# Relative fnmatch patterns, not full gitignore syntax.
+private/*
+*.local

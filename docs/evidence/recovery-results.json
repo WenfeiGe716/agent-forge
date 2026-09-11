@@ -1,0 +1,17 @@
+{
+  "passed": 6,
+  "failed": 0,
+  "checks": [
+    "unauthenticated requests rejected",
+    "process restart reuses completed activity journal; no repeat model calls",
+    "stale approval rejected after restart",
+    "durable rejection cancels without starting developers",
+    "model call hard cap stops run at exactly one call",
+    "real HTTP SSE Last-Event-ID resumes without duplicate prior events"
+  ],
+  "restart_boundary": "awaiting_approval; completed operations only",
+  "model_calls_before_restart": 3,
+  "model_calls_after_restart": 3,
+  "temporal_tested": false,
+  "docker_tested": false
+}

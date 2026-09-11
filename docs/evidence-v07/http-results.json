@@ -1,0 +1,611 @@
+{
+  "method": "real HTTP/SQLite/local coordinator/Git/fixed unittest; SCRIPTED model replies",
+  "passed": 23,
+  "failed": 0,
+  "run_ids": {
+    "v07 定向需求到可验收代码": "10091f0b45e640c1893d13246fe02b1e",
+    "v07 指定两成员纯讨论": "567a7eca67704986aabc4a60301557f6",
+    "v07 决策拒绝保留记录": "386d4f58846f49429b514e300e2d49ad"
+  },
+  "skill_id": "6c4d95f578ba41e6b6c0cc34cb6865f0",
+  "results": [
+    {
+      "name": "Skill文本包创建为待审核，未执行安装钩子",
+      "status": "passed",
+      "detail": {
+        "id": "6c4d95f578ba41e6b6c0cc34cb6865f0",
+        "digest": "668394bf5c4a0c34311d0bd03f3a893059da1269a834bbc6808afa46bbd10959"
+      }
+    },
+    {
+      "name": "未审核Skill不能绑定",
+      "status": "passed",
+      "detail": 422
+    },
+    {
+      "name": "管理员按摘要批准后绑定到指定Agent，非全团队自动加载",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实HTTP导出Skill ZIP与不可变版本",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "定向@成员解析与明确入口一致",
+      "status": "passed",
+      "detail": {
+        "entry_agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+        "recipients": [
+          "b7b34387d0a44f97805b3abe25b053c9"
+        ],
+        "resolved": [
+          {
+            "id": "b7b34387d0a44f97805b3abe25b053c9",
+            "name": "Atlas",
+            "department": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "不存在的收件人明确拒绝，不猜测",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "入口Agent主动提问并持久化阻塞，回答前不虚构会议",
+      "status": "passed",
+      "detail": {
+        "run": "10091f0b45e640c1893d13246fe02b1e",
+        "question": {
+          "id": "755aa69e7de9bee7acd9f3dd02449efca523db469aa203ea780356b62e9ca273",
+          "request_id": "755aa69e7de9bee7acd9f3dd02449efca523db469aa203ea780356b62e9ca273",
+          "run_id": "10091f0b45e640c1893d13246fe02b1e",
+          "task_key": "intake",
+          "agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+          "digest": "a5391d1ed09049095366820775ce44287a919f60f573e5426b6f7f5b38af5e06",
+          "status": "pending",
+          "question": {
+            "question": "本次优先交付接口能力还是界面？",
+            "context": "这是脚本化验证问题。选择结果将进入原步骤后续上下文，不代表模型自行推理。",
+            "options": [
+              {
+                "id": "api-first",
+                "label": "接口优先，保持现有函数签名"
+              },
+              {
+                "id": "ui-first",
+                "label": "界面优先，先完善交互"
+              }
+            ],
+            "allow_text": true
+          },
+          "answer": {},
+          "answered_by": "",
+          "created_at": "2026-09-09T04:04:16.012600+00:00",
+          "answered_at": ""
+        },
+        "calls": 3
+      }
+    },
+    {
+      "name": "人工等待不继续消耗模型调用预算",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真正按需加载Skill和资源，版本与加载事件进入运行",
+      "status": "passed",
+      "detail": {
+        "skills": [
+          {
+            "id": 27,
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "kind": "skill.activated",
+            "data": {
+              "agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+              "task_key": "intake",
+              "skill_id": "6c4d95f578ba41e6b6c0cc34cb6865f0",
+              "name": "v07-review-checklist-1788926654",
+              "version": 1,
+              "digest": "668394bf5c4a0c34311d0bd03f3a893059da1269a834bbc6808afa46bbd10959"
+            },
+            "created_at": "2026-09-09T04:04:15.272093+00:00"
+          },
+          {
+            "id": 32,
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "kind": "skill.resource.read",
+            "data": {
+              "agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+              "task_key": "intake",
+              "name": "v07-review-checklist-1788926654",
+              "version": 1,
+              "path": "references/checklist.md"
+            },
+            "created_at": "2026-09-09T04:04:15.642182+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "name": "编辑Skill生成新版本，不污染正在等待的运行快照",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "错误摘要不能回答历史问题",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "定向追加说明先持久化，不重启整个任务",
+      "status": "passed",
+      "detail": {
+        "id": "0292bbba3c434fa2a1b8e69c207859e0",
+        "status": "persisted",
+        "effect": "加入所选成员后续模型调用的上下文；不重启完成任务，不改变权限或已批准的验收范围"
+      }
+    },
+    {
+      "name": "相同回答幂等，冲突回答拒绝，不二次调度",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "目标满足后结束真实会议，行动项有责任人与计划审批状态",
+      "status": "passed",
+      "detail": {
+        "run_id": "10091f0b45e640c1893d13246fe02b1e",
+        "entry_agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+        "decisions": [
+          {
+            "id": "755aa69e7de9bee7acd9f3dd02449efca523db469aa203ea780356b62e9ca273",
+            "request_id": "755aa69e7de9bee7acd9f3dd02449efca523db469aa203ea780356b62e9ca273",
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "task_key": "intake",
+            "agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+            "digest": "a5391d1ed09049095366820775ce44287a919f60f573e5426b6f7f5b38af5e06",
+            "status": "answered",
+            "question": {
+              "question": "本次优先交付接口能力还是界面？",
+              "context": "这是脚本化验证问题。选择结果将进入原步骤后续上下文，不代表模型自行推理。",
+              "options": [
+                {
+                  "id": "api-first",
+                  "label": "接口优先，保持现有函数签名"
+                },
+                {
+                  "id": "ui-first",
+                  "label": "界面优先，先完善交互"
+                }
+              ],
+              "allow_text": true
+            },
+            "answer": {
+              "choice_id": "api-first",
+              "text": "保持签名，不增加无关功能。",
+              "reject": false
+            },
+            "answered_by": "85eee6522da04ba5abbde2c687b1c785",
+            "created_at": "2026-09-09T04:04:16.012600+00:00",
+            "answered_at": "2026-09-09T04:04:17.408030+00:00"
+          }
+        ],
+        "meetings": [
+          {
+            "id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "host_id": "b7b34387d0a44f97805b3abe25b053c9",
+            "participants": [
+              "b7b34387d0a44f97805b3abe25b053c9",
+              "2c4332ca3c5f40d9a798a35e1f8c1a60",
+              "665666e488884902a2136e51eded8970"
+            ],
+            "subject": "v07 定向需求到可验收代码",
+            "agenda": "围绕用户已经确认的交付方向，形成可执行行动项和验证条件。",
+            "status": "concluded",
+            "speaker_ids": [],
+            "outcome": {
+              "stop_reason": "goal_satisfied",
+              "goal_checkpoint": {
+                "cycle": 1,
+                "outcome": "goal_satisfied",
+                "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力",
+                "transcript_digest": "75da96c451291714f9b4e25486fe4e9e4e457aba50861bbcb05360110df04916",
+                "assessor_id": "665666e488884902a2136e51eded8970",
+                "criteria": [
+                  {
+                    "id": "solution",
+                    "description": "给出可执行方案与验证方式",
+                    "evidence_type": "decision",
+                    "status": "met",
+                    "rationale": "已具备候选证据",
+                    "evidence": [
+                      {
+                        "task_key": "discussion_1_0",
+                        "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                        "path": "",
+                        "sha256": ""
+                      },
+                      {
+                        "task_key": "discussion_1_1",
+                        "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                        "path": "",
+                        "sha256": ""
+                      },
+                      {
+                        "task_key": "discussion_1_2",
+                        "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                        "path": "",
+                        "sha256": ""
+                      }
+                    ],
+                    "file_receipts": [],
+                    "errors": []
+                  }
+                ],
+                "open_issues": [],
+                "met_count": 1,
+                "total_count": 1,
+                "stagnation_count": 0,
+                "best_met_count": 1,
+                "seen_progress": [
+                  "026ffebc4461f86162635135d87bfda5d32cbc2e254fdb6bf3d23676dfbb1274"
+                ],
+                "semantic_verification": "model_assessed; human acceptance required",
+                "code_tests": "not_executed_in_read_only_discussion"
+              }
+            },
+            "created_at": "2026-09-09T04:04:17.856293+00:00",
+            "ended_at": "2026-09-09T04:04:19.389385+00:00",
+            "source": "business"
+          }
+        ],
+        "actions": [
+          {
+            "id": "10091f0b45e640c1893d13246fe02b1e:action:fix_add",
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+            "owner_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+            "task_key": "fix_add",
+            "specification": {
+              "key": "fix_add",
+              "title": "修复加法函数",
+              "description": "检查calc.py，将错误减法改为加法。",
+              "agent_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+              "depends_on": [],
+              "acceptance": "add(2,3)==5"
+            },
+            "status": "pending_approval",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+              "plan_task_key": "plan"
+            },
+            "created_at": "2026-09-09T04:04:20.512915+00:00",
+            "result": {}
+          },
+          {
+            "id": "10091f0b45e640c1893d13246fe02b1e:action:document",
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+            "owner_id": "665666e488884902a2136e51eded8970",
+            "task_key": "document",
+            "specification": {
+              "key": "document",
+              "title": "整理验收说明",
+              "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+              "agent_id": "665666e488884902a2136e51eded8970",
+              "depends_on": [],
+              "acceptance": "文档包含验收命令"
+            },
+            "status": "pending_approval",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+              "plan_task_key": "plan"
+            },
+            "created_at": "2026-09-09T04:04:20.513562+00:00",
+            "result": {}
+          },
+          {
+            "id": "10091f0b45e640c1893d13246fe02b1e:action:edge_tests",
+            "run_id": "10091f0b45e640c1893d13246fe02b1e",
+            "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+            "owner_id": "665666e488884902a2136e51eded8970",
+            "task_key": "edge_tests",
+            "specification": {
+              "key": "edge_tests",
+              "title": "补充边界测试",
+              "description": "依据已集成代码补充tests/test_edges.py。",
+              "agent_id": "665666e488884902a2136e51eded8970",
+              "depends_on": [
+                "fix_add",
+                "document"
+              ],
+              "acceptance": "负数与零值测试通过"
+            },
+            "status": "pending_approval",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "10091f0b45e640c1893d13246fe02b1e:meeting",
+              "plan_task_key": "plan"
+            },
+            "created_at": "2026-09-09T04:04:20.514012+00:00",
+            "result": {}
+          }
+        ],
+        "instructions": [
+          {
+            "id": "0292bbba3c434fa2a1b8e69c207859e0",
+            "body": "V07补充：保留add原签名，验收必须运行现有测试。",
+            "recipients": [
+              "b7b34387d0a44f97805b3abe25b053c9"
+            ],
+            "author_id": "85eee6522da04ba5abbde2c687b1c785",
+            "created_at": "2026-09-09T04:04:17.404055+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "name": "回答和补充说明进入实际后续模型请求，原问题不重提",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "会议生命周期与实际发言步骤产生事件，而非固定动画计时",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "会话分页包含公开回复与工具回答，不返回system或隐藏思考",
+      "status": "passed",
+      "detail": {
+        "count": 8,
+        "page": {
+          "items": [
+            {
+              "key": "intake",
+              "agent_id": "b7b34387d0a44f97805b3abe25b053c9",
+              "title": "接收定向需求与请求用户决策",
+              "kind": "intake",
+              "status": "done",
+              "meeting_id": null,
+              "message_count": 8,
+              "summary": "已接收用户决定，召集必要成员明确方案与验收。"
+            }
+          ],
+          "total": 3,
+          "has_more": true,
+          "next_offset": 1
+        }
+      }
+    },
+    {
+      "name": "追溯时间线使用服务端游标，无重复翻页",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "计划批准后行动项对应真实Git修改、固定测试与独立审查",
+      "status": "passed",
+      "detail": {
+        "calls": 24,
+        "checks": {
+          "verification": "passed",
+          "commands": [
+            {
+              "command": "python -m unittest discover -s tests",
+              "exit_code": 0,
+              "stdout": "",
+              "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+              "timed_out": false,
+              "fixture_only": true,
+              "sandbox_verified": false
+            }
+          ],
+          "tracked_files_modified": false
+        }
+      }
+    },
+    {
+      "name": "人工接受后行动项才显示已验收，原项目保持不变",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "少数成员纯讨论形成建议行动项，不伪造代码执行",
+      "status": "passed",
+      "detail": {
+        "run_id": "567a7eca67704986aabc4a60301557f6",
+        "entry_agent_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+        "decisions": [
+          {
+            "id": "028884e7fde1343ee8464e00f1a5d2bd673c99290c36b0d9833c5ebf9a73b073",
+            "request_id": "028884e7fde1343ee8464e00f1a5d2bd673c99290c36b0d9833c5ebf9a73b073",
+            "run_id": "567a7eca67704986aabc4a60301557f6",
+            "task_key": "intake",
+            "agent_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+            "digest": "8b773829cc80846fd7a97f2cd607c1273ffbb0122d3d074ffb13cb96e4db81d5",
+            "status": "answered",
+            "question": {
+              "question": "本次优先交付接口能力还是界面？",
+              "context": "这是脚本化验证问题。选择结果将进入原步骤后续上下文，不代表模型自行推理。",
+              "options": [
+                {
+                  "id": "api-first",
+                  "label": "接口优先，保持现有函数签名"
+                },
+                {
+                  "id": "ui-first",
+                  "label": "界面优先，先完善交互"
+                }
+              ],
+              "allow_text": true
+            },
+            "answer": {
+              "choice_id": "api-first",
+              "text": "保持签名，不增加无关功能。",
+              "reject": false
+            },
+            "answered_by": "85eee6522da04ba5abbde2c687b1c785",
+            "created_at": "2026-09-09T04:04:26.030480+00:00",
+            "answered_at": "2026-09-09T04:04:26.126169+00:00"
+          }
+        ],
+        "meetings": [
+          {
+            "id": "567a7eca67704986aabc4a60301557f6:meeting",
+            "run_id": "567a7eca67704986aabc4a60301557f6",
+            "host_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+            "participants": [
+              "2c4332ca3c5f40d9a798a35e1f8c1a60",
+              "665666e488884902a2136e51eded8970"
+            ],
+            "subject": "v07 指定两成员纯讨论",
+            "agenda": "围绕用户已经确认的交付方向，形成可执行行动项和验证条件。",
+            "status": "concluded",
+            "speaker_ids": [],
+            "outcome": {
+              "stop_reason": "goal_satisfied",
+              "goal_checkpoint": {
+                "cycle": 1,
+                "outcome": "goal_satisfied",
+                "summary": "目标复核夹具：检查目标、来源和未解决问题；不代表真实LLM能力",
+                "transcript_digest": "2b6d9e3219e3443b5f2683982869c2f115be2e31e14b849f45f6d4ed4cac7cce",
+                "assessor_id": "665666e488884902a2136e51eded8970",
+                "criteria": [
+                  {
+                    "id": "solution",
+                    "description": "给出可执行方案与验证方式",
+                    "evidence_type": "decision",
+                    "status": "met",
+                    "rationale": "已具备候选证据",
+                    "evidence": [
+                      {
+                        "task_key": "discussion_1_0",
+                        "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                        "path": "",
+                        "sha256": ""
+                      },
+                      {
+                        "task_key": "discussion_1_1",
+                        "explanation": "关联已完成的实际贡献，脚本化证据示例",
+                        "path": "",
+                        "sha256": ""
+                      }
+                    ],
+                    "file_receipts": [],
+                    "errors": []
+                  }
+                ],
+                "open_issues": [],
+                "met_count": 1,
+                "total_count": 1,
+                "stagnation_count": 0,
+                "best_met_count": 1,
+                "seen_progress": [
+                  "026ffebc4461f86162635135d87bfda5d32cbc2e254fdb6bf3d23676dfbb1274"
+                ],
+                "semantic_verification": "model_assessed; human acceptance required",
+                "code_tests": "not_executed_in_read_only_discussion"
+              }
+            },
+            "created_at": "2026-09-09T04:04:26.667662+00:00",
+            "ended_at": "2026-09-09T04:04:27.833034+00:00",
+            "source": "business"
+          }
+        ],
+        "actions": [
+          {
+            "id": "567a7eca67704986aabc4a60301557f6:action:fix_add",
+            "run_id": "567a7eca67704986aabc4a60301557f6",
+            "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+            "owner_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+            "task_key": "",
+            "specification": {
+              "key": "fix_add",
+              "title": "修复加法函数",
+              "description": "检查calc.py，将错误减法改为加法。",
+              "agent_id": "2c4332ca3c5f40d9a798a35e1f8c1a60",
+              "depends_on": [],
+              "acceptance": "add(2,3)==5"
+            },
+            "status": "proposed",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+              "plan_task_key": "action_plan"
+            },
+            "created_at": "2026-09-09T04:04:28.991872+00:00",
+            "result": {}
+          },
+          {
+            "id": "567a7eca67704986aabc4a60301557f6:action:document",
+            "run_id": "567a7eca67704986aabc4a60301557f6",
+            "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+            "owner_id": "665666e488884902a2136e51eded8970",
+            "task_key": "",
+            "specification": {
+              "key": "document",
+              "title": "整理验收说明",
+              "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+              "agent_id": "665666e488884902a2136e51eded8970",
+              "depends_on": [],
+              "acceptance": "文档包含验收命令"
+            },
+            "status": "proposed",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+              "plan_task_key": "action_plan"
+            },
+            "created_at": "2026-09-09T04:04:28.992444+00:00",
+            "result": {}
+          },
+          {
+            "id": "567a7eca67704986aabc4a60301557f6:action:edge_tests",
+            "run_id": "567a7eca67704986aabc4a60301557f6",
+            "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+            "owner_id": "665666e488884902a2136e51eded8970",
+            "task_key": "",
+            "specification": {
+              "key": "edge_tests",
+              "title": "补充边界测试",
+              "description": "依据已集成代码补充tests/test_edges.py。",
+              "agent_id": "665666e488884902a2136e51eded8970",
+              "depends_on": [
+                "fix_add",
+                "document"
+              ],
+              "acceptance": "负数与零值测试通过"
+            },
+            "status": "proposed",
+            "origin": {
+              "plan_digest": "d0b6d0f58bf5a58957f4b34bbf6bee22a0db2ce331a2c855885892083c7c1319",
+              "meeting_id": "567a7eca67704986aabc4a60301557f6:meeting",
+              "plan_task_key": "action_plan"
+            },
+            "created_at": "2026-09-09T04:04:28.992879+00:00",
+            "result": {}
+          }
+        ],
+        "instructions": []
+      }
+    },
+    {
+      "name": "用户拒绝继续时转人工，未产生会议或开发成功",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "未经认证不能读取决策、会话或Skill",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

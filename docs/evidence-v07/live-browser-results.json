@@ -1,0 +1,160 @@
+{
+  "method": "actual DOM/WebGL + real HTTP bridge; scripted models; not browser-native navigation/SSE/download",
+  "passed": 15,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "真实API登录与4位实际Agent，正式页面无示例控制条",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "Skill编辑器保存真实SKILL.md与文本资源，新版本待审核",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "按当前摘要审核后才允许绑定，内容可检查与导出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "成员表单实际绑定审核版本和按需模式，默认不授予脚本执行",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "办公室收件人与@指令进入创建表单，并由后端核对",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "Agent真实提问显示可选择选项、上下文及问题摘要",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "通过浏览器提交决定，已回答状态写入后端",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实会议状态驱动至少3名成员入座，业务运行不等待动画",
+      "status": "passed",
+      "detail": [
+        {
+          "agentId": "9ba1038a490449ba9ff25595b6cae6a7",
+          "pickX": "819.0846617519857",
+          "pickY": "591.5399604476988",
+          "pose": "communicating",
+          "posture": "seated",
+          "meetingId": "0cd71059d72eb7eddc9833287390c0d9:meeting",
+          "meetingSpeaker": "true",
+          "sitBlend": "0",
+          "leaderVisit": "false",
+          "visitEvent": "",
+          "source": "business",
+          "busy": "true",
+          "stage": "meeting_seated",
+          "worldX": "2.2",
+          "worldZ": "3.45",
+          "evidence": "417",
+          "visible": "true"
+        },
+        {
+          "agentId": "fa09b5bd196748408963fb42dda7b386",
+          "pickX": "765.0600366294384",
+          "pickY": "670.8242298103869",
+          "pose": "reading",
+          "posture": "seated",
+          "meetingId": "0cd71059d72eb7eddc9833287390c0d9:meeting",
+          "meetingSpeaker": "false",
+          "sitBlend": "0",
+          "leaderVisit": "false",
+          "visitEvent": "",
+          "source": "business",
+          "busy": "true",
+          "stage": "meeting_seated",
+          "worldX": "2.2",
+          "worldZ": "6.55",
+          "evidence": "",
+          "visible": "true"
+        },
+        {
+          "agentId": "8860255fa96544f0a3a3df4f73b0d59b",
+          "pickX": "898.293503075838",
+          "pickY": "618.7749425880611",
+          "pose": "reading",
+          "posture": "seated",
+          "meetingId": "0cd71059d72eb7eddc9833287390c0d9:meeting",
+          "meetingSpeaker": "false",
+          "sitBlend": "1",
+          "leaderVisit": "false",
+          "visitEvent": "",
+          "source": "business",
+          "busy": "true",
+          "stage": "meeting_seated",
+          "worldX": "4.4",
+          "worldZ": "3.45",
+          "evidence": "",
+          "visible": "true"
+        },
+        {
+          "agentId": "b8664b0e66e2418abb994d5c5c14bfc2",
+          "pickX": "844.2688779532909",
+          "pickY": "698.0592119507492",
+          "pose": "reading",
+          "posture": "seated",
+          "meetingId": "0cd71059d72eb7eddc9833287390c0d9:meeting",
+          "meetingSpeaker": "false",
+          "sitBlend": "1",
+          "leaderVisit": "false",
+          "visitEvent": "",
+          "source": "business",
+          "busy": "true",
+          "stage": "meeting_seated",
+          "worldX": "4.4",
+          "worldZ": "6.55",
+          "evidence": "",
+          "visible": "true"
+        }
+      ]
+    },
+    {
+      "name": "实际散会决议关联3个行动项和责任人，未批准时不显示完成",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "会话工作台展示真实Skill调用、用户回答回执和公开发言",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "Skill来源可按事件检索，与同一运行和成员关联",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "从协作工作台进入真实计划审批与最终验收，开发链路保持可用",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "看板卡片可回到同一决策、会议和行动项链路",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "1100px下工作台没有文档水平溢出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "全链路实际浏览器操作无未捕获异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

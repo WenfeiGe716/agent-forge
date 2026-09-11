@@ -1,0 +1,14 @@
+{
+  "version": "0.7.0",
+  "actual_test_environment": {
+    "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41"
+  },
+  "content_hashes": {
+    "frontend/dist/index.html": "15a9eac8214fdb685660833d56247cab1dc0d17103e572b92bc927774c3ed95b",
+    "frontend/dist/workbench-preview.html": "de70b2b4913a4fb4aaef7de283ba14578f03fa30ab52fa13dbfa07d342fb618c",
+    "frontend/package-lock.json": "05096d4a8f47382b66952cd537410d287ff14c5929a530fc35ca7d208e445399",
+    "backend/forge/skills.py": "d5f6c2085c954e18d02be1c55fe0ac6e18d857bec42b8658b228e9add111f641",
+    "backend/forge/engagement.py": "6599f5b5ae0ace4725c97216e0051ebf154abc3901e592f00ff9ac9b09071868"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "method": "local software GPU spot samples, not hardware benchmark",
+  "viewport": [
+    1600,
+    1000
+  ],
+  "info": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "width": 1166,
+    "height": 729,
+    "vertices": "276444"
+  },
+  "samples": [
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "2.6499999999999986",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "7",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "3.2499999999999964",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "10",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "3.8499999999999943",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "10",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "4.549999999999992",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "8",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "5.09999999999999",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "8",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "5.749999999999988",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "8",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "6.399999999999985",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "8",
+      "leases": "0"
+    },
+    {
+      "testid": "office-viewport",
+      "cityEnabled": "true",
+      "cityPhase": "ew_green",
+      "cityTime": "6.949999999999983",
+      "cityCars": "12",
+      "cityPeds": "6",
+      "fps": "8",
+      "leases": "0"
+    }
+  ]
+}

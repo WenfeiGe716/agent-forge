@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+data
+imports
+backups
+**/node_modules
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/.venv
+.local
+.venv
+**/launcher-raw.tmp
+**/*.db
+**/*.db-wal
+**/*.db-shm

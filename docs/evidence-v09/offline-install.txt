@@ -1,0 +1,41 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Looking in links: offline/wheelhouse
+Requirement already satisfied: annotated-doc==0.0.4 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 1)) (0.0.4)
+Requirement already satisfied: annotated-types==0.7.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 2)) (0.7.0)
+Requirement already satisfied: anyio==4.13.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 3)) (4.13.0)
+Requirement already satisfied: certifi==2026.5.20 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 4)) (2026.5.20)
+Requirement already satisfied: cffi==2.0.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 5)) (2.0.0)
+Requirement already satisfied: click==8.1.8 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 6)) (8.1.8)
+Requirement already satisfied: cryptography==46.0.4 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 7)) (46.0.4)
+Requirement already satisfied: fastapi==0.128.2 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 8)) (0.128.2)
+Requirement already satisfied: greenlet==3.5.1 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 9)) (3.5.1)
+Requirement already satisfied: h11==0.16.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 10)) (0.16.0)
+Requirement already satisfied: httpcore==1.0.9 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 11)) (1.0.9)
+Requirement already satisfied: httpx==0.28.1 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 12)) (0.28.1)
+Requirement already satisfied: idna==3.17 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 13)) (3.17)
+Requirement already satisfied: iniconfig==2.3.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 14)) (2.3.0)
+Requirement already satisfied: packaging==25.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 15)) (25.0)
+Requirement already satisfied: pluggy==1.6.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 16)) (1.6.0)
+Requirement already satisfied: pycparser==3.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 17)) (3.0)
+Requirement already satisfied: pydantic==2.13.4 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 18)) (2.13.4)
+Requirement already satisfied: pydantic-core==2.46.4 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 19)) (2.46.4)
+Requirement already satisfied: pygments==2.20.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 20)) (2.20.0)
+Requirement already satisfied: pytest==9.0.2 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 21)) (9.0.2)
+Requirement already satisfied: pytest-asyncio==1.3.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 22)) (1.3.0)
+Requirement already satisfied: sqlalchemy==2.0.50 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 23)) (2.0.50)
+Requirement already satisfied: starlette==0.50.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 24)) (0.50.0)
+Requirement already satisfied: typing-extensions==4.16.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 25)) (4.16.0)
+Requirement already satisfied: typing-inspection==0.4.2 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 26)) (0.4.2)
+Requirement already satisfied: uvicorn==0.48.0 in ./.venv/lib/python3.13/site-packages (from -r offline/requirements-linux-cp313.lock (line 27)) (0.48.0)
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+No broken requirements found.
+{
+  "compiler": "5.8.3",
+  "mode": "offline-transpile-and-browser-validation",
+  "semantic_typecheck": false,
+  "source_files": 27,
+  "syntax_errors": 0,
+  "react": "18.2.0",
+  "output": "frontend/dist"
+}
+离线依赖安装完成。运行 bash start.sh 启动实际平台，登录后配置供应商。

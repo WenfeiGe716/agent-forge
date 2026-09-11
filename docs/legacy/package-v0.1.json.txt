@@ -1,0 +1,9 @@
+{
+  "name": "agent-forge-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {"dev":"vite --host 0.0.0.0", "build":"tsc -b && vite build", "preview":"vite preview --host 0.0.0.0"},
+  "dependencies": {"react":"19.1.0","react-dom":"19.1.0","three":"0.177.0","@xyflow/react":"12.6.2","lucide-react":"0.511.0"},
+  "devDependencies": {"typescript":"5.8.3","vite":"6.3.5","@vitejs/plugin-react":"4.4.1","@types/react":"19.1.4","@types/react-dom":"19.1.5","@types/three":"0.177.0"}
+}

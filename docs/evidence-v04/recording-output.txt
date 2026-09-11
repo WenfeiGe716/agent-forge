@@ -1,0 +1,39 @@
+{
+  "source": "actual office-preview.html, explicit sample events, no model API",
+  "method": "CDP actual browser frame capture, original timestamp intervals, no speed-up; 20fps encoded duplicates are not rendering FPS",
+  "gpu": "Chromium ANGLE SwiftShader software GPU",
+  "render_fps_observed": "4",
+  "frames": 123,
+  "source_duration_s": 23.06795620918274,
+  "actions": [
+    {
+      "elapsed_seconds": 0.0,
+      "action": "工作成员按任务执行；空闲成员喝水、看手机、小憩；全部是明确标识的示例输入"
+    },
+    {
+      "elapsed_seconds": 1.85,
+      "action": "选中正在空闲的Luna，查看其动作依据"
+    },
+    {
+      "elapsed_seconds": 5.201,
+      "action": "明确派发示例任务，立即打断空闲/释放设施，回工位；执行不等待动画"
+    },
+    {
+      "elapsed_seconds": 13.26,
+      "action": "只有显式示例消息事件出现后才绘制气泡和连线"
+    },
+    {
+      "elapsed_seconds": 16.241,
+      "action": "占用来源断线，停止空闲与对话，显示安全等待"
+    },
+    {
+      "elapsed_seconds": 18.928,
+      "action": "恢复来源后重新确认占用，不靠随机动画猜测任务"
+    },
+    {
+      "elapsed_seconds": 22.765,
+      "action": "夜间显示仍使用同一业务/空闲状态机"
+    }
+  ],
+  "page_errors": []
+}

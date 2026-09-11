@@ -1,0 +1,21 @@
+{
+  "product": "Agent Forge",
+  "version": "0.10.1",
+  "date": "2026-09-09",
+  "baseline_zip_sha256": "71c2169a816c854e14497e1d49ea637039b2d0129fdffd047e6ff0eaac39f1da",
+  "entrypoint": "bash start.sh",
+  "formal_frontend": "frontend/dist/index.html",
+  "scope": "Add local Skill Store, bounded native/role adapter, source catalog, reviewed installation and explicit Agent binding. Preserve detailed office, persistent city and existing execution.",
+  "validation": {
+    "backend": 204,
+    "new_store_backend_cases": 35,
+    "browser_api_restart": 19,
+    "frontend_syntax_errors": 0,
+    "upstream_archive_downloaded": false,
+    "real_llm": false,
+    "hardware_gpu": false,
+    "fresh_archive_start": 8
+  },
+  "preserved_key_files": 21,
+  "note": "The default Agency Agents source is unsynced. No entire upstream repository, synthetic upstream content, user database or credentials are bundled. Synthetic role fixtures only occur in tests/evidence, clearly labeled. Full Model Hub scoring/routing/custom protocol integration is not claimed."
+}

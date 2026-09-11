@@ -1,0 +1,27 @@
+{
+  "passed": 5,
+  "failed": 0,
+  "results": [
+    {
+      "name": "正常启动不启用测试夹具",
+      "status": "passed"
+    },
+    {
+      "name": "正常模式连接本地编排器",
+      "status": "passed"
+    },
+    {
+      "name": "不自动创建模型供应商或测试密钥",
+      "status": "passed"
+    },
+    {
+      "name": "新增编排表正常初始化，未混入示例模板",
+      "status": "passed"
+    },
+    {
+      "name": "正式HTTP入口提供本轮实际构建产物",
+      "status": "passed",
+      "sha256": "bfdd70bf540ba8a62852586c1eee66405fbb2b1522080419be33351ad39118ec"
+    }
+  ]
+}

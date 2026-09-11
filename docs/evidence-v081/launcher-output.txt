@@ -1,0 +1,204 @@
+Agent Forge v0.8.1 · http://127.0.0.1:8797
+管理员账号：admin
+首次登录密码（已从报告移除）
+登录后只需在接入页配置供应商和模型。导入项目后即可下达真实需求。
+INFO:     Started server process [5778]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8797 (Press CTRL+C to quit)
+INFO:     127.0.0.1:40772 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:40772 - "GET /api/auth/me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:40772 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:40772 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/providers HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/providers HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/models HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/models HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/models HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/agents/50b79a3e49b24b20a281e4df124fac5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/agents/ae82f1ae63584464a67294ef905d0dd9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/agents/78a27690728345569b9a567d716c7b76 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/setup/environment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/setup/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/setup/connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/setup/environment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/providers/f98cc636df074b789e1d5511eb570ebf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/providers/304a135bbd394c15909daaf4e57a44ba HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "PUT /api/providers/74dbbdf7c92d4a61b5d3213c0f25e1bc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/setup/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/auth/me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:40772 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/users HTTP/1.1" 201 Created
+INFO:     127.0.0.1:40772 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/setup/connect HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:40772 - "POST /api/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40772 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5778]
+Agent Forge v0.8.1 · http://127.0.0.1:8797
+管理员账号：admin
+使用原管理员密码；已保存的供应商、团队和Skill不会重置。
+登录后只需在接入页配置供应商和模型。导入项目后即可下达真实需求。
+INFO:     Started server process [5957]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8797 (Press CTRL+C to quit)
+INFO:     127.0.0.1:46572 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/office/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/providers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "GET /workbench-preview.html HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46572 - "GET /api/office/state?after=0&limit=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46572 - "POST /api/auth/logout HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5957]

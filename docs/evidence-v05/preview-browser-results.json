@@ -1,0 +1,214 @@
+{
+  "mode": "explicit in-memory preview, not production API",
+  "passed": 20,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "实际WebGL生成14位成员，非静态截图",
+      "status": "passed",
+      "detail": {
+        "labels": 14,
+        "errors": 0
+      }
+    },
+    {
+      "name": "无来访时所有工位成员坐着",
+      "status": "passed",
+      "detail": [
+        {
+          "id": "demo-Atlas",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Nova",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Vega",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Milo",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Echo",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Sage",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Luna",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Juno",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Kai",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Wren",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Flint",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Pax",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Rio",
+          "posture": "seated",
+          "blend": "1"
+        },
+        {
+          "id": "demo-Cade",
+          "posture": "seated",
+          "blend": "1"
+        }
+      ]
+    },
+    {
+      "name": "选中人物与成员详情及镜头聚焦联动",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "同事到访：接待者仍坐着，事件编号可追溯",
+      "status": "passed",
+      "detail": {
+        "agentId": "demo-Nova",
+        "pickX": "799.9999940991402",
+        "pickY": "477.4769516661763",
+        "pose": "communicating",
+        "posture": "seated",
+        "sitBlend": "1",
+        "leaderVisit": "false",
+        "visitEvent": "2",
+        "source": "business",
+        "busy": "true",
+        "stage": "work:writing",
+        "worldX": "-5.8",
+        "worldZ": "-1.7799999999999998",
+        "evidence": "2",
+        "visible": "true"
+      }
+    },
+    {
+      "name": "领导到访：覆盖坐姿偏好，站在椅旁",
+      "status": "passed",
+      "detail": {
+        "agentId": "demo-Nova",
+        "pickX": "847.2372657656671",
+        "pickY": "493.71890679001814",
+        "pose": "communicating",
+        "posture": "standing",
+        "sitBlend": "0",
+        "leaderVisit": "true",
+        "visitEvent": "3",
+        "source": "business",
+        "busy": "true",
+        "stage": "work:writing",
+        "worldX": "-4.9799999999999995",
+        "worldZ": "-1.7799999999999998",
+        "evidence": "3",
+        "visible": "true"
+      }
+    },
+    {
+      "name": "领导离开后重新坐回椅子",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "任务看板的五个状态列与4条示例运行可操作",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "看板按需求搜索",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "看板按状态筛选",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "看板卡片进入任务审批与执行详情",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "项目配置表单保存并更新卡片",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "模型参数通过编辑表单保存",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "成员的领导关系和同事站姿偏好可保存",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "编排可选择子团队并调整发言顺序",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "编排模板保存后显示真实编辑字段",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "纯讨论创建页不要求固定角色或整个团队",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "使用编排创建示例任务并明确不执行模型",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "新建讨论任务出现在看板队列",
+      "status": "passed",
+      "detail": null
+    },
+    {
+      "name": "1100px界面无文档横向溢出（看板内部可横滚）",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

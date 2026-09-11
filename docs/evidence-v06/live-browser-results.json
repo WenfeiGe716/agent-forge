@@ -1,0 +1,137 @@
+{
+  "method": "actual DOM/WebGL + real HTTP bridge; SCRIPTED model replies; not native navigation/SSE",
+  "passed": 14,
+  "failed": 0,
+  "pageerrors": [],
+  "results": [
+    {
+      "name": "正式页面登录真实API，真实4成员与WebGL正常",
+      "status": "passed",
+      "detail": {
+        "members": 4,
+        "demo_controls": 0
+      }
+    },
+    {
+      "name": "项目表单保存至真实数据库",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "错误模型JSON显示错误且不保存",
+      "status": "passed",
+      "detail": 4
+    },
+    {
+      "name": "模型参数真实持久化且版本增加",
+      "status": "passed",
+      "detail": {
+        "version": 5,
+        "parameters": {
+          "max_tokens": 3072
+        }
+      }
+    },
+    {
+      "name": "成员管理真实保存领导关系和接待偏好",
+      "status": "passed",
+      "detail": {
+        "version": 6,
+        "reception": "stand"
+      }
+    },
+    {
+      "name": "目标验收模板经浏览器保存至真实数据库，无轮数停止参数",
+      "status": "passed",
+      "detail": {
+        "version": 1,
+        "graph": {
+          "mode": "discussion",
+          "participants": [
+            "3f6d4bc5693a4dda8e19bc4ecf1605d9",
+            "5d7fcf2104b24b9e97ba93d824c6a5a4"
+          ],
+          "strategy": "sequential",
+          "stop_when": "goal_satisfied",
+          "prompt": "解决需求，形成可执行、有依据的方案，明确风险与验证方式。",
+          "criteria": [
+            {
+              "id": "solution",
+              "description": "说明加法错误与修复方案，关联两位成员的论证",
+              "evidence_type": "decision"
+            },
+            {
+              "id": "risks",
+              "description": "明确边界测试与剩余风险，不能只说已就绪",
+              "evidence_type": "decision"
+            }
+          ],
+          "assessor_id": "5d7fcf2104b24b9e97ba93d824c6a5a4",
+          "stagnation_checks": 3,
+          "legacy_stop_migrated": false
+        }
+      }
+    },
+    {
+      "name": "从模板启动真实目标工作流，仅所选两位成员参与",
+      "status": "passed",
+      "detail": {
+        "run_id": "13425cf3a546cbdd08f51d797f2199aa"
+      }
+    },
+    {
+      "name": "界面展示真实目标检查点及4次发言2次复核结果",
+      "status": "passed",
+      "detail": {
+        "calls": 6,
+        "checkpoint": "goal_satisfied"
+      }
+    },
+    {
+      "name": "目标详情可展开核对实际发言任务编号与理由",
+      "status": "passed",
+      "detail": [
+        {
+          "task_key": "discussion_2_0",
+          "explanation": "关联已完成的实际贡献，脚本化证据示例",
+          "path": "",
+          "sha256": ""
+        },
+        {
+          "task_key": "discussion_2_1",
+          "explanation": "关联已完成的实际贡献，脚本化证据示例",
+          "path": "",
+          "sha256": ""
+        }
+      ]
+    },
+    {
+      "name": "浏览器启动的流程实际经历缺项继续和目标达成",
+      "status": "passed",
+      "detail": [
+        "continue",
+        "goal_satisfied"
+      ]
+    },
+    {
+      "name": "目标讨论仅展示纪要产物，不伪造代码快照",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "目标达到后仍由实际人工验收操作完成运行",
+      "status": "passed",
+      "detail": "completed"
+    },
+    {
+      "name": "完成列由真实后台结果驱动",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实API页面全链路无未捕获前端异常",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

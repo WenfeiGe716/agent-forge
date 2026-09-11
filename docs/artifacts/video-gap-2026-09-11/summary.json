@@ -1,0 +1,381 @@
+{
+  "source": "/Users/gewenfei/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_fvstjji3yxsu22_7666/msg/video/2026-09/9564c9d12f2136a2908cd8310930ec41_raw.mp4",
+  "decoded_frames": 11220,
+  "first_timestamp": 0.0,
+  "last_timestamp": 187.786056,
+  "unique_downsampled_frame_hashes": null,
+  "crop_xywh": [
+    254,
+    20,
+    1084,
+    680
+  ],
+  "metrics_resolution": [
+    320,
+    200
+  ],
+  "selected_frames": 378,
+  "contact_sheets": 13,
+  "strongest_adjacent_frame_changes": [
+    {
+      "frame": 9759,
+      "seconds": 163.399211,
+      "mean_change_0_255": 79.80627,
+      "changed_pixel_fraction_gt12": 0.97494,
+      "center_change": 102.32565,
+      "left_panel_change": 37.29515,
+      "right_panel_change": 83.56489
+    },
+    {
+      "frame": 6142,
+      "seconds": 102.533456,
+      "mean_change_0_255": 35.09734,
+      "changed_pixel_fraction_gt12": 0.75498,
+      "center_change": 55.98266,
+      "left_panel_change": 26.02577,
+      "right_panel_change": 24.35099
+    },
+    {
+      "frame": 6426,
+      "seconds": 107.265722,
+      "mean_change_0_255": 34.47369,
+      "changed_pixel_fraction_gt12": 0.77752,
+      "center_change": 52.75142,
+      "left_panel_change": 25.13515,
+      "right_panel_change": 26.25935
+    },
+    {
+      "frame": 100,
+      "seconds": 1.671256,
+      "mean_change_0_255": 32.43804,
+      "changed_pixel_fraction_gt12": 0.62291,
+      "center_change": 47.00671,
+      "left_panel_change": 18.14851,
+      "right_panel_change": 37.69751
+    },
+    {
+      "frame": 11111,
+      "seconds": 185.931467,
+      "mean_change_0_255": 30.75016,
+      "changed_pixel_fraction_gt12": 0.80444,
+      "center_change": 39.06651,
+      "left_panel_change": 21.99315,
+      "right_panel_change": 25.28563
+    },
+    {
+      "frame": 10452,
+      "seconds": 174.945289,
+      "mean_change_0_255": 28.91601,
+      "changed_pixel_fraction_gt12": 0.35342,
+      "center_change": 24.62453,
+      "left_panel_change": 3.97545,
+      "right_panel_change": 96.10824
+    },
+    {
+      "frame": 814,
+      "seconds": 13.7346,
+      "mean_change_0_255": 28.88489,
+      "changed_pixel_fraction_gt12": 0.35361,
+      "center_change": 24.45354,
+      "left_panel_change": 3.76967,
+      "right_panel_change": 96.76557
+    },
+    {
+      "frame": 326,
+      "seconds": 5.584722,
+      "mean_change_0_255": 25.40447,
+      "changed_pixel_fraction_gt12": 0.47152,
+      "center_change": 42.65689,
+      "left_panel_change": 10.11336,
+      "right_panel_change": 15.55573
+    },
+    {
+      "frame": 9964,
+      "seconds": 166.814167,
+      "mean_change_0_255": 25.25391,
+      "changed_pixel_fraction_gt12": 0.47008,
+      "center_change": 42.58387,
+      "left_panel_change": 9.91946,
+      "right_panel_change": 15.37393
+    },
+    {
+      "frame": 10,
+      "seconds": 0.171856,
+      "mean_change_0_255": 25.16122,
+      "changed_pixel_fraction_gt12": 0.46666,
+      "center_change": 42.57136,
+      "left_panel_change": 9.75592,
+      "right_panel_change": 15.34169
+    },
+    {
+      "frame": 1934,
+      "seconds": 32.400522,
+      "mean_change_0_255": 25.12167,
+      "changed_pixel_fraction_gt12": 0.50878,
+      "center_change": 47.02845,
+      "left_panel_change": 15.55185,
+      "right_panel_change": 13.48151
+    },
+    {
+      "frame": 1446,
+      "seconds": 24.2678,
+      "mean_change_0_255": 23.37491,
+      "changed_pixel_fraction_gt12": 0.47397,
+      "center_change": 34.50079,
+      "left_panel_change": 12.15491,
+      "right_panel_change": 7.57416
+    },
+    {
+      "frame": 275,
+      "seconds": 4.733767,
+      "mean_change_0_255": 23.25829,
+      "changed_pixel_fraction_gt12": 0.28291,
+      "center_change": 34.40424,
+      "left_panel_change": 0.0083,
+      "right_panel_change": 53.80507
+    },
+    {
+      "frame": 9913,
+      "seconds": 165.964189,
+      "mean_change_0_255": 23.23533,
+      "changed_pixel_fraction_gt12": 0.282,
+      "center_change": 34.33035,
+      "left_panel_change": 0.00205,
+      "right_panel_change": 53.84862
+    },
+    {
+      "frame": 11084,
+      "seconds": 185.477967,
+      "mean_change_0_255": 23.04414,
+      "changed_pixel_fraction_gt12": 0.46627,
+      "center_change": 34.48011,
+      "left_panel_change": 11.88836,
+      "right_panel_change": 7.49822
+    },
+    {
+      "frame": 3502,
+      "seconds": 58.533667,
+      "mean_change_0_255": 22.70872,
+      "changed_pixel_fraction_gt12": 0.41406,
+      "center_change": 39.93697,
+      "left_panel_change": 12.84821,
+      "right_panel_change": 16.46403
+    },
+    {
+      "frame": 10453,
+      "seconds": 174.965378,
+      "mean_change_0_255": 22.3938,
+      "changed_pixel_fraction_gt12": 0.26417,
+      "center_change": 12.13348,
+      "left_panel_change": 1.29854,
+      "right_panel_change": 95.32047
+    },
+    {
+      "frame": 196,
+      "seconds": 3.417889,
+      "mean_change_0_255": 22.36502,
+      "changed_pixel_fraction_gt12": 0.3817,
+      "center_change": 33.70171,
+      "left_panel_change": 9.15345,
+      "right_panel_change": 8.23751
+    },
+    {
+      "frame": 815,
+      "seconds": 13.751422,
+      "mean_change_0_255": 22.31107,
+      "changed_pixel_fraction_gt12": 0.26183,
+      "center_change": 12.04753,
+      "left_panel_change": 1.27131,
+      "right_panel_change": 95.32616
+    },
+    {
+      "frame": 9834,
+      "seconds": 164.645878,
+      "mean_change_0_255": 22.30416,
+      "changed_pixel_fraction_gt12": 0.38067,
+      "center_change": 33.64658,
+      "left_panel_change": 9.01137,
+      "right_panel_change": 8.11873
+    },
+    {
+      "frame": 11112,
+      "seconds": 185.949078,
+      "mean_change_0_255": 22.06813,
+      "changed_pixel_fraction_gt12": 0.76248,
+      "center_change": 28.07415,
+      "left_panel_change": 15.77961,
+      "right_panel_change": 18.10634
+    },
+    {
+      "frame": 9971,
+      "seconds": 166.929478,
+      "mean_change_0_255": 21.86127,
+      "changed_pixel_fraction_gt12": 0.35605,
+      "center_change": 35.611,
+      "left_panel_change": 7.10592,
+      "right_panel_change": 11.74681
+    },
+    {
+      "frame": 11109,
+      "seconds": 185.901744,
+      "mean_change_0_255": 21.71375,
+      "changed_pixel_fraction_gt12": 0.56403,
+      "center_change": 25.46823,
+      "left_panel_change": 15.2883,
+      "right_panel_change": 16.85307
+    },
+    {
+      "frame": 9965,
+      "seconds": 166.828833,
+      "mean_change_0_255": 21.68432,
+      "changed_pixel_fraction_gt12": 0.42191,
+      "center_change": 34.09096,
+      "left_panel_change": 8.26176,
+      "right_panel_change": 20.86901
+    },
+    {
+      "frame": 327,
+      "seconds": 5.604322,
+      "mean_change_0_255": 21.61821,
+      "changed_pixel_fraction_gt12": 0.422,
+      "center_change": 34.04034,
+      "left_panel_change": 8.1872,
+      "right_panel_change": 20.81161
+    },
+    {
+      "frame": 11,
+      "seconds": 0.191344,
+      "mean_change_0_255": 21.54957,
+      "changed_pixel_fraction_gt12": 0.41639,
+      "center_change": 34.06768,
+      "left_panel_change": 8.29176,
+      "right_panel_change": 20.85354
+    },
+    {
+      "frame": 10339,
+      "seconds": 173.061856,
+      "mean_change_0_255": 21.24927,
+      "changed_pixel_fraction_gt12": 0.3992,
+      "center_change": 33.40468,
+      "left_panel_change": 8.12631,
+      "right_panel_change": 22.0005
+    },
+    {
+      "frame": 701,
+      "seconds": 11.834622,
+      "mean_change_0_255": 21.23328,
+      "changed_pixel_fraction_gt12": 0.39798,
+      "center_change": 33.43036,
+      "left_panel_change": 7.96012,
+      "right_panel_change": 22.02465
+    },
+    {
+      "frame": 7300,
+      "seconds": 121.833311,
+      "mean_change_0_255": 21.10371,
+      "changed_pixel_fraction_gt12": 0.49538,
+      "center_change": 27.48129,
+      "left_panel_change": 11.12592,
+      "right_panel_change": 27.89911
+    },
+    {
+      "frame": 186,
+      "seconds": 3.251533,
+      "mean_change_0_255": 20.93061,
+      "changed_pixel_fraction_gt12": 0.436,
+      "center_change": 33.67905,
+      "left_panel_change": 6.45292,
+      "right_panel_change": 9.56465
+    },
+    {
+      "frame": 333,
+      "seconds": 5.704178,
+      "mean_change_0_255": 20.88624,
+      "changed_pixel_fraction_gt12": 0.34466,
+      "center_change": 35.14801,
+      "left_panel_change": 5.21789,
+      "right_panel_change": 10.848
+    },
+    {
+      "frame": 9824,
+      "seconds": 164.479322,
+      "mean_change_0_255": 20.75652,
+      "changed_pixel_fraction_gt12": 0.43097,
+      "center_change": 33.634,
+      "left_panel_change": 6.15801,
+      "right_panel_change": 9.24693
+    },
+    {
+      "frame": 18,
+      "seconds": 0.303856,
+      "mean_change_0_255": 20.61586,
+      "changed_pixel_fraction_gt12": 0.33658,
+      "center_change": 35.21298,
+      "left_panel_change": 5.2847,
+      "right_panel_change": 10.94664
+    },
+    {
+      "frame": 1445,
+      "seconds": 24.251722,
+      "mean_change_0_255": 19.86127,
+      "changed_pixel_fraction_gt12": 0.41081,
+      "center_change": 29.44755,
+      "left_panel_change": 12.7153,
+      "right_panel_change": 12.91665
+    },
+    {
+      "frame": 1539,
+      "seconds": 25.8177,
+      "mean_change_0_255": 19.84877,
+      "changed_pixel_fraction_gt12": 0.30197,
+      "center_change": 22.6981,
+      "left_panel_change": 1.89813,
+      "right_panel_change": 54.02539
+    },
+    {
+      "frame": 9968,
+      "seconds": 166.879044,
+      "mean_change_0_255": 19.7021,
+      "changed_pixel_fraction_gt12": 0.37309,
+      "center_change": 33.27702,
+      "left_panel_change": 8.50949,
+      "right_panel_change": 13.6485
+    },
+    {
+      "frame": 330,
+      "seconds": 5.652344,
+      "mean_change_0_255": 19.67803,
+      "changed_pixel_fraction_gt12": 0.37033,
+      "center_change": 33.19017,
+      "left_panel_change": 8.5019,
+      "right_panel_change": 13.70486
+    },
+    {
+      "frame": 11083,
+      "seconds": 185.461922,
+      "mean_change_0_255": 19.67403,
+      "changed_pixel_fraction_gt12": 0.40789,
+      "center_change": 29.4813,
+      "left_panel_change": 12.80705,
+      "right_panel_change": 12.9347
+    },
+    {
+      "frame": 10342,
+      "seconds": 173.115478,
+      "mean_change_0_255": 19.47966,
+      "changed_pixel_fraction_gt12": 0.33502,
+      "center_change": 28.78773,
+      "left_panel_change": 7.94292,
+      "right_panel_change": 25.33727
+    },
+    {
+      "frame": 704,
+      "seconds": 11.884611,
+      "mean_change_0_255": 19.46289,
+      "changed_pixel_fraction_gt12": 0.33609,
+      "center_change": 28.78033,
+      "left_panel_change": 7.87054,
+      "right_panel_change": 25.33378
+    }
+  ]
+}

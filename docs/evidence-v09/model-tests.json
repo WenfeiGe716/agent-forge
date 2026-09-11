@@ -1,0 +1,66 @@
+{
+  "passed": 15,
+  "failed": 0,
+  "results": [
+    {
+      "name": "所有原创新网格具有完整三角形与有限顶点法线",
+      "status": "passed"
+    },
+    {
+      "name": "物理倒角不改变尺寸边界",
+      "status": "passed"
+    },
+    {
+      "name": "错误模型尺寸显式拒绝",
+      "status": "passed"
+    },
+    {
+      "name": "身份外观与成员排序无关",
+      "status": "passed"
+    },
+    {
+      "name": "角色与发型模型不调用随机数",
+      "status": "passed"
+    },
+    {
+      "name": "人物各姿态几何有限、没有隐式模型调用",
+      "status": "passed"
+    },
+    {
+      "name": "隐藏的卫生间人物仍不绘制",
+      "status": "passed"
+    },
+    {
+      "name": "站起时头部高于坐姿且骨盆落在原座面",
+      "status": "passed"
+    },
+    {
+      "name": "鞋底接触工位地面，不再埋入地板",
+      "status": "passed"
+    },
+    {
+      "name": "座椅座面高度保持0.715并具有5个脚轮",
+      "status": "passed"
+    },
+    {
+      "name": "六个会议座椅高度0.82与原会议坐姿匹配",
+      "status": "passed"
+    },
+    {
+      "name": "键帽、灯具、纸张与杯把是实际几何",
+      "status": "passed"
+    },
+    {
+      "name": "皮肤织物木材金属按不同表面参数建模",
+      "status": "passed"
+    },
+    {
+      "name": "办公区工位、设施和寻路接口保持兼容",
+      "status": "passed"
+    },
+    {
+      "name": "选择圈和接触阴影不改变业务占用",
+      "status": "passed"
+    }
+  ]
+}

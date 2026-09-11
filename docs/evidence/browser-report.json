@@ -1,0 +1,179 @@
+{
+  "base_commit": "e065f79c2b7992d8e479a351f1faaf3c4734a960",
+  "checks": {
+    "commands": [
+      {
+        "command": "python -m unittest discover -s tests",
+        "exit_code": 0,
+        "fixture_only": true,
+        "sandbox_verified": false,
+        "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK\n",
+        "stdout": "",
+        "timed_out": false
+      }
+    ],
+    "tracked_files_modified": false,
+    "verification": "passed"
+  },
+  "config_snapshot": {
+    "6328cb89052b49d9906a25fa0f0e41b0": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Atlas",
+      "role": "planner",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 50,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "c25dc86698ec4ed5a6169918c0a4a6b5": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Sage",
+      "role": "reviewer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 50,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "e52c91d6c8034e28bdf1fe281216a5a2": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Nova",
+      "role": "developer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 50,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 14,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "e905e28ba75f48b889001edd67259918": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Echo",
+      "role": "tester",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 50,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    }
+  },
+  "input_tokens": 1690,
+  "limitations": [
+    "Imported files are a snapshot; original Git history is not imported.",
+    "No automatic merge, push or production deployment.",
+    "Missing checks are UNVERIFIED, not passed."
+  ],
+  "model_calls": 16,
+  "output_tokens": 685,
+  "plan": {
+    "summary": "修复加法、并行维护文档，随后补充边界测试，最后独立审查。",
+    "tasks": [
+      {
+        "acceptance": "add(2,3)==5",
+        "agent_id": "e52c91d6c8034e28bdf1fe281216a5a2",
+        "depends_on": [],
+        "description": "检查calc.py，将错误减法改为加法。",
+        "key": "fix_add",
+        "title": "修复加法函数"
+      },
+      {
+        "acceptance": "文档包含验收命令",
+        "agent_id": "e905e28ba75f48b889001edd67259918",
+        "depends_on": [],
+        "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+        "key": "document",
+        "title": "整理验收说明"
+      },
+      {
+        "acceptance": "负数与零值测试通过",
+        "agent_id": "e905e28ba75f48b889001edd67259918",
+        "depends_on": [
+          "fix_add",
+          "document"
+        ],
+        "description": "依据已集成代码补充tests/test_edges.py。",
+        "key": "edge_tests",
+        "title": "补充边界测试"
+      }
+    ]
+  },
+  "review": {
+    "issues": [],
+    "summary": "已读取实现与测试，并核对平台提供的验收报告。结论由脚本化验证服务生成。",
+    "verdict": "pass"
+  },
+  "run_id": "77aa81333baab6e45d724cf0cdaf32a1",
+  "title": "浏览器交互验收 / 1788892609"
+}

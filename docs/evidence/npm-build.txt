@@ -1,0 +1,13 @@
+
+> agent-forge-workbench@0.2.0 build
+> node ../scripts/build-offline.mjs
+
+{
+  "compiler": "5.8.3",
+  "mode": "offline-transpile-and-browser-validation",
+  "semantic_typecheck": false,
+  "source_files": 10,
+  "syntax_errors": 0,
+  "react": "18.2.0",
+  "output": "frontend/dist"
+}

@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "release_status": "local core engineering validation; not full production acceptance",
+  "python_wheels": 27,
+  "backend_tests": {
+    "passed": 70,
+    "failed": 0
+  },
+  "browser_api_checks": {
+    "passed": 40,
+    "failed": 0,
+    "uncaught_page_errors": [],
+    "scope": "Real Chromium DOM/WebGL + constrained test bridge to actual local HTTP/SSE. Browser URL policy unchanged; native navigation/download/CORS/EventSource not validated."
+  },
+  "process_http_checks": {
+    "passed": 6,
+    "failed": 0
+  },
+  "normal_launcher_checks": {
+    "passed": 5,
+    "failed": 0
+  },
+  "model_services": "scripted HTTP fixtures, not LLMs",
+  "ui_sha256": "b186d248dc4665d13ebe2c2cf285ed97f9ea4a6c4baa65d167bc7c739ee36cf8",
+  "not_validated": [
+    "real LLM reasoning",
+    "Docker/gVisor",
+    "Temporal/PostgreSQL",
+    "native browser URL navigation/cookies/HTTPS/CORS/EventSource/download UI",
+    "full TypeScript semantic checking",
+    "production security and performance"
+  ]
+}

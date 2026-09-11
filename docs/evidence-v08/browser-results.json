@@ -1,0 +1,123 @@
+{
+  "method": "real local launcher + API + browser DOM/WebGL via bridge + scripted HTTP model protocol. No real LLM or Docker.",
+  "passed": 17,
+  "failed": 0,
+  "pageerrors": [],
+  "model_requests": [
+    {
+      "path": "/v1/chat/completions",
+      "model": "fixture-onboarding-model",
+      "has_tools": true
+    },
+    {
+      "path": "/v1/chat/completions",
+      "model": "fixture-onboarding-model",
+      "has_tools": false
+    },
+    {
+      "path": "/v1/messages",
+      "model": "fixture-second-model",
+      "has_tools": true
+    },
+    {
+      "path": "/v1/messages",
+      "model": "fixture-second-model",
+      "has_tools": false
+    }
+  ],
+  "results": [
+    {
+      "name": "单命令启动正式服务，配置与随机密钥自动生成",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "默认保留登录保护，不开放未认证供应商管理",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "新实例自动进入供应商接入页，无示例供应商、项目或任务",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "正式DOM无演示按钮、没有演示数据注入器",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "模型目录经真实HTTP读取，不擅自挑选型号或触发付费调用",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "错误JSON由界面拦截，未发送模型请求",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "两次实际HTTP完成工具往返，连接、模型、4位成员、3个内置Skill持久化",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "接入成功清空页面密钥，返回值不回显，Skill不自动获得脚本权限",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "进入4名真实配置成员的3D工作台，没有虚构在途任务或人工推进按钮",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "内置Skill在正式管理页可见，可沿用原有版本和审核管理",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "刷新后直接恢复正式办公室，不重复显示首次向导",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "真实停止与重启后供应商、成员、Skill、登录会话及密钥保持不变",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "第二供应商使用另一协议完成工具往返，不覆盖已绑定成员及其Skill",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "760px宽度接入页无文档水平溢出",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "没有真实沙箱时明确显示未就绪，不用模型连接结果冒充执行环境",
+      "status": "passed",
+      "detail": {
+        "database": "connected",
+        "orchestrator": "connected (local journal)",
+        "git": true,
+        "sandbox": {
+          "state": "unavailable",
+          "detail": "尚未连接代码执行服务。规划、讨论和只读审查不需要代码沙箱。"
+        }
+      }
+    },
+    {
+      "name": "生产静态目录不提供旧预览入口及示例工厂脚本",
+      "status": "passed",
+      "detail": true
+    },
+    {
+      "name": "实际浏览器操作未捕获异常为0",
+      "status": "passed",
+      "detail": true
+    }
+  ]
+}

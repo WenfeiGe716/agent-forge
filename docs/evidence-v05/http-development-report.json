@@ -1,0 +1,233 @@
+{
+  "base_commit": "005bc25bd1a00847e4fab58256085917e514fecc",
+  "checks": {
+    "commands": [
+      {
+        "command": "python -m unittest discover -s tests",
+        "exit_code": 0,
+        "fixture_only": true,
+        "sandbox_verified": false,
+        "stderr": "test_add (test_calc.TestCalc.test_add) ... ok\ntest_negative (test_edges.TestEdges.test_negative) ... ok\ntest_zero (test_edges.TestEdges.test_zero) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+        "stdout": "",
+        "timed_out": false
+      }
+    ],
+    "tracked_files_modified": false,
+    "verification": "passed"
+  },
+  "config_snapshot": {
+    "1ab51190d8f84384846277ff278d7ef7": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Echo",
+      "role": "tester",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "6c2755ed34e34d73af1a758f819265a3": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Nova",
+      "role": "developer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "be64e8d4c68644aa858814de7892a61f": {
+      "models": [
+        {
+          "model": "fixture-openai",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接A / OpenAI协议"
+        }
+      ],
+      "name": "Atlas",
+      "role": "planner",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    },
+    "d3535d65bc0c4110a229ef9e5bf1faa9": {
+      "models": [
+        {
+          "model": "fixture-anthropic",
+          "parameters": {
+            "max_tokens": 2048
+          },
+          "provider": "验证连接B / Anthropic协议"
+        }
+      ],
+      "name": "Sage",
+      "role": "reviewer",
+      "runtime": {
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "cpu": 1.0,
+        "max_agent_messages": 20,
+        "max_context_chars": 120000,
+        "max_file_bytes": 200000,
+        "max_model_calls": 100,
+        "max_parallel": 2,
+        "max_rework_rounds": 2,
+        "max_steps": 12,
+        "max_tasks": 20,
+        "memory_mb": 1024,
+        "task_timeout_s": 3600
+      }
+    }
+  },
+  "discussion": [
+    {
+      "agent_id": "6c2755ed34e34d73af1a758f819265a3",
+      "key": "discussion_1_0",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "order": 0,
+      "ready": false,
+      "round": 1,
+      "status": "done",
+      "summary": "第1轮：已读取0份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "1ab51190d8f84384846277ff278d7ef7",
+      "key": "discussion_1_1",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "order": 1,
+      "ready": false,
+      "round": 1,
+      "status": "done",
+      "summary": "第1轮：已读取0份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "6c2755ed34e34d73af1a758f819265a3",
+      "key": "discussion_2_0",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "order": 0,
+      "ready": true,
+      "round": 2,
+      "status": "done",
+      "summary": "第2轮：已读取2份先前发言，明确需求边界和验证条件。"
+    },
+    {
+      "agent_id": "1ab51190d8f84384846277ff278d7ef7",
+      "key": "discussion_2_1",
+      "notes": "脚本化HTTP服务，用于验证顺序、上下文与停止条件，不是真实推理。",
+      "order": 1,
+      "ready": true,
+      "round": 2,
+      "status": "done",
+      "summary": "第2轮：已读取2份先前发言，明确需求边界和验证条件。"
+    }
+  ],
+  "input_tokens": 2110,
+  "limitations": [
+    "Imported files are a snapshot; original Git history is not imported.",
+    "No automatic merge, push or production deployment.",
+    "Missing checks are UNVERIFIED, not passed."
+  ],
+  "model_calls": 20,
+  "orchestration": {
+    "min_rounds": 1,
+    "mode": "development",
+    "participants": [
+      "6c2755ed34e34d73af1a758f819265a3",
+      "1ab51190d8f84384846277ff278d7ef7"
+    ],
+    "prompt": "核对需求接口与测试边界，明确分歧。",
+    "rounds": 2,
+    "stop_when": "max_rounds",
+    "strategy": "parallel"
+  },
+  "output_tokens": 855,
+  "plan": {
+    "summary": "修复加法、并行维护文档，随后补充边界测试，最后独立审查。",
+    "tasks": [
+      {
+        "acceptance": "add(2,3)==5",
+        "agent_id": "6c2755ed34e34d73af1a758f819265a3",
+        "depends_on": [],
+        "description": "检查calc.py，将错误减法改为加法。",
+        "key": "fix_add",
+        "title": "修复加法函数"
+      },
+      {
+        "acceptance": "文档包含验收命令",
+        "agent_id": "1ab51190d8f84384846277ff278d7ef7",
+        "depends_on": [],
+        "description": "写README.fixture.md，说明行为与验收命令，不修改calc.py。",
+        "key": "document",
+        "title": "整理验收说明"
+      },
+      {
+        "acceptance": "负数与零值测试通过",
+        "agent_id": "1ab51190d8f84384846277ff278d7ef7",
+        "depends_on": [
+          "fix_add",
+          "document"
+        ],
+        "description": "依据已集成代码补充tests/test_edges.py。",
+        "key": "edge_tests",
+        "title": "补充边界测试"
+      }
+    ]
+  },
+  "review": {
+    "issues": [],
+    "summary": "已读取实现与测试，并核对平台提供的验收报告。结论由脚本化验证服务生成。",
+    "verdict": "pass"
+  },
+  "run_id": "59d286c2720646ac8900ef5881921acf",
+  "title": "HTTP讨论后完整开发"
+}

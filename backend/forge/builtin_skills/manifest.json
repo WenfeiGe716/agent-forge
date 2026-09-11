@@ -1,0 +1,36 @@
+{
+  "release": "0.8.0",
+  "packages": [
+    {
+      "name": "requirements-clarification",
+      "roles": [
+        "planner"
+      ],
+      "files": {
+        "SKILL.md": "454aab2a8116b55d73e1c193fc25ba64ae049c292955e42fc05c73e8459a5e0d",
+        "references/checklist.md": "c85289c001f61c33cc0d7e5cd23a2ab7b52a92b215c5c2d8cee999539b41aff0"
+      }
+    },
+    {
+      "name": "evidence-code-review",
+      "roles": [
+        "developer",
+        "reviewer"
+      ],
+      "files": {
+        "SKILL.md": "77393bdffd79ec22ccd46cf2b7075e3358da8c14977b5c92c5f684405238014d",
+        "references/checklist.md": "e13453b556d5f0816c77ed897161c47e90da57ceaf5f690278f47dde48c5af6f"
+      }
+    },
+    {
+      "name": "regression-test-design",
+      "roles": [
+        "tester"
+      ],
+      "files": {
+        "SKILL.md": "c77f18eab4c1a343f3e31b3a2306e83969a52cac49ce950315fc47707bee8fdf",
+        "references/checklist.md": "65f063cd908e6208f75bd3715a5a6499fb5b93133cf39e94bb7f78959f87f1b4"
+      }
+    }
+  ]
+}

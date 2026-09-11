@@ -1,0 +1,28 @@
+{
+  "passed": 3,
+  "failed": 0,
+  "scope": "actual WebGL asset inspection, not a task/session screen",
+  "results": [
+    {
+      "frames": 15,
+      "instancing": null,
+      "glError": 0,
+      "errors": [],
+      "name": "before"
+    },
+    {
+      "frames": 7,
+      "instancing": true,
+      "glError": 0,
+      "errors": [],
+      "name": "after"
+    },
+    {
+      "frames": 7,
+      "instancing": false,
+      "glError": 0,
+      "errors": [],
+      "name": "fallback"
+    }
+  ]
+}

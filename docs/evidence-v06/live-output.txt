@@ -1,0 +1,15 @@
+PASS 正式页面登录真实API，真实4成员与WebGL正常
+PASS 项目表单保存至真实数据库
+PASS 错误模型JSON显示错误且不保存
+PASS 模型参数真实持久化且版本增加
+PASS 成员管理真实保存领导关系和接待偏好
+PASS 目标验收模板经浏览器保存至真实数据库，无轮数停止参数
+PASS 从模板启动真实目标工作流，仅所选两位成员参与
+OFFICE STATE {'hidden': False, 'dialogs': 0, 'viewport': {'testid': 'office-viewport', 'cityEnabled': 'true', 'cityPhase': 'ew_green', 'cityTime': '0.3', 'cityCars': '12', 'cityPeds': '6'}, 'canvas': {'vertices': '220524'}}
+PASS 界面展示真实目标检查点及4次发言2次复核结果
+PASS 目标详情可展开核对实际发言任务编号与理由
+PASS 浏览器启动的流程实际经历缺项继续和目标达成
+PASS 目标讨论仅展示纪要产物，不伪造代码快照
+PASS 目标达到后仍由实际人工验收操作完成运行
+PASS 完成列由真实后台结果驱动
+PASS 真实API页面全链路无未捕获前端异常
