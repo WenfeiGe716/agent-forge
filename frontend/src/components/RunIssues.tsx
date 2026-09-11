@@ -4,7 +4,7 @@ type WorkIssue={task_key:string;kind:string;source_agent_id:string;source_agent_
 export function runIssues(run:Run):WorkIssue[]{
  return (run.tasks||[]).map(task=>task.result?.issue_summary).filter((issue):issue is WorkIssue=>!!issue&&typeof issue.task_key==='string'&&['open','resolved','escalated'].includes(issue.status));
 }
-export default function RunIssues({run,onInspect,onNewTask}:{run:Run;onInspect?:()=>void;onNewTask?:()=>void}){
+export default function RunIssues({run,onInspect,onNewTask,onResume}:{run:Run;onInspect?:()=>void;onNewTask?:()=>void;onResume?:()=>void}){
  const issues=runIssues(run);if(!issues.length)return null;
  const open=issues.filter(i=>i.status!=='resolved'),resolved=issues.filter(i=>i.status==='resolved');
  const leader=run.snapshot?.agents?.[run.snapshot?.entry_agent_id]?.name||'负责人';
@@ -20,7 +20,7 @@ export default function RunIssues({run,onInspect,onNewTask}:{run:Run;onInspect?:
    {Array.isArray(issue.files)&&!!issue.files.length&&<details className="run-issue-files"><summary>涉及 {issue.files.length} 个文件</summary><ul>{issue.files.map(file=><li key={file}><code>{file}</code></li>)}</ul></details>}
    {issue.uncertain&&issue.status!=='resolved'&&<p className="run-issue-uncertain" role="status">结果未确认：负责人不会盲目重放可能已经产生副作用的操作，会先核对文件和工具回执。</p>}
    {issue.status==='resolved'?<details><summary>查看修复结论与证据</summary><p>{issue.resolution||'修复证据已记录。'}</p><p>已集成工作：{issue.evidence_task_keys?.join('、')||'请查看执行记录'}</p></details>:<div className="run-issue-next"><b>{recovering?'现在谁在处理':'下一步'}</b><p>{recovering?`${leader} 具备本次团队内的协调权限，会读取失败证据、尝试修复或把剩余工作改派给团队成员；尚未解决前不会提交完成。`:paused?'任务已暂停，可继续运行以恢复负责人协调。':issue.escalation_reason||'负责人已无法在当前运行内安全继续。请核对问题和已有记录，明确剩余工作或必要授权；不会自动重复整次任务。'}</p></div>}
-   {issue.status==='escalated'&&<div className="run-issue-actions"><span className="microcopy">负责人建议不能代替人工审批；新的修复任务仍会使用单独的确认版本。</span>{onInspect&&<button type="button" className="button secondary small" onClick={onInspect}>查看负责人处理记录</button>}{onNewTask&&<button type="button" className="button primary small" onClick={onNewTask}>按剩余工作新建任务</button>}</div>}
+   {issue.status==='escalated'&&<div className="run-issue-actions">{onResume&&run.snapshot?.execution_strategy==='autonomous'&&<button type="button" className="button primary small" onClick={onResume}>继续此任务（负责人处理）</button>}{onInspect&&<button type="button" className="button secondary small" onClick={onInspect}>查看负责人处理记录</button>}{onNewTask&&run.snapshot?.execution_strategy!=='autonomous'&&<button type="button" className="button secondary small" onClick={onNewTask}>按剩余工作新建任务</button>}</div>}
    <details className="run-issue-technical"><summary>工作记录编号</summary><code>{issue.task_key}</code></details>
   </article>;
  };

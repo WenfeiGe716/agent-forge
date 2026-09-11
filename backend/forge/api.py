@@ -633,6 +633,17 @@ def control_run(run_id: str,data: Control,user=Depends(developer)):
                 issue = task.spec.get('work_issue') if isinstance(task.spec, dict) else None
                 if issue and issue.get('status') == 'escalated':
                     task.spec = {**task.spec, 'work_issue': {**issue, 'status': 'open', 'attempts': 0, 'escalation_reason': ''}}
+                # A runtime exception can stop a task before reconciliation
+                # had a chance to journal its member failure. Convert that
+                # preserved boundary into a blocked result so the first tick
+                # after resume routes it to the leader instead of replaying an
+                # unknown model/tool step.
+                if task.kind == 'autonomous' and task.status == 'needs_attention':
+                    error = (r.error or task.result.get('error') or '运行在成员执行边界中断')[:2200]
+                    task.status = 'failed'
+                    task.result = {**task.result, 'outcome': 'blocked',
+                        'summary': task.result.get('summary') or '成员执行中断：' + error,
+                        'error': error, 'failure': {**task.result.get('failure', {}), 'uncertain': True}}
             r.status, r.error, r.updated_at = 'queued', '', now()
             emit(s, r.id, 'run.resumed', {'actor': user.id, 'mode': 'same_run', 'summary': '已恢复原任务，负责人将先检查并处理未完成工作'})
         elif r.status in TERMINAL: raise HTTPException(409,'运行已结束；重新执行需要新建运行')
