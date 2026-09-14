@@ -36,6 +36,9 @@ const operation=world=>plain({agents:world.agents,desks:world.desks,actors:[...w
 
 test('daylight surface changes preserve exact applied desks, occupants and input configuration',()=>{
  const f=fixture(),before=plain(f),world=make(f);assert.deepEqual(f,before);
+ const perimeter=world.parts.find(p=>p.tag==='department-perimeter');
+ assert.deepEqual(dimensions(perimeter),[40,.08,20],'department apron expands westward while stopping before the street');
+ assert.equal(perimeter.p[0],-4,'department apron expansion is biased to the west/left side');
  assert.equal(world.desks.length,4);assert.equal(world.actors.size,2);assert.equal(world.agents.length,2);
  assert.deepEqual(plain(world.desks.map(d=>[d.id,d.x,d.z,d.occupancy,d.rendered_agent_id])),[
   ['one',-8,-4,'occupied','a'],['two',-4,-4,'vacant',null],['three',4,-4,'occupied','b'],['four',8,-4,'reserved',null]]);
@@ -44,13 +47,13 @@ test('daylight surface changes preserve exact applied desks, occupants and input
  assert.equal(world.facilities.restroom.length,0,'no invented facility outside the applied layout');
 });
 
-test('work islands visibly inherit configured accents without changing zone bounds or navigation',()=>{
+test('work islands use quiet neutral textile finishes without changing zone bounds or navigation',()=>{
  const f=fixture(),world=make(f),interiors=world.parts.filter(p=>p.tag==='organization-zone-interior');
- assert.equal(interiors.length,2);assert.notDeepEqual(plain(interiors[0].color),plain(interiors[1].color));
+ assert.equal(interiors.length,2);assert.deepEqual(plain(interiors[0].color),plain(interiors[1].color));
  for(const zone of f.floor.zones){
   const outline=world.parts.find(p=>p.tag==='organization-zone'&&p.zoneId===zone.id),interior=interiors.find(p=>p.zoneId===zone.id);
   assert.deepEqual(plain(outline.p),[zone.x,.079,zone.z]);assert.deepEqual(dimensions(outline),[zone.width,.024,zone.depth]);
-  assert.deepEqual(plain(outline.color),plain(color(Number.parseInt(zone.color.slice(1),16))));
+  assert.equal(outline.surface,'cloth');assert.ok(outline.color.every(c=>c>.65&&c<.9));
   const [w,,d]=dimensions(interior);assert.ok(w<zone.width&&d<zone.depth);assert.equal(interior.surface,'cloth');assert.ok(interior.color.every(c=>c>.7&&c<1));
  }
  const recolored=structuredClone(f);recolored.floor.zones[0].color='#bb7999';recolored.config.floors=[recolored.floor];
@@ -69,12 +72,12 @@ test('warm tile surface and centered low-contrast joints remain below the editab
  for(const joint of joints){assert.equal(joint.castShadow,false);assert.ok(joint.p[1]+joint.s[1]/2<.079);assert.ok(joint.color.every((c,i)=>Math.abs(c-floor.color[i])<.08));}
 });
 
-test('chairs retain seat height and casters while preserving more of the team color',()=>{
+test('chairs retain seat height and casters with restrained upholstery finishes',()=>{
  const hue=0x4d92d9,chair=chairKit(2,3,hue),seat=chair.find(p=>p.tag==='chair-seat-cushion');
  assert.ok(Math.abs(seat.matrix[13]+dimensions(seat)[1]/2-.715)<1e-7);
  assert.equal(chair.filter(p=>p.tag==='chair-caster').length,5);assert.equal(chair.filter(p=>p.tag==='chair-armrest').length,2);
- assert.ok(seat.color[2]-seat.color[0]>.35,'team upholstery should not be mostly neutral gray');
- assert.ok(Math.hypot(...seat.color.map((c,i)=>c-color(hue)[i]))<.18);
+ assert.ok(Math.max(...seat.color)-Math.min(...seat.color)<.28,'upholstery should remain a neutral textile finish');
+ assert.ok(Math.hypot(...seat.color.map((c,i)=>c-color(0x737b7a)[i]))<.24);
  const meeting=chairKit(2,3,hue,Math.PI,.82).find(p=>p.tag==='chair-seat-cushion');assert.ok(Math.abs(meeting.matrix[13]+dimensions(meeting)[1]/2-.82)<1e-7);
 });
 
@@ -91,13 +94,26 @@ test('legacy presentation uses the same warm surface without changing an assigne
  const agent={id:'legacy',name:'旧布局成员',role:'developer',office_position:{x:8,z:-7,floor:2,zone:'custom'}},before=plain(agent),world=makeOffice([agent]);
  assert.deepEqual(agent,before);assert.deepEqual(plain(world.agents[0].home),[8,0,-5.98]);
  const floor=world.parts.find(p=>p.p[1]===0&&p.s[0]===26.85);assert.deepEqual(plain(floor.color),plain(color(0xf0eee7)));
- const islands=world.parts.filter(p=>p.p[1]===.101);assert.equal(islands.length,6);assert.ok(new Set(islands.map(p=>p.color.join(','))).size>3);
+ const islands=world.parts.filter(p=>p.p[1]===.101);assert.equal(islands.length,6);assert.ok(new Set(islands.map(p=>p.color.join(','))).size<=3,'legacy zones use neutral rug finishes');
 });
 
 test('neutral indoor daylight leaves night sky lighting and exterior quality fallback intact',()=>{
  const source=fs.readFileSync('frontend/src/graphics/officeRenderer.ts','utf8');
- assert.match(source,/vec3 indoorAmbient=mix\(vec3\(\.38,\.345,\.30\),vec3\(\.80,\.81,\.79\),hemi\)/);
+ assert.match(source,/vec3 indoorAmbient=mix\(vec3\(\.24,\.225,\.21\),vec3\(\.59,\.60,\.58\),hemi\)/);
  assert.match(source,/mix\(skyAmbient\*vec3\(\.21,\.26,\.43\),K\.w>15\.5\?skyAmbient:indoorAmbient,day\)/);
  assert.match(source,/if\(K\.w>15\.5&&environmentQuality<1\.5\)/);
  assert.match(source,/float vis=visibility\(n,l\)/,'real shadows remain part of material response');
+});
+
+test('pantry and common fixtures keep valid surfaces and initialize collision checks before use',()=>{
+ const zones=[
+  {id:'pantry',name:'茶水间',kind:'pantry',x:-5,z:0,width:4,depth:4,color:'#6594d5'},
+  {id:'common',name:'公共区',kind:'common',x:5,z:0,width:7,depth:5,color:'#86b3a5'}
+ ];
+ const floor={floor:1,name:'研发层',department:'研发部',zones};
+ const world=makeOffice([],floor,{layout_version:2,positions:{},floors:[floor],teams:[],desks:[]});
+ const valid=new Set(['matte','skin','cloth','metal','wood','screen','rubber','shadow','glass','stone']);
+ assert.ok(world.parts.length>0);
+ assert.ok(world.parts.every(part=>!part.surface||typeof part.surface==='string'&&valid.has(part.surface)), 'all fixture surfaces must be renderer-safe');
+ assert.ok(world.facilities.drink.some(slot=>slot.id.startsWith('pantry:')), 'pantry water cooler is present');
 });

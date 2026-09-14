@@ -14,7 +14,7 @@ const files=[],diagnostics=[];
 function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,entry.name);if(entry.isDirectory())walk(p);else if(/\.tsx?$/.test(p))files.push(p);}}
 walk(source);
 const withPreview=process.argv.includes('--with-preview');
-const productionFiles=files.filter(p=>!['Preview.tsx','SuitePreview.tsx','previewV07.ts'].includes(path.basename(p)));
+const productionFiles=files.filter(p=>!['Preview.tsx','SuitePreview.tsx','previewV07.ts','RealisticAssetPreview.ts'].includes(path.basename(p)));
 const emittedFiles=withPreview?files:productionFiles;
 for(const p of emittedFiles){const relative=path.relative(source,p).replace(/\.tsx?$/,'.js');const text=fs.readFileSync(p,'utf8').replace(/import\s+['"][^'"]+\.css['"];?/g,'');
  const result=ts.transpileModule(text,{fileName:p,reportDiagnostics:true,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,isolatedModules:true,sourceMap:true}});
@@ -23,7 +23,7 @@ for(const p of emittedFiles){const relative=path.relative(source,p).replace(/\.t
  const target=path.join(out,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,code);if(result.sourceMapText)fs.writeFileSync(target+'.map',result.sourceMapText);
 }
 if(diagnostics.length){console.error(diagnostics);process.exit(1);}
-const combinedCSS=['styles.css','studio.css','design.css','provider-center.css','role-templates.css','execution.css','organization-inventory.css','agent-directory.css','task-workspace.css','task-approvals.css','employee-task.css','task-flow.css','run-board.css','employee-task-density.css','workspace-density.css','team-execution-permissions.css','studio-navigation.css'].map(name=>fs.readFileSync(path.join(source,name),'utf8')).join('\n');
+const combinedCSS=['styles.css','studio.css','design.css','provider-center.css','role-templates.css','execution.css','organization-inventory.css','agent-directory.css','task-workspace.css','task-approvals.css','employee-task.css','task-flow.css','run-board.css','employee-task-density.css','workspace-density.css','team-execution-permissions.css','studio-navigation.css','components/employee-portrait.css'].map(name=>fs.readFileSync(path.join(source,name),'utf8')).join('\n');
 fs.writeFileSync(path.join(out,'styles.css'),combinedCSS);
 fs.mkdirSync(path.join(out,'vendor'),{recursive:true});
 for(const name of ['react-runtime.js','react.js','react-dom-client.js','jsx-runtime.js','THIRD_PARTY_NOTICES.md'])fs.copyFileSync(path.join(root,'frontend/vendor',name),path.join(out,'vendor',name));
@@ -32,7 +32,10 @@ fs.writeFileSync(path.join(out,'index.html'),`<!doctype html><html lang="zh-CN">
 const result={compiler:ts.version,mode:'offline-transpile-and-browser-validation',semantic_typecheck:false,source_files:emittedFiles.length,syntax_errors:diagnostics.length,react:'18.2.0',output:'frontend/dist'};
 fs.mkdirSync(path.join(root,'docs/evidence'),{recursive:true});fs.writeFileSync(path.join(root,'docs/evidence/offline-build.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
 // Also emit a single-file page: no module/package network requests at runtime.
-let bundled=fs.readFileSync(path.join(root,'frontend/vendor/react-runtime.js'),'utf8').replace(/export const /g,'const ');
+const realisticVendor=fs.readFileSync(path.join(root,'frontend/vendor/realistic-runtime.js'),'utf8');
+const realisticLock=JSON.parse(fs.readFileSync(path.join(root,'frontend/vendor/realistic-runtime.lock.json'),'utf8'));
+if(crypto.createHash('sha256').update(realisticVendor).digest('hex')!==realisticLock.sha256)throw Error('Realistic rendering vendor checksum mismatch');
+let bundled=realisticVendor+'\n'+fs.readFileSync(path.join(root,'frontend/vendor/react-runtime.js'),'utf8').replace(/export const /g,'const ');
 bundled+='\nconst uiFactories={};const uiCache={};\n';
 for(const p of emittedFiles){const id=path.relative(source,p).replaceAll('\\','/').replace(/\.tsx?$/,'');const text=fs.readFileSync(p,'utf8').replace(/import\s+['"][^'"]+\.css['"];?/g,'');
  const emitted=ts.transpileModule(text,{fileName:p,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true}}).outputText;
@@ -50,8 +53,20 @@ fs.mkdirSync(desktopOut,{recursive:true});
 fs.writeFileSync(path.join(desktopOut,'app.js'),bundled);
 fs.writeFileSync(path.join(desktopOut,'styles.css'),combinedCSS);
 fs.writeFileSync(path.join(desktopOut,'index.html'),'<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent Forge · Mac 协作工坊</title><link rel="stylesheet" href="/styles.css"></head><body><div id="root"></div><script src="/app.js" defer></script></body></html>');
+// Authored PBR models and maps travel with the app; no runtime CDN dependency.
+for(const destination of [out,desktopOut]){
+ const assets=path.join(root,'frontend/public/assets');
+ // Generated output only: do not retain obsolete source maps after a format
+ // migration (e.g. TGA -> PNG) or ship removed preview candidates in desktop.
+ fs.rmSync(path.join(destination,'assets'),{recursive:true,force:true});
+ if(fs.existsSync(assets))fs.cpSync(assets,path.join(destination,'assets'),{recursive:true});
+ fs.mkdirSync(path.join(destination,'vendor'),{recursive:true});
+ for(const name of ['THREE-LICENSE.txt','realistic-runtime.lock.json','realistic-runtime.js'])fs.copyFileSync(path.join(root,'frontend/vendor',name),path.join(destination,'vendor',name));
+}
 // Previews are opt-in developer artifacts; no fixture factories ship by default.
 if(withPreview){
+const realisticPreview=html.replace("loadUI('main');","loadUI('RealisticAssetPreview').mountRealisticPreview();");
+fs.writeFileSync(path.join(out,'realistic-assets-preview.html'),realisticPreview);
 const preview=html.replace("loadUI('main');","loadUI('Preview').mountPreview();").replace('<title>Agent Forge · 协作工坊</title>','<title>Agent Forge · 行为与空闲动作预览</title>');
 fs.writeFileSync(path.join(out,'office-preview.html'),preview);
 const workbenchPreview=html.replace("loadUI('main');","loadUI('SuitePreview').mountPreview();").replace('<title>Agent Forge · 协作工坊</title>','<title>Agent Forge v0.7 · 完整交互示例（不调用模型）</title>');

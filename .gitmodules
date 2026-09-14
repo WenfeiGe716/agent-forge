@@ -1,0 +1,6 @@
+[submodule "third_party/codex"]
+	path = third_party/codex
+	url = https://github.com/openai/codex.git
+[submodule "third_party/opencodex"]
+	path = third_party/opencodex
+	url = https://github.com/lidge-jun/opencodex.git

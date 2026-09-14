@@ -44,32 +44,37 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
  const zones:Layout['zones']=[],facilities:World['facilities']={drink:[],nap:[],restroom:[]},meetingSeats:NonNullable<World['meetingSeats']>=[];
  const add=(p:Vec,s:Vec,h:number,tag='department-floor',extra:Partial<Part>={})=>{const part=bevel(p,s,h,Math.min(...s)*.18,{tag,...extra});parts.push(part);return part;};
  const round=(p:Vec,s:Vec,h:number,tag:string,surface:Part['surface']='matte')=>add(p,s,h,tag,{mesh:'cylinder',s,surface});
+ // Shared collision probe used by optional pantry/common decorations.  It
+ // must exist before the zone pass, where reception furniture may call it.
+ const free=(x:number,z:number,w:number,d:number)=>!obstacles.some(o=>Math.abs(x-o.x)<(w+o.w)/2+.06&&Math.abs(z-o.z)<(d+o.d)/2+.06)
+  &&!places.some(a=>Math.abs(a.reception[0]-x)<w/2+.35&&Math.abs(a.reception[2]-z)<d/2+.35)
+  &&!Object.values(facilities).flat().some(slot=>Math.abs(slot.position[0]-x)<w/2+.35&&Math.abs(slot.position[2]-z)<d/2+.35);
  const stamp=(zone:OrganizationZone,partStart:number,obstacleStart:number)=>{
   for(const part of parts.slice(partStart))Object.assign(part,{zoneId:zone.id});
   for(const obstacle of obstacles.slice(obstacleStart))obstacle.zoneId=zone.id;
  };
  const water=(id:string,x:number,z:number)=>{
-  add([x,.62,z],[.84,1.26,.84],0xd8e2e4,'water-cooler');
-  round([x,1.6,z],[.53,.72,.53],0x89c0d1,'water-bottle');
-  round([x,1.95,z],[.25,.06,.25],0xc6e2e7,'water-bottle-cap');
-  add([x+.46,.85,z],[.065,.46,.5],0x758c9c,'water-dispenser');
-  for(const[dz,h]of[[-.12,0x649acc],[.12,0xd48389]])add([x+.50,.91,z+dz],[.07,.07,.07],h,'water-tap');
-  add([x+.46,.61,z],[.16,.045,.48],0x607f90,'water-drip-tray',{surface:'metal'});
-  for(const dx of[-.28,.28])for(const dz of[-.28,.28])add([x+dx,.10,z+dz],[.10,.15,.10],0x526a7a,'water-foot');
+  add([x,.62,z],[.84,1.26,.84],0xd4d8d4,'water-cooler',{surface:'stone'});
+  const bottle=round([x,1.6,z],[.53,.72,.53],0xb8cfce,'water-bottle','glass');bottle.alpha=.74;
+  round([x,1.95,z],[.25,.06,.25],0xc9d2cf,'water-bottle-cap','matte');
+  add([x+.46,.85,z],[.065,.46,.5],0x657175,'water-dispenser',{surface:'metal'});
+  for(const[dz,h]of[[-.12,0x738b89],[.12,0xa4877e]])add([x+.50,.91,z+dz],[.07,.07,.07],h,'water-tap');
+  add([x+.46,.61,z],[.16,.045,.48],0x59676a,'water-drip-tray',{surface:'metal'});
+  for(const dx of[-.28,.28])for(const dz of[-.28,.28])add([x+dx,.10,z+dz],[.10,.15,.10],0x475256,'water-foot',{surface:'rubber'});
   obstacles.push({x,z,w:1.02,d:.9});
   for(const[slot,dz]of[-.33,.33].entries())facilities.drink.push({id:id+':water:'+slot,position:[x+1.05,0,z+dz],yaw:-Math.PI/2});
  };
  const sofa=(zone:OrganizationZone)=>{
   const x=zone.x-zone.width/2+1.05,z=zone.z,length=Math.min(3,zone.depth-.65);
-  add([x,.61,z],[1.4,.53,length],0x78a899,'sofa-base',{surface:'cloth'});
-  add([x-.55,1,z],[.3,.95,length+.06],0x8fb9aa,'sofa-back',{surface:'cloth'});
+  add([x,.61,z],[1.4,.53,length],0x78837e,'sofa-base',{surface:'cloth'});
+  add([x-.55,1,z],[.3,.95,length+.06],0x909a91,'sofa-back',{surface:'cloth'});
   for(const sign of[-1,1]){
-   add([x,.83,z+sign*(length/2-.1)],[1.45,.7,.2],0x8bb5a5,'sofa-arm',{surface:'cloth'});
+   add([x,.83,z+sign*(length/2-.1)],[1.45,.7,.2],0x87948c,'sofa-arm',{surface:'cloth'});
    // Keep the cushion at the same contact height as the authored seated
    // character pose.  The previous 0.925 centre put the hip inside the
    // cushion and made the legs visibly pass through the sofa front edge.
-   add([x+.15,.82,z+sign*length*.21],[.94,.12,length*.43],0xa4cbbb,'sofa-cushion',{surface:'cloth'});
-   add([x-.20,1.05,z+sign*length*.21],[.25,.34,.48],0xb4d6c7,'sofa-pillow',{surface:'cloth'});
+   add([x+.15,.82,z+sign*length*.21],[.94,.12,length*.43],0xa8b0a5,'sofa-cushion',{surface:'cloth'});
+   add([x-.20,1.05,z+sign*length*.21],[.25,.34,.48],0xb5b9ae,'sofa-pillow',{surface:'cloth'});
    for(const dx of[-.5,.5])add([x+dx,.19,z+sign*(length/2-.28)],[.09,.2,.09],0x566e68,'sofa-foot',{surface:'wood'});
    // Seat slightly toward the back so the authored nap feet remain inside
    // the sofa footprint instead of clipping through its front edge.
@@ -85,10 +90,60 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
    obstacles.push({x:cx,z,w:diameter+.08,d:diameter+.08});
   }
  };
+ // Expanded neutral perimeter apron: the inner 27×20 floor remains the
+ // stable layout/navigation surface, while the surrounding apron gives the
+ // office a more spacious campus feel for extra furniture and circulation.
+ // Give the department a real campus-like footprint around the stable 27×20
+ // work floor.  The inner coordinates remain unchanged for saved layouts,
+ // while the wider apron makes circulation and shared amenities visible.
+ // Keep the expansion on the west (left) side of the campus. The south edge
+ // stops before the street so the office never spills onto the road.
+ add([-4,-.405,0],[40,.08,20],0xc8cbc5,'department-perimeter');
  add([0,-.37,0],[27,.7,20],0xd3d5ce);add([0,0,0],[26.85,.11,19.85],0xf0eee7);
  // Centered, quiet tile joints; the editable zone planes stay above the floor.
  for(let x=-12;x<=12;x+=1.5)parts.push({p:[x,.063,0],s:[.012,.005,19.8],color:color(0xdedcd4),tag:'floor-tile-joint',castShadow:false});
  for(let z=-9;z<=9;z+=1.5)parts.push({p:[0,.063,z],s:[26.7,.005,.012],color:color(0xdedcd4),tag:'floor-tile-joint',castShadow:false});
+ // Edge amenities occupy the new apron only: low-profile charging lockers,
+ // LED wayfinding strips and planters add useful office detail without
+ // colliding with editable desks or changing navigation contracts.
+ for(const x of[-20.8,-16.4,-12.4,12.4,16.8]){
+  // Keep the service edge on the north side; the south edge borders the
+  // street and must remain a clean sidewalk/curb transition.
+  add([x,.62,10.75],[1.55,1.18,.56],0x596870,'apron-storage',{surface:'metal'});
+  add([x,.83,10.46],[1.23,.48,.025],0x1e3039,'apron-storage-panel',{surface:'screen'});
+  for(let i=0;i<3;i++)add([x-.4+i*.4,.86,10.44],[.12,.018,.012],i===1?0x75d5be:0x5f94b5,'apron-storage-led',{surface:'screen'});
+ }
+ for(const z of[10.7]){
+  for(let x=-8;x<=8;x+=4) add([x,.075,z],[2.4,.018,.055],0x6b9c9b,'apron-led-strip',{surface:'metal',emissive:.16});
+  for(const x of[-10.2,10.2]){
+   parts.push(...plantKit(x,z,.72));
+   obstacles.push({x,z,w:.85,d:.85});
+  }
+ }
+ // The west apron is usable workplace space, not an empty border. These
+ // amenities are visual facilities only (no task, meeting, or fake presence
+ // is created): a compact gym, a glass training room, and a small pet corner.
+ add([-19,.075,-4],[5.2,.024,4.2],0xd0d2cc,'amenity-gym-floor',{surface:'cloth'});
+ add([-20.7,.46,-4],[.62,.78,1.35],0x526570,'amenity-gym-rack',{surface:'metal'});
+ add([-19.0,.48,-4.0],[1.65,.12,.58],0x6c8790,'amenity-gym-bench',{surface:'cloth'});
+ add([-17.45,.70,-4.0],[.12,1.35,.12],0x9aaab0,'amenity-gym-bike',{surface:'metal'});
+ add([-17.45,1.38,-4.0],[.72,.08,.30],0x2a3a45,'amenity-gym-console',{surface:'screen'});
+ for(const x of[-20.2,-19.25,-18.3])add([x,.09,-5.45],[.56,.018,.56],0x91aaa4,'amenity-gym-mat',{surface:'cloth'});
+ add([-19,.075,1.4],[5.2,.024,3.2],0xd3d5cf,'amenity-training-floor',{surface:'cloth'});
+ add([-19,1.25,2.92],[5.1,2.35,.06],0x9fb9be,'amenity-training-glass',{surface:'glass',alpha:.30});
+ add([-19,2.42,2.97],[5.2,.08,.10],0x748b91,'amenity-training-rail',{surface:'metal'});
+ add([-20.4,.65,1.0],[2.2,.12,.9],0xb99d78,'amenity-training-table',{surface:'wood'});
+ for(const x of[-21.2,-19.6])for(const z of[.35,1.65])parts.push(...chairKit(x,z,0x879ca3,0,.72));
+ add([-17.2,.70,1.0],[.10,1.25,1.2],0x344b55,'amenity-training-display',{surface:'screen'});
+ add([-19,.075,8.5],[5.2,.024,2.3],0xd4d6d0,'amenity-pet-floor',{surface:'cloth'});
+ add([-20.25,.34,8.35],[1.25,.48,.95],0xb88968,'amenity-pet-bed',{surface:'cloth'});
+ // Small low-poly cat sculpture keeps the pet corner readable at overview
+ // scale without introducing an employee-like actor or business event.
+ round([-19.0,.52,8.35],[.58,.52,.82],0x343d4a,'pet-cat-body','cloth');
+ round([-19.0,.96,8.35],[.48,.45,.48],0x424d5a,'pet-cat-head','cloth');
+ add([-19.22,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear','leaf');
+ add([-18.78,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear','leaf');
+ add([-18.55,.72,8.35],[.72,.10,.10],0x424d5a,'pet-cat-tail',{surface:'cloth'});
  add([0,.75,-9.7],[26.8,1.5,.17],0xebece6,'department-wall');
  for(let i=0;i<7;i++){
   const x=-11.2+i*3.75;
@@ -97,13 +152,26 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
   add([x,1.95,-9.56],[.055,1.1,.025],0xffffff,'department-window-mullion');
   add([x,1.34,-9.5],[3.42,.07,.35],0xd3dfe1,'department-window-sill');
  }
+ // Continue the rear glazing across the new west wing so the enlarged room
+ // has a finished back wall rather than a hard visual cutoff.
+ add([-18,.75,-9.7],[8.0,1.5,.17],0xebece6,'department-wall-extension');
+ for(let i=0;i<3;i++){
+  const x=-20.8+i*2.8;
+  add([x,1.95,-9.7],[2.35,1.2,.14],0x9eafb9,'department-window-frame-extension',{surface:'metal'});
+  add([x,1.95,-9.61],[2.18,1.07,.04],0xc7e1e8,'department-window-extension',{surface:'glass',alpha:.88});
+  add([x,1.95,-9.56],[.055,1.1,.025],0xffffff,'department-window-mullion-extension');
+  add([x,1.34,-9.5],[2.48,.07,.35],0xd3dfe1,'department-window-sill-extension');
+ }
  const accent=(value?:string|null,kind='work')=>value&&/^#[\da-f]{6}$/i.test(value)?Number.parseInt(value.slice(1),16):kind==='meeting'?0x969fcf:kind==='common'?0x86b3a5:0x69b7b0;
  for(const zone of floor.zones){
   const partStart=parts.length,obstacleStart=obstacles.length;
   const hue=accent(zone.color,zone.kind);
-  add([zone.x,.079,zone.z],[zone.width,.024,zone.depth],hue,'organization-zone');
-  const tint=zone.kind==='work'?.20:.12,ivory=color(0xf3f0e9);
-  add([zone.x,.102,zone.z],[Math.max(.1,zone.width-.22),.018,Math.max(.1,zone.depth-.22)],hue,'organization-zone-interior',{color:color(hue).map((channel,i)=>channel*tint+ivory[i]*(1-tint)) as Vec,surface:'cloth',roughness:.96});
+  // No coloured rectangles: zones are represented by low-contrast woven rugs
+  // that blend into the floor.  The semantic accent remains on the label and
+  // agent marker, while geometry stays neutral and realistic.
+  const rug=zone.kind==='meeting'?0xcac8c0:zone.kind==='common'?0xd2d0c7:0xd8d6ce;
+  add([zone.x,.079,zone.z],[zone.width,.024,zone.depth],rug,'organization-zone',{surface:'cloth',roughness:.98});
+  add([zone.x,.102,zone.z],[Math.max(.1,zone.width-.22),.018,Math.max(.1,zone.depth-.22)],rug,'organization-zone-interior',{color:color(rug),surface:'cloth',roughness:.98});
   zones.push({name:zone.name,position:[zone.x,.19,zone.z-zone.depth/2+.17],accent:hue});
   if(zone.kind==='meeting'&&zone.width>=4&&zone.depth>=2.8){
    const width=Math.min(6.4,zone.width-1.4),depth=Math.min(1.9,zone.depth-2.35),span=Math.min(4.4,width-.2);
@@ -167,6 +235,22 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
    facilities.nap.push({id:zone.id+':rest',position:[right,0,zone.z],yaw:Math.PI});
    const plantZ=zone.z+zone.depth/2-.7;
    parts.push(...plantKit(zone.x,plantZ,.7));obstacles.push({x:zone.x,z:plantZ,w:.6,d:.6});
+   // Common zones double as a compact client/reception area when wide enough:
+   // a slim stone counter, two visitor stools and a small information screen.
+   if(zone.width>=6&&zone.depth>=4){
+    const counterZ=zone.z+zone.depth/2-.72,counterX=zone.x;
+    if(free(counterX,counterZ,3.2,.72)){
+     add([counterX,.64,counterZ],[3.0,1.12,.62],0x56636b,'reception-counter',{surface:'stone'});
+     add([counterX,1.23,counterZ-.01],[3.14,.09,.70],0xc8d0cf,'reception-countertop',{surface:'stone'});
+     for(const x of[counterX-1.0,counterX+1.0]){
+      round([x,.46,counterZ+.66],[.42,.82,.42],0x384751,'visitor-stool','metal');
+      round([x,.91,counterZ+.66],[.34,.08,.34],0x718289,'visitor-stool-seat','cloth');
+     }
+     add([counterX,1.84,counterZ-.31],[1.55,.92,.08],0x2e414b,'reception-screen',{surface:'screen'});
+     add([counterX,1.84,counterZ-.265],[1.38,.74,.012],0x20303a,'reception-screen-glass',{surface:'screen'});
+     obstacles.push({x:counterX,z:counterZ,w:3.2,d:.82});
+    }
+   }
   }
   stamp(zone,partStart,obstacleStart);
  }
@@ -208,9 +292,6 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
  for(const zone of floor.zones.filter(z=>z.kind==='work'))parts.push(...workstationIslandInlays(desks,zone,accent(zone.color)));
  // Decorative items use remaining zone space, never a hard-coded world corner
  // or a workstation's reception/seat. They participate in path collision tests.
- const free=(x:number,z:number,w:number,d:number)=>!obstacles.some(o=>Math.abs(x-o.x)<(w+o.w)/2+.06&&Math.abs(z-o.z)<(d+o.d)/2+.06)
-  &&!places.some(a=>Math.abs(a.reception[0]-x)<w/2+.35&&Math.abs(a.reception[2]-z)<d/2+.35)
-  &&!Object.values(facilities).flat().some(slot=>Math.abs(slot.position[0]-x)<w/2+.35&&Math.abs(slot.position[2]-z)<d/2+.35);
  for(const zone of floor.zones.filter(z=>['work','lounge','pantry'].includes(z.kind))){
   const partStart=parts.length,obstacleStart=obstacles.length;
   if(zone===floor.zones.find(z=>z.kind==='work')&&zone.width>=4){
@@ -223,8 +304,29 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
    }
   }
   const corners=[[zone.x+zone.width/2-.75,zone.z-zone.depth/2+.75],[zone.x+zone.width/2-.75,zone.z+zone.depth/2-.75],[zone.x-zone.width/2+.75,zone.z+zone.depth/2-.75]];
-  const point=corners.find(([x,z])=>zone.width>=3&&zone.depth>=3&&free(x,z,1.3,1.3));
+ const point=corners.find(([x,z])=>zone.width>=3&&zone.depth>=3&&free(x,z,1.3,1.3));
   if(point){parts.push(...plantKit(point[0],point[1],.55));obstacles.push({x:point[0],z:point[1],w:1.3,d:1.3});}
+  // Shared technology fixtures add the richer “real office” layer seen in
+  // the reference: a compact equipment rack, charging shelf and wall display
+  // per sufficiently large work area. They are optional decorations and only
+  // claim space after the same collision checks used by navigation.
+  if(zone.kind==='work'&&zone.width>=5.5&&zone.depth>=4.5){
+   const x=zone.x+zone.width/2-.62,z=zone.z-zone.depth/2+.72;
+   if(free(x,z,1.05,.82)){
+    add([x,.72,z],[.92,1.35,.68],0x3a4850,'tech-rack',{surface:'metal'});
+    add([x,.95,z+.36],[.72,.42,.025],0x172731,'tech-rack-panel',{surface:'screen'});
+    for(let i=0;i<4;i++)add([x-.25+i*.17,1.04,z+.375],[.10,.018,.014],i%2?0x6ed5c0:0x77a9e8,'tech-rack-led',{surface:'screen'});
+    add([x-.04,1.44,z],[1.02,.07,.78],0x9eabb0,'tech-rack-cap',{surface:'metal'});
+    add([x-.02,.18,z],[.88,.12,.62],0x27343c,'tech-rack-plinth',{surface:'rubber'});
+    obstacles.push({x,z,w:1.12,d:.9});
+  }
+   const panelX=zone.x-zone.width/2+.18,panelZ=zone.z+zone.depth/2-.26;
+   const panelDepth=Math.min(.42,Math.max(.24,zone.depth-1.1));
+   if(free(panelX,panelZ,.18,panelDepth)){
+    add([panelX,1.72,panelZ],[.045,1.55,panelDepth],0x485c66,'acoustic-panel',{surface:'cloth'});
+    add([panelX+.028,1.72,panelZ],[.012,1.25,Math.max(.18,panelDepth-.08)],0x5f7882,'acoustic-panel-inlay',{surface:'screen',alpha:.65});
+   }
+  }
   stamp(zone,partStart,obstacleStart);
  }
  // Only old layouts without an explicit restroom keep the historical fallback.

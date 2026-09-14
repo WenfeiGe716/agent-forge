@@ -87,6 +87,44 @@ class Task(Base):
     result: Mapped[dict] = mapped_column(JSON, default=dict)
     base_commit: Mapped[str] = mapped_column(String(64), default='')
     started_at: Mapped[str] = mapped_column(String(40), default='')
+class MemoryContext(Base):
+    """Durable, task-scoped memory projection.
+
+    This is deliberately separate from Codex's private runtime history.  The
+    control plane owns the projection and may compact it without changing the
+    upstream thread.  ``task_id`` is the primary key so a context can never be
+    reused by another run or member.
+    """
+    __tablename__ = 'memory_contexts'
+    task_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    run_id: Mapped[str] = mapped_column(String(32), index=True)
+    task_key: Mapped[str] = mapped_column(String(64))
+    agent_id: Mapped[str] = mapped_column(String(32), default='')
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    compressed: Mapped[bool] = mapped_column(Boolean, default=False)
+    context: Mapped[dict] = mapped_column(JSON, default=dict)
+    updated_at: Mapped[str] = mapped_column(String(40), default=now)
+class RuntimeApproval(Base):
+    """A Codex server request bound to one live connection, never a plan vote."""
+    __tablename__ = 'runtime_approvals'
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    run_id: Mapped[str] = mapped_column(String(32), index=True)
+    task_key: Mapped[str] = mapped_column(String(64))
+    agent_id: Mapped[str] = mapped_column(String(32))
+    connection_id: Mapped[str] = mapped_column(String(64))
+    request_id: Mapped[dict] = mapped_column(JSON)
+    thread_id: Mapped[str] = mapped_column(String(100))
+    turn_id: Mapped[str] = mapped_column(String(100))
+    item_id: Mapped[str] = mapped_column(String(100))
+    kind: Mapped[str] = mapped_column(String(100))
+    payload: Mapped[dict] = mapped_column(JSON)
+    digest: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(32), default='pending', index=True)
+    decision: Mapped[dict] = mapped_column(JSON, default=dict)
+    error: Mapped[str] = mapped_column(Text, default='')
+    created_at: Mapped[str] = mapped_column(String(40), default=now)
+    updated_at: Mapped[str] = mapped_column(String(40), default=now)
+
 class Step(Base):
     __tablename__ = 'steps'
     id: Mapped[str] = mapped_column(String(160), primary_key=True)
@@ -227,6 +265,43 @@ def session():
 
 def emit(s, run_id: str | None, kind: str, data: dict):
     s.add(Event(run_id=run_id, kind=kind, data=data))
+
+def persist_runtime_event(s, run_id: str, runtime_event, *, source: str = 'codex') -> Event:
+    """Project a normalized runtime event into the durable Forge event log.
+
+    The runtime bridge deliberately knows nothing about Forge's database. This
+    seam keeps the raw protocol method and payload intact while giving the
+    existing event/SSE projections a stable ``runtime.*`` kind. ``s`` is an
+    already-open SQLAlchemy session; the caller controls the transaction.
+    """
+    if not isinstance(run_id, str) or not run_id.strip():
+        raise ValueError('runtime event requires a run id')
+    kind = getattr(runtime_event, 'kind', None)
+    if not isinstance(kind, str) or not kind.strip():
+        raise ValueError('runtime event requires a kind')
+    # Event.kind is intentionally indexed by the UI and bounded to 60 chars.
+    # Preserve the unmodified protocol method in data.runtime_kind.
+    projected_kind = 'runtime.' + kind.replace('/', '.')
+    if len(projected_kind) > 60:
+        projected_kind = projected_kind[:60]
+    payload = getattr(runtime_event, 'payload', {})
+    if not isinstance(payload, dict):
+        payload = {}
+    data = {
+        'source': source,
+        'runtime_kind': kind,
+        'task_id': getattr(runtime_event, 'task_id', None),
+        'thread_id': getattr(runtime_event, 'thread_id', None),
+        'turn_id': getattr(runtime_event, 'turn_id', None),
+        'item_id': getattr(runtime_event, 'item_id', None),
+        'sequence': max(0, int(getattr(runtime_event, 'sequence', 0) or 0)),
+        'request_id': getattr(runtime_event, 'request_id', None),
+        'payload': payload,
+    }
+    row = Event(run_id=run_id, kind=projected_kind, data=data)
+    s.add(row)
+    s.flush()
+    return row
 
 def init_db():
     Base.metadata.create_all(engine)

@@ -1,0 +1,75 @@
+{
+  "loaded": [
+    {
+      "id": "potted_plant_02",
+      "triangles": 69806,
+      "maps": 12,
+      "meshes": 3,
+      "size": [
+        0.7011570334434509,
+        0.8411787391305552,
+        0.6573865756508894
+      ],
+      "position": [
+        1.5135472148661873,
+        -7.303913574609923e-05,
+        -0.3536553832604802
+      ]
+    },
+    {
+      "id": "metal_office_desk",
+      "triangles": 6898,
+      "maps": 36,
+      "meshes": 9,
+      "size": [
+        2.0000003576278687,
+        0.7875000238418579,
+        0.9472135305404663
+      ],
+      "position": [
+        6.244295930324384e-07,
+        0,
+        -0.4242824800648014
+      ]
+    },
+    {
+      "id": "office_task_chair_nisu",
+      "triangles": 4674,
+      "maps": 4,
+      "purpose": "office-task-chair",
+      "height": 1.18
+    }
+  ],
+  "errors": [],
+  "frames": 84,
+  "renderSource": "local-authored-3d-assets",
+  "businessCalls": 0,
+  "person": {
+    "source": "Microsoft Rocketbox",
+    "rigged": true,
+    "clip": "Take 001",
+    "duration": 2.6666667461395264,
+    "boneCount": 81
+  },
+  "view": "office",
+  "stats": {
+    "dynamicParts": 0,
+    "dynamicTriangles": 0,
+    "staticTriangles": 0,
+    "drawCalls": 15,
+    "frameCpuMs": 0.30000001192092896,
+    "shadowSize": 2048
+  },
+  "glError": 0,
+  "projectedTarget": [
+    799.9999988079069,
+    499.9999932013455,
+    0.2799999320879576
+  ],
+  "resources": {
+    "geometries": 26,
+    "textures": 20
+  },
+  "requestFailures": [],
+  "externalRequests": []
+}

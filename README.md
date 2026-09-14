@@ -1,6 +1,8 @@
 # Agent Forge · 协作工坊
 
-**v0.15.0 macOS 桌面客户端 · 复用 v0.14 工作台与执行内核**
+**Rust 产品后端与事务内核 · 保留现有 React / Electron 工作台**
+
+2026-09-12：网页、Electron 和默认 Compose 入口已切换到 Rust，产品资产、认证会话和新 Run 由 Rust 持久化。Codex 源码不改。当前原生执行支持单成员本地 Codex Run；多成员调度、Skill 执行、自定义模型参数和旧运行限制尚未迁移，预检会拒绝不支持的配置。下文历史功能目录中的配置管理能力仍可使用，执行范围以 [Rust 切换验收](docs/VALIDATION_RUST_CUTOVER.md) 为准。
 
 **AI 自动生成建议，人负责确认、编辑和治理。自动生成 ≠ 自动生效。**
 
@@ -77,14 +79,17 @@
 
 ## 启动
 
-离线包适用 **Linux x86_64、CPython3.13及兼容系统库**，需要已有Python和Git。首次执行自动安装核心离线依赖并创建本地配置。
+开发启动需要 Node.js、Rust/Cargo、Git 和已构建的前端资源；执行任务还需要项目内固定版本 Codex，以及非 Responses 协议所需的 OpenCodex gateway/Bun。桌面安装包自带这些运行资源。
 
 ```bash
 cd agent-forge
+node scripts/build-offline.mjs
 bash start.sh
 ```
 
-访问 `http://127.0.0.1:8787`，账号 `admin`。随机初始密码在启动终端显示，后续启动不会自动重置。`.local/config.json`包含凭据和加密密钥，不要上传或转发。
+访问 `http://127.0.0.1:8787`，账号 `admin`。已有 `.local/config.json` 的账号密码和加密密钥继续使用；新部署的随机初始密码保存在该文件中，不在日志中显示。首次启动将 `.local/forge.db` 导入独立的 `.local/product.sqlite3`，新 Run 使用 `.local/runs.sqlite3`。不要上传或转发配置文件。
+
+`bash start.sh --no-build` 使用已构建 Rust 程序；`--port 8788` 指定端口。显式 `bash start.sh --legacy` 才启动旧 Python 服务，其 `.venv` 和离线依赖要求见历史部署文档。两个实现不会同步后续写入；切换前应停止旧任务。
 
 用户的模型API Key不是平台登录密码。没有供应商时也可以管理商店、Skill、项目和成员；实际运行任务时才校验参与Agent的模型与权限。
 
@@ -109,6 +114,10 @@ bash start.sh
 既有 v0.10.1 的 Skill 商店验证记录保留在版本报告中。v0.13 的验证包含新设计层、模型协议、路由快照及既有回归；真实供应商联调的可用性和限制记录在设计中心验证报告中。测试替身与真实模型调用分别标明。
 
 ```bash
+cargo test --locked --manifest-path rust/Cargo.toml
+cargo clippy --locked --manifest-path rust/Cargo.toml --all-targets -- -D warnings
+node --test desktop/test/*.test.cjs
+# Legacy compatibility and migration fixtures:
 PYTHONPATH=backend .venv/bin/python -m pytest backend/tests -q
 cd frontend
 npm ci --offline --ignore-scripts --no-audit --no-fund

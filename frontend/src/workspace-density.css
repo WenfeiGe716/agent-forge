@@ -32,6 +32,161 @@
 .studio-composer .composer-permissions:hover {color:#e6dcff;}
 .studio-composer .composer-permissions:focus-visible {outline:2px solid #b6a0ef;outline-offset:4px;border-radius:3px;}
 .studio-composer [aria-busy="true"] {opacity:.55;cursor:wait;}
+
+/* Composer density: keep the action surface readable when a long request,
+   many attachments, or narrow side panels are present.  Metadata remains
+   available in the selectors/popover; explanatory copy does not consume the
+   primary input height. */
+.studio-composer {
+  width:min(700px,calc(100% - 56px));
+  max-height:min(300px,calc(100vh - 150px));
+  overflow:visible;
+}
+.studio-composer>header {
+  min-height:32px;
+  max-width:100%;
+  scrollbar-width:none;
+}
+.studio-composer>header::-webkit-scrollbar {display:none}
+.studio-composer>header>select {min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.studio-composer>div {
+  align-items:flex-end;
+  flex-wrap:wrap;
+  max-height:220px;
+  overflow:auto;
+  scrollbar-gutter:stable;
+}
+.studio-composer>div>textarea {
+  flex:1 1 300px;
+  min-height:42px;
+  max-height:150px;
+  overflow:auto;
+}
+.studio-composer>footer {
+  align-items:center;
+  gap:10px;
+  min-height:24px;
+}
+/* The first footer item repeats the placeholder and is intentionally hidden;
+   permission control and the keyboard hint remain available. */
+.studio-composer>footer>span:first-child {display:none}
+.studio-composer>footer>span:last-child {margin-left:auto}
+.studio-composer .composer-failure {
+  max-height:130px;
+  padding:4px 0;
+  overflow:auto;
+  scrollbar-gutter:stable;
+}
+
+/* Shared attachment affordance for the initial request composer and the
+   running-agent composer.  Components can opt in without duplicating layout
+   rules; filenames never widen the panel. */
+.composer-attachments,
+.studio-composer .attachment-tray {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  width:100%;
+  max-height:70px;
+  overflow:auto;
+  scrollbar-gutter:stable;
+}
+.composer-attachment-chip,
+.studio-composer .attachment-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-width:0;
+  max-width:min(240px,100%);
+  padding:5px 8px;
+  border:1px solid #8bd6e833;
+  border-radius:7px;
+  background:#15283a;
+  color:#c8d9eb;
+  font-size:10px;
+}
+.composer-attachment-chip b,
+.studio-composer .attachment-chip b {
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:500;
+}
+.composer-attachment-chip button,
+.studio-composer .attachment-chip button {
+  width:17px;
+  height:17px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#ffffff12;
+  color:#adc1d8;
+  line-height:15px;
+  cursor:pointer;
+}
+.composer-attachment-chip button:hover,
+.studio-composer .attachment-chip button:hover {background:#ffffff22;color:#fff}
+.composer-attach-button {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-height:30px;
+  padding:6px 9px;
+  font-size:11px;
+}
+.studio-composer .composer-input-row {flex-wrap:nowrap;overflow:visible;max-height:none;}
+.studio-composer .composer-input-row .composer-attach-button {
+  flex:none;width:32px;min-width:32px;height:32px;padding:0;
+  border:1px solid #ffffff18;border-radius:7px;background:#ffffff08;
+  color:#b9c9df;box-shadow:none;
+}
+.studio-composer .composer-input-row .composer-attach-button:hover:not(:disabled) {background:#b7a5f018;color:#e5dcff;border-color:#b7a5f05a}
+.studio-composer .composer-input-row .composer-attach-button:disabled {opacity:.45;cursor:not-allowed}
+.composer-attachment-chip small {color:#8da4bf;font-size:9px;white-space:nowrap}
+.composer-attachment-error {margin:3px 2px 0;color:#e8ae8f;font-size:10px;overflow-wrap:anywhere}
+
+/* Optional “more” popover for project/team/recipient selectors.  Keeping it
+   out of flow prevents long option labels from pushing the send button. */
+.composer-more {position:relative;flex:none}
+.composer-more>summary {
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:6px 9px;
+  border:1px solid #ffffff20;
+  border-radius:7px;
+  color:#c5d2e5;
+  background:#ffffff06;
+  cursor:pointer;
+  list-style:none;
+}
+.composer-more>summary::-webkit-details-marker {display:none}
+.composer-more[open]>summary {border-color:#b7a5f05a;background:#b7a5f016;color:#e1d9fa}
+.composer-more>div {
+  position:absolute;
+  right:0;
+  bottom:calc(100% + 8px);
+  z-index:30;
+  width:min(320px,calc(100vw - 32px));
+  max-height:min(360px,calc(100vh - 180px));
+  overflow:auto;
+  padding:10px;
+  border:1px solid #ffffff20;
+  border-radius:11px;
+  background:#202b3bf7;
+  box-shadow:0 -10px 35px #0005;
+}
+.composer-more>div :is(label,select) {width:100%;min-width:0;margin-bottom:8px}
+
+@media(max-width:740px){
+  .studio-composer {width:calc(100% - 24px);max-height:min(280px,calc(100vh - 130px))}
+  .studio-composer>header {gap:6px}
+  .studio-composer>header>select {max-width:150px}
+  .studio-composer>div {max-height:180px}
+  .studio-composer>div>textarea {flex-basis:220px;max-height:120px}
+}
 .run-issues {min-width:0;margin:12px 0;}
 .run-issue {min-width:0;border:1px solid #ab895848;border-left:3px solid #c79c61;background:#be97480a;border-radius:12px;padding:16px;margin:8px 0;color:inherit;font-size:12px;line-height:1.65;overflow-wrap:anywhere;}
 .run-issue.recovering {border-color:#81a5ca55;border-left-color:#81a5ca;background:#729bc609;}

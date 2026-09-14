@@ -2,7 +2,7 @@ import {api,requestId} from './api';
 import type {ExecutionReadiness} from './types';
 
 export class RunPreflightError extends Error {
- constructor(public readiness:ExecutionReadiness){super('任务尚未开始，请先处理执行条件。');}
+ constructor(public readiness:ExecutionReadiness){super('暂时无法发送，请处理下方提示后重试。');}
 }
 
 export class RunSubmissionUncertainError extends Error {
@@ -14,7 +14,8 @@ function submissionBody(seed:Record<string,any>){
  const body={project_id:seed.project_id,title:seed.title,request:seed.request,
   agent_ids:[...seed.agent_ids],entry_agent_id:seed.entry_agent_id,
   execution_strategy:'autonomous',run_project_checks:false,collaboration_flow:false,
-  office_team_id:seed.office_team_id||null,office_layout_ref:seed.office_layout_ref||null};
+  office_team_id:seed.office_team_id||null,office_layout_ref:seed.office_layout_ref||null,
+  attachments:Array.isArray(seed.attachments)?seed.attachments.map((item:any)=>({filename:item.filename,content_base64:item.content_base64,media_type:item.media_type||'application/octet-stream'})):[]};
  // Capture nested layout identity before awaiting transport. Edits to a draft
  // must not change the preflight/creation body of an in-flight submission.
  return JSON.parse(JSON.stringify(body)) as Record<string,any>;

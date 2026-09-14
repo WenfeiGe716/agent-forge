@@ -22,6 +22,12 @@ test('autonomous acceptance never labels absent, failed or truncated check recei
 test('mode-only autonomous acceptance uses the actual entry owner',()=>{
  const h=harness({run:{...baseRun,mode:'autonomous',status:'awaiting_acceptance',snapshot:{...baseRun.snapshot,entry_agent_id:'requirements'},report:{checks:{verification:'not_requested'},review:{verdict:'not_requested'}}}});const tree=h.render();assert.match(text(tree),/任务负责人需求分析师/);assert.doesNotMatch(text(tree),/独立审查员质量审查员/);
 });
+
+test('Codex runtime awaiting approval cannot enter the plan decision API',()=>{
+ for(const patch of [{execution_engine:'codex'},{snapshot:{...baseRun.snapshot,execution_engine:'codex'}}]){
+  const h=harness({run:{...baseRun,...patch}});assert.equal(h.render(),null);assert.equal(h.calls.length,0);
+ }
+});
 function nodes(value){if(Array.isArray(value))return value.flatMap(nodes);if(!value||typeof value!=='object')return[];return[value,...nodes(value.props?.children)];}
 function text(value){if(Array.isArray(value))return value.map(text).join('');if(value&&typeof value==='object')return text(value.props?.children);return value==null?'':String(value);}
 function field(tree,label){const result=nodes(tree).find(node=>node.props?.['aria-label']===label);assert.ok(result,'field '+label);return result;}

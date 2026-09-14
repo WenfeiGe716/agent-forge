@@ -8,13 +8,17 @@ export function chairKit(x:number,z:number,accent:number,yaw=0,seatTop=.715,fini
  const put=(p:Part)=>{p.matrix=multiply(parent,p.matrix||modelMatrix(p.p,p.s,p.yaw));parts.push(p);};
  const b=(p:V3,s:V3,h:number,r=.035,surf:Part['surface']='matte',tag='chair')=>put(bevel(p,s,h,r,{surface:surf,tag}));
  const c=(p:V3,s:V3,h:number,mesh='cylinder',tag='chair')=>put({p,s,color:color(h),mesh,surface:'metal',tag});
- const upholstery=mix(accent,0x66716f,.22);
+ // Role colour is intentionally only a restrained undertone.  Saturated
+ // upholstery made the office read like a toy UI and competed with the
+ // character labels; real furniture uses a charcoal/stone base with a subtle
+ // team tint in the piping and small details.
+ const upholstery=mix(accent,0x737b7a,.74);
  b([0,.579,0],[.715,.11,.68],0x313e4b,.05,'matte','chair-seat-shell');
  b([0,.650,0],[.667,.13,.63],upholstery,.059,'cloth','chair-seat-cushion');
  b([0,.709,.017],[.60,.012,.53],mix(upholstery,0xd2d9da,.2),.006,'cloth','chair-seat-piping');
- // The rear of a seated chair is the large, readable team-color surface in
- // the office view. Finish changes never move the seat or its contact points.
- b([0,.996,.32],[.708,.682,.096],finish==='department'?mix(accent,0x687d75,.08):0x35424e,.039,'matte','chair-back-frame');
+ // The rear remains a readable dark shell; role colour is limited to the
+ // subtle textile undertone. Finish changes never move the seat or contacts.
+ b([0,.996,.32],[.708,.682,.096],finish==='department'?mix(accent,0x596260,.78):0x35424e,.039,'matte','chair-back-frame');
  b([0,1.004,.252],[.609,.577,.086],upholstery,.04,'cloth','chair-back-padding');
  b([0,.849,.187],[.51,.12,.08],mix(upholstery,0x2f4350,.18),.035,'cloth','chair-lumbar');
  for(const side of[-1,1]){

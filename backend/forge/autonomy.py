@@ -9,10 +9,14 @@ import json
 import zipfile
 from sqlalchemy import select, update
 from .db import session, Run, Task, Step, AgentMessage, Meeting, DecisionRequest, HumanInstruction, InstructionReceipt, emit, now
-from .schema import TeamAssignment, TeamDiscussion
+from .schema import TeamAssignment, TeamDiscussion, AutonomousFinish
 from . import workspace as ws
 
 TERMINAL_TASKS = {'done', 'integrated', 'unverified', 'failed', 'conflicted', 'superseded'}
+# ``needs_attention`` is intentionally recoverable, but it is not runnable:
+# a blocked result must wait for an explicit coordinator retry/continue/
+# reassign action instead of being silently scheduled again by a legacy tick.
+NON_RUNNABLE_TASKS = TERMINAL_TASKS | {'needs_attention'}
 
 
 def _id(value):
@@ -49,6 +53,11 @@ def _tasks(s, run):
 def available_tools(run, agent):
     """The directory and execution expose the same frozen capability grants."""
     names = [*agent['tools'], 'inspect_team', 'request_decision']
+    # Codex-first activations submit through the run-scoped MCP bridge. Keep
+    # this visible in the frozen capability directory without pretending the
+    # legacy engine's ``finish`` tool has been replaced globally.
+    if run.snapshot.get('execution_engine') == 'codex' and 'finish' in agent['tools']:
+        names.append('submit_result')
     if 'read_file' in agent['tools']:
         names += ['read_work_result', 'read_work_issue']
         if agent['id'] == _leader(run): names.append('resolve_work_issue')
@@ -79,6 +88,76 @@ def _queue(s, run, identity, recipient, title, spec):
     s.flush()
     emit(s, run.id, 'team.work.queued', {'task_key': key, 'agent_id': recipient,
          'assignment_type': spec.get('assignment_type'), 'summary': title[:180]})
+    return row
+
+
+def request_recovery(s, run, source_key, action, recipient_id=None, reason=''):
+    """Queue a bounded recovery activation inside *run*.
+
+    A recovery is a new activation, not a new Run: the failed source Task is
+    left untouched as evidence and the new activation starts from the current
+    integrated workspace.  Repeating the same request while it is active is
+    idempotent; once it has terminally failed, a subsequent request gets a new
+    generation and remains in the same run.
+    """
+    if run.snapshot.get('execution_strategy') != 'autonomous':
+        raise ValueError('只有团队自治运行支持负责人恢复')
+    source = s.get(Task, run.id + ':' + source_key)
+    if not source or source.kind != 'autonomous':
+        raise ValueError('恢复目标不存在或不属于本次运行')
+    if (source.status in TERMINAL_TASKS and not
+        (source.status in {'failed', 'conflicted'} or
+         source.status == 'integrated' and source.result.get('outcome') == 'blocked')):
+        raise ValueError('该成员工作已完成，不能重复恢复')
+    if source.status not in {'failed', 'needs_attention', 'conflicted', 'integrated'} and source.result.get('outcome') != 'blocked':
+        raise ValueError('只有失败、阻塞或冲突的成员工作可以恢复')
+    if action not in {'retry', 'reassign', 'continue'}:
+        raise ValueError('未知恢复动作')
+    recipient = recipient_id or source.agent_id
+    if action == 'reassign' and not recipient_id:
+        raise ValueError('转派恢复必须指定团队成员')
+    if recipient not in run.snapshot['agents']:
+        raise ValueError('恢复成员必须属于本次冻结团队')
+    # Do not create concurrent live activations for one source. Two agents
+    # repairing the same failed boundary would race on the same integration
+    # snapshot and make the recovery result ambiguous.
+    active = [t for t in s.scalars(select(Task).where(Task.run_id == run.id))
+              if t.spec.get('recovery_of') == source.key
+              and t.status not in TERMINAL_TASKS]
+    if active:
+        if active[0].spec.get('recovery_agent_id') == recipient:
+            return active[0]
+        raise ValueError('该失败工作已有恢复激活正在执行，请先等待其结果')
+    generation = int(source.spec.get('recovery_generation', 0)) + 1
+    identity = f'{run.id}:recovery:{source.key}:{action}:{recipient}:{generation}'
+    title = {'retry': '重试失败成员工作', 'reassign': '转派失败成员工作',
+             'continue': '继续失败成员工作'}[action]
+    spec = {
+        'assignment_type': 'coordination' if recipient == _leader(run) else 'message',
+        'description': source.spec.get('description') or run.request,
+        'acceptance': '读取原始失败证据，在当前团队权限内完成并提交真实成果；无法解决时说明阻塞原因。',
+        'report_to': _leader(run) if recipient != _leader(run) else None,
+        'source_task_key': source.key,
+        'recovery_of': source.key,
+        'recovery_action': action,
+        'recovery_agent_id': recipient,
+        'recovery_generation': generation,
+        'recovery_reason': str(reason or '')[:4000],
+        'request_digest': _id(identity),
+    }
+    row = _queue(s, run, identity, recipient, title, spec)
+    source.spec = {**source.spec, 'recovery_requested': {
+        'action': action, 'agent_id': recipient, 'task_key': row.key,
+        'generation': generation, 'reason': str(reason or '')[:4000],
+        'requested_at': now(),
+    }, 'recovery_generation': generation}
+    emit(s, run.id, 'team.recovery.requested', {
+        'source_task_key': source.key, 'recovery_task_key': row.key,
+        'action': action, 'agent_id': recipient, 'reason': str(reason or '')[:1000],
+        'generation': generation,
+    })
+    # The scheduler will pick this same run up after a needs_attention stop.
+    run.status, run.error, run.updated_at = 'queued', '', now()
     return row
 
 
@@ -164,6 +243,59 @@ def assign_work(run_id, key, operation, arguments):
                  'task_key': row.key, 'summary': request['title'], 'body': request['instruction']})
         return {'task_key': row.key, 'recipient_id': recipient, 'status': row.status,
                 'note': '调度器将按成员占用和并发预算唤醒；无需等待固定流程。'}
+
+
+def submit_result(run_id, key, arguments):
+    """Record a real member result from the task-scoped MCP bridge.
+
+    This is the Codex equivalent of the legacy ``finish`` tool.  It validates
+    the exact frozen task workspace and evidence before changing Task.status;
+    a member can report ``done`` or ``blocked``, while only the coordinator
+    may submit ``ready`` for human acceptance.
+    """
+    result = AutonomousFinish.model_validate(arguments, strict=True).model_dump()
+    # A Codex process may retry an MCP request after a transport interruption.
+    # Make that retry safe and never allow a later call to rewrite an already
+    # accepted result with a different claim.
+    submission_digest = _id(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    with session() as s:
+        run, task = _authority(s, run_id, key)
+        agent = (run.snapshot.get('agents') or {}).get(task.agent_id) or {}
+        if 'finish' not in (agent.get('tools') or []):
+            raise ValueError('当前成员没有提交结果（finish）权限')
+        previous = task.result if isinstance(task.result, dict) else {}
+        previous_digest = previous.get('submission_digest')
+        if previous_digest:
+            if previous_digest == submission_digest:
+                return {'task_key': task.key, 'status': task.status,
+                        'outcome': previous.get('outcome'),
+                        'summary': previous.get('summary', ''),
+                        'deliverables': previous.get('deliverables', []),
+                        'evidence_task_keys': previous.get('evidence_task_keys', []),
+                        'idempotent': True,
+                        'note': '相同结果已提交，未重复改变任务状态。'}
+            raise ValueError('本成员已经提交过结果，不能用不同内容覆盖；请由负责人恢复原任务')
+        if task.status in TERMINAL_TASKS:
+            raise ValueError('本成员任务已经结束，不能再次提交结果；请由负责人恢复原任务')
+        result = validate_submission(run, task, result)
+        outcome = result['outcome']
+        # ``waiting`` is a completed activation whose result will be routed by
+        # the run scheduler. A genuine blocker remains ``needs_attention`` so
+        # the coordinator/API can offer retry, continue or reassign in this
+        # same run; it must never look like a successful integration.
+        if outcome == 'done' and not result['deliverables'] and not result['evidence_task_keys'] and len(result['notes'].strip()) < 20:
+            raise ValueError('done 结果必须包含实际成果文件、已完成证据或不少于20字的工作记录')
+        task.result = {**result, 'submission_digest': submission_digest}
+        task.status = 'needs_attention' if outcome == 'blocked' else 'done'
+        emit(s, run_id, 'task.finished' if outcome in {'done', 'ready'} else 'task.blocked', {
+            'task_key': task.key, 'agent_id': task.agent_id, 'outcome': outcome,
+            'summary': result['summary'][:1800], 'deliverables': result['deliverables'][:100],
+            'submission_digest': submission_digest,
+        })
+        return {'task_key': task.key, 'status': task.status, 'outcome': outcome,
+                'summary': result['summary'], 'deliverables': result['deliverables'],
+                'evidence_task_keys': result['evidence_task_keys'],
+                'note': '结果已写入本次运行；交付候选仍需负责人核对并由用户验收。'}
 
 
 def queue_message(s, run, sender_task, message, request_reply):
@@ -442,19 +574,25 @@ def autonomy_tick(data):
         # no started_at and must not jump ahead when the old approval arrives.
         # Keep this ownership local to each member: globally sorting all active
         # work first would starve unprepared work belonging to other members.
-        active = [t for t in rows if t.kind == 'autonomous' and t.status not in TERMINAL_TASKS]
+        active = [t for t in rows if t.kind == 'autonomous' and t.status not in NON_RUNNABLE_TASKS]
         owners = {}
         for task in sorted(active, key=lambda t: (not bool(t.started_at), t.started_at, t.key)):
             if task.base_commit or task.started_at:
                 owners.setdefault(task.agent_id, task.key)
         runnable, blocked, occupied = [], [], set()
         for task in rows:
-            if task.kind != 'autonomous' or task.status in TERMINAL_TASKS: continue
+            if task.kind != 'autonomous' or task.status in NON_RUNNABLE_TASKS: continue
             if task.agent_id in owners and owners[task.agent_id] != task.key: continue
             source_key = task.spec.get('source_task_key')
             source = next((t for t in rows if t.key == source_key), None)
             source_ready = source and (source.status == 'integrated' or
-                (source.status == 'superseded' and source.spec.get('work_issue', {}).get('status') == 'resolved'))
+                (source.status == 'superseded' and source.spec.get('work_issue', {}).get('status') == 'resolved') or
+                # Explicit retry/reassign/continue starts from the last
+                # integrated run snapshot. A failed source is intentionally
+                # retained as audit evidence, so it must not block its
+                # replacement activation forever.
+                (source.status in {'failed', 'needs_attention', 'conflicted'}
+                 and source.spec.get('recovery_requested')))
             if not task.base_commit and source and not source_ready:
                 # New work sees the sender's integrated files. The sender yields
                 # with finish(waiting); this never blocks a already-started peer.

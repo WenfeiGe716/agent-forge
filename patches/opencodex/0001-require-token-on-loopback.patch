@@ -1,0 +1,19 @@
+diff --git a/src/server/auth-cors.ts b/src/server/auth-cors.ts
+--- a/src/server/auth-cors.ts
++++ b/src/server/auth-cors.ts
+@@ -286,5 +286,5 @@ export function isLoopbackHostname(hostname: string | undefined): boolean {
+ }
+ 
+ export function isApiAuthRequired(config: Pick<OcxConfig, "hostname">): boolean {
+-  return !isLoopbackHostname(config.hostname);
++  return !!configuredApiAuthToken(config) || !isLoopbackHostname(config.hostname);
+ }
+@@ -486,7 +486,7 @@ export function hasForwardableCodexBearer(headers: Headers, config: OcxConfig): boolean {
+  * decision, but it names the admission instead of collapsing it to a boolean.
+  */
+ export function resolveApiAuth(req: Request, config: RequestPolicyView): DataPlaneAdmission | null {
+-  // A loopback bind never reads a token at all, so there is no key to name.
++  // Loopback remains unauthenticated only when no data-plane token is configured.
+   if (!isApiAuthRequired(config)) return { kind: "loopback", source: "loopback" };
+   const dedicated = req.headers.get("x-opencodex-api-key")?.trim();
+   if (dedicated) return resolveDataPlaneAdmissionSecret(dedicated, config, "dedicated");

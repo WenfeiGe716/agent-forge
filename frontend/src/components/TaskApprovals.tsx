@@ -10,7 +10,7 @@ const items=(value:unknown):Json[]=>Array.isArray(value)?value.filter(item=>item
 
 /** Decisions stay bound to one frozen version until the server advances the run. */
 export default function TaskApprovals({run,writer,onRefresh}:Props){
- const phase=run.status==='awaiting_approval'?'plan':run.status==='awaiting_acceptance'?'acceptance':null;
+ const phase=run.status==='awaiting_approval'&&run.execution_engine!=='codex'&&run.snapshot?.execution_engine!=='codex'?'plan':run.status==='awaiting_acceptance'?'acceptance':null;
  const digest=text(phase==='plan'?run.plan_digest:run.artifact_digest);
  const planItems=items(run.plan?.tasks);
  const scopeReady=phase==='plan'?!!text(run.plan?.summary).trim()&&planItems.length>0:!!run.report&&typeof run.report==='object'&&!Array.isArray(run.report);

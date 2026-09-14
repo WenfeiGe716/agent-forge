@@ -1,5 +1,5 @@
 {
-  "passed": 13,
+  "passed": 15,
   "failed": 0,
   "results": [
     {
@@ -47,11 +47,19 @@
       "status": "passed"
     },
     {
+      "name": "道路与人行道材质连续，不在街段中途跳色",
+      "status": "passed"
+    },
+    {
       "name": "夜间路灯与信号采用显式发光材质",
       "status": "passed"
     },
     {
       "name": "城市动作明确标记ambient，无业务或模型事件",
+      "status": "passed"
+    },
+    {
+      "name": "城市素材使用分层材质而非单一塑料色块",
       "status": "passed"
     }
   ]

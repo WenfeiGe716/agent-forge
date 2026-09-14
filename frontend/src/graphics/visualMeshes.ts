@@ -12,10 +12,13 @@ export function surface(rows:number,cols:number,point:(u:number,v:number)=>[V3,V
  }
  return new Float32Array(out);
 }
-export function smoothSphere(rows=12,cols=20):Float32Array{
+// Higher tessellation keeps the small portrait canvas from exposing faceted
+// cheeks, hands and shoes.  The meshes are still generated once and shared by
+// every actor, so this improves silhouette quality without per-frame work.
+export function smoothSphere(rows=16,cols=24):Float32Array{
  return surface(rows,cols,(u,v)=>{const a=u*Math.PI*2,b=v*Math.PI,n:V3=[Math.cos(a)*Math.sin(b),Math.cos(b),Math.sin(a)*Math.sin(b)];return[n.map(x=>x*.5) as V3,n];});
 }
-export function capsuleMesh(rows=12,cols=16):Float32Array{
+export function capsuleMesh(rows=16,cols=20):Float32Array{
  return surface(rows,cols,(u,v)=>{const a=u*Math.PI*2,b=v*Math.PI,n:V3=[Math.cos(a)*Math.sin(b),Math.cos(b),Math.sin(a)*Math.sin(b)];const y=Math.cos(b)*.24+(v<.5?.26:-.26);return[[n[0]*.5,y,n[2]*.5],unit([n[0],n[1]*2.08,n[2]])];});
 }
 export function cylinderMesh(cols=24):Float32Array{
@@ -47,7 +50,7 @@ export function loft(rings:[number,number,number,number][],cols=24):Float32Array
  return new Float32Array(out);
 }
 export function hairCap(long=false):Float32Array{
- return surface(12,28,(u,v)=>{const a=u*Math.PI*2,front=(Math.sin(a)+1)/2,end=(long?2.13:1.97)-front*(long?.98:.80),b=v*end;const n:V3=[Math.cos(a)*Math.sin(b),Math.cos(b),Math.sin(a)*Math.sin(b)];return[[n[0]*.335,n[1]*.386,n[2]*.340-.022],n];});
+ return surface(16,36,(u,v)=>{const a=u*Math.PI*2,front=(Math.sin(a)+1)/2,end=(long?2.13:1.97)-front*(long?.98:.80),b=v*end;const n:V3=[Math.cos(a)*Math.sin(b),Math.cos(b),Math.sin(a)*Math.sin(b)];return[[n[0]*.335,n[1]*.386,n[2]*.340-.022],n];});
 }
 export function torusMesh(radial=28,tube=6,ratio=.075):Float32Array{
  // Ring in XY plane, faces +Z. Radius bounds [-.5,.5].
@@ -57,8 +60,8 @@ export function modelMeshes():Map<string,Float32Array>{
  return new Map([
  ['sphere',smoothSphere()],['limb',smoothSphere(6,12)],['capsule',capsuleMesh()],['cylinder',cylinderMesh()],['round',bevelBox(1,1,1,.1,1)],
  ['ring',torusMesh()],['eye',smoothSphere(8,16)],['hair-short',hairCap()],['hair-long',hairCap(true)],
- ['face',loft([[-.31,.025,.03,.025],[-.28,.13,.14,.036],[-.21,.225,.23,.018],[-.08,.277,.267,0],[.08,.287,.272,0],[.23,.244,.22,-.015],[.31,.13,.12,-.025],[.34,.003,.003,-.025]],28)],
- ['torso',loft([[-.31,.16,.125,0],[-.27,.235,.166,0],[-.1,.242,.176,0],[.1,.27,.178,-.014],[.23,.29,.155,-.025],[.30,.16,.11,-.014],[.32,.105,.095,-.01]],24)],
+ ['face',loft([[-.31,.025,.03,.025],[-.28,.13,.14,.036],[-.21,.225,.23,.018],[-.08,.277,.267,0],[.08,.287,.272,0],[.23,.244,.22,-.015],[.31,.13,.12,-.025],[.34,.003,.003,-.025]],36)],
+ ['torso',loft([[-.31,.16,.125,0],[-.27,.235,.166,0],[-.1,.242,.176,0],[.1,.27,.178,-.014],[.23,.29,.155,-.025],[.30,.16,.11,-.014],[.32,.105,.095,-.01]],30)],
  ['pot',loft([[-.5,.31,.31,0],[-.45,.34,.34,0],[.42,.48,.48,0],[.49,.49,.49,0],[.5,.43,.43,0]],24)],
  ['leaf',loft([[-.5,.001,.003,0],[-.25,.12,.035,.02],[.04,.18,.045,.08],[.30,.12,.032,.10],[.5,.001,.003,.075]],14)]
  ]);

@@ -17,6 +17,7 @@ x-app-env: &app-env
   MAX_PROJECT_MB: ${MAX_PROJECT_MB:-200}
 services:
   database:
+    profiles: [legacy, migration, ops]
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
@@ -34,6 +35,7 @@ services:
       retries: 20
     restart: unless-stopped
   temporal:
+    profiles: [legacy, ops]
     image: temporalio/auto-setup:1.29.1
     depends_on:
       database: {condition: service_healthy}
@@ -48,23 +50,34 @@ services:
     networks: [private]
     restart: unless-stopped
   api:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.rust
+      args:
+        FORGE_UID: ${HOST_UID:-1000}
+        FORGE_GID: ${HOST_GID:-1000}
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
-    environment: *app-env
+    environment:
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run scripts/init.sh}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Run scripts/init.sh}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
+      SECURE_COOKIE: ${SECURE_COOKIE:-false}
+      FORGE_CODEX_BINARY: /opt/forge-runtime/codex
     volumes:
       - ${FORGE_DATA_DIR:?Run scripts/init.sh}:/data
       - ${FORGE_IMPORT_DIR:?Run scripts/init.sh}:/imports:ro
-    networks: [private, web]
+      - rust-state:/state
+      - ${FORGE_RUNTIME_DIR:-./runtime/linux}:/opt/forge-runtime:ro
+    networks: [web, egress]
     extra_hosts: ["host.docker.internal:host-gateway"]
-    depends_on:
-      database: {condition: service_healthy}
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8000/api/health"]
       interval: 10s
       timeout: 5s
       retries: 20
     restart: unless-stopped
   worker:
+    profiles: [legacy]
     build: ./backend
     command: ["python", "-m", "forge.worker"]
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
@@ -79,6 +92,7 @@ services:
       sandbox-broker: {condition: service_started}
     restart: unless-stopped
   sandbox-broker:
+    profiles: [legacy]
     build:
       context: .
       dockerfile: infra/Dockerfile.broker
@@ -113,10 +127,44 @@ services:
     networks: [private]
     depends_on: [temporal]
     restart: unless-stopped
+  export-legacy:
+    profiles: [migration]
+    build: ./backend
+    entrypoint: ["python", "/migration/export-postgres-to-sqlite.py"]
+    command: ["--output", "/exports/legacy-product.sqlite3", "--schema", "/migration/product-schema.sql", "--extensions", "/migration/product-extensions.sql"]
+    environment:
+      FORGE_POSTGRES_EXPORT_URL: postgresql://forge:${FORGE_DB_PASSWORD:?Run scripts/init.sh}@database:5432/forge
+    volumes:
+      - ./scripts/export-postgres-to-sqlite.py:/migration/export-postgres-to-sqlite.py:ro
+      - ./rust/crates/forge-server/src/product_store/schema.sql:/migration/product-schema.sql:ro
+      - ./rust/crates/forge-server/src/product_store/extensions.sql:/migration/product-extensions.sql:ro
+      - ${FORGE_EXPORT_DIR:-./backups/rust-migration}:/exports
+    networks: [private]
+    depends_on:
+      database: {condition: service_healthy}
+  import-legacy:
+    profiles: [migration]
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.rust
+      args:
+        FORGE_UID: ${HOST_UID:-1000}
+        FORGE_GID: ${HOST_GID:-1000}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    command: ["--product-db", "/state/product.sqlite3", "--import-db", "/exports/legacy-product.sqlite3", "--rust-db", "/state/runs.sqlite3", "--data-root", "/data", "--import-root", "/imports", "--migrate-only"]
+    environment:
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run scripts/init.sh}
+    volumes:
+      - rust-state:/state
+      - ${FORGE_EXPORT_DIR:-./backups/rust-migration}:/exports:ro
+      - ${FORGE_DATA_DIR}:/data
+      - ${FORGE_IMPORT_DIR}:/imports:ro
 networks:
   private: {internal: true}
   broker: {internal: true}
   web: {}
   egress: {}
 volumes:
+  # Retained for rollback/export. Never remove it during the Rust switch.
   postgres-data: {}
+  rust-state: {}

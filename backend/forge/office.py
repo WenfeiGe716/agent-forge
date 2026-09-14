@@ -99,7 +99,20 @@ def office_snapshot(s,user,after=None,limit=200):
           'reading':95,'reviewing':95,'communicating':92,'thinking':90,'waiting':20,'idle':0}
     for run in runs:
         members=set(run.snapshot.get('agents',{}))
-        if run.snapshot.get('execution_strategy') == 'autonomous' and run.status not in FINISHED:
+        # A run-level terminal/attention state does not mean every member is
+        # blocked. Restrict visible ownership to the task(s) that actually
+        # failed or need a decision; unaffected teammates are released back to
+        # idle so the office roster reflects real responsibility.
+        if run.status == 'needs_attention':
+            affected = {t.agent_id for t in tasks if t.run_id == run.id and t.status in {'failed', 'needs_attention'}}
+            if not affected:
+                affected = {run.snapshot.get('entry_agent_id') or run.snapshot.get('planner_id')}
+            members = {aid for aid in affected if aid in records}
+        elif run.status.startswith('awaiting_'):
+            pending = {t.agent_id for t in tasks if t.run_id == run.id and t.status in {'waiting_decision', 'awaiting_approval', 'awaiting_acceptance'}}
+            owner = run.snapshot.get('entry_agent_id') or run.snapshot.get('planner_id')
+            members = pending or ({owner} if owner else set())
+        if run.snapshot.get('execution_strategy') == 'autonomous' and run.status not in FINISHED and run.status != 'needs_attention' and not run.status.startswith('awaiting_'):
             run_tasks = [t for t in tasks if t.run_id == run.id and t.kind == 'autonomous']
             members = {t.agent_id for t in run_tasks if t.status not in ('done', 'integrated', 'conflicted', 'superseded')
                 or (t.status in ('done', 'integrated') and t.result.get('outcome') == 'waiting' and not t.spec.get('resumed_by'))}

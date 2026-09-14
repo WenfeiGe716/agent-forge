@@ -1,0 +1,30 @@
+{
+  "ok": false,
+  "owner": "rust",
+  "runtime": "unmodified-codex",
+  "provider": "智蔻",
+  "model": "gpt-5.6-terra:qlyj",
+  "real_provider_used": true,
+  "model_fixture_used": false,
+  "stage": "provider_probe",
+  "reason": "Configured provider failed live streaming tool-call verification; team inference was not started.",
+  "probe": {
+    "provider": "智蔻",
+    "provider_id": "f5cbf0753af44671bb048fed885ae69c",
+    "model": "gpt-5.6-terra:qlyj",
+    "protocol": "openai_responses",
+    "real_provider_used": true,
+    "requests": [
+      {
+        "http_status": 401,
+        "seconds": 0.34,
+        "error": {
+          "type": "invalid_request_error",
+          "code": null
+        }
+      }
+    ],
+    "ok": false
+  },
+  "real_model_inference_verified": false
+}

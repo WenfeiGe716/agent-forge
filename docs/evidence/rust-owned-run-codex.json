@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "runtime": "codex",
+  "owner": "rust",
+  "status": "accepted",
+  "execution": {
+    "connection": {
+      "worker_id": "fixture-agent",
+      "connection_id": "4467fbe4-d91d-4f5a-933b-8e6ec996b4f7",
+      "generation": 1
+    },
+    "thread_id": "01a0941b-e1ff-73a3-9794-6bf5c87e16ca",
+    "turn_id": "01a0941b-e218-7c10-851a-946dc5bb671e"
+  },
+  "runtime_version": "sha256:659d70d0137a78c5863a43eca66f15dc399d82fd73afa9ff6edbf283b024e841",
+  "product_database_unchanged": true,
+  "python_runs": 0,
+  "python_tasks": 0,
+  "provider_revision_id": "fixture-revision",
+  "route_digest": "a00baaa2fcc53fb6b3c1aeb211c2169743bcf20a92b4d3ef34a7b1b1c00f81ce",
+  "runtime_events": 17,
+  "event_count": 27,
+  "provider_requests": [
+    {
+      "path": "/v1/responses",
+      "model": "fixture-model",
+      "authenticated": true,
+      "tool_outputs": 0
+    },
+    {
+      "path": "/v1/responses",
+      "model": "fixture-model",
+      "authenticated": true,
+      "tool_outputs": 1
+    }
+  ],
+  "artifact_sha256": "ec04efbf01497758a3e7c74cb868cf8d02936290a31472f591d03ea2ba9a18e4",
+  "separate_acceptance": true,
+  "duplicate_execution_rejected": true
+}

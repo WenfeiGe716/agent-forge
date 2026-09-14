@@ -32,6 +32,7 @@ function harness(run=base,{handler,events=[]}={}){
   if(id==='./RunIssues'){const issues={};vm.runInNewContext(compile('components/RunIssues.tsx'),{exports:issues,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return issues;}
   if(id==='./TaskApprovals')return{__esModule:true,default:component('approval')};
   if(id==='./ExecutionCenter')return{__esModule:true,default:component('execution-requests')};
+  if(id==='./CodexRuntimeApprovals')return{__esModule:true,default:component('runtime-approvals')};
   if(id==='./Collaboration')return{Question:component('question')};
   if(id==='./TaskFlow')return{__esModule:true,default:component('task-flow'),TaskOutputs:component('task-outputs')};
   throw Error(id);
@@ -177,4 +178,30 @@ test('real model delta events are aggregated per run and rendered while the turn
  const activity=helpers.taskActivity({...base,status:'running'},events);
  assert.equal(activity.streamText,'部分输出');assert.equal(activity.status,'正在接收模型输出（已收到 4 字）');
  const tree=harness({...base,status:'running'},{events}).render();assert.match(text(tree),/实时模型输出 · 研发成员/);assert.match(text(tree),/部分输出/);
+});
+
+test('lossless Codex runtime notifications are projected into the live model stream',()=>{
+ const event=(id,kind,payload)=>({id,kind,run_id:base.id,created_at:base.updated_at,data:{runtime_kind:kind.replace(/^runtime\./,'').replace(/\./g,'/'),payload,thread_id:'thread-1',turn_id:'turn-1',item_id:'item-1',sequence:id}});
+ const events=[event(1,'runtime.turn.started',{}),event(2,'runtime.item.agentMessage.delta',{delta:'来自 Codex'})];
+ const activity=helpers.taskActivity({...base,status:'running',artifact_digest:'',report:{}},events);
+ assert.equal(activity.streamText,'来自 Codex');
+ assert.match(activity.status,/正在接收模型输出/);
+});
+
+test('Codex completed notifications with a failed turn remain visibly failed',()=>{
+ const event={id:1,kind:'runtime.turn.completed',run_id:base.id,created_at:base.updated_at,data:{runtime_kind:'turn/completed',payload:{turn:{status:'failed',error:{message:'工具调用被拒绝'}}}}};
+ const activity=helpers.taskActivity({...base,status:'running',artifact_digest:'',report:{}},[event]);
+ assert.equal(activity.events[0].kind,'task.failed');
+ assert.match(activity.status,/成员执行失败/);
+ assert.match(activity.events[0].data.summary,/工具调用被拒绝/);
+});
+
+test('Codex runtime requests replace plan approval and stay bound to the current task',()=>{
+ const run={...base,execution_engine:'codex',status:'awaiting_approval',plan_digest:'',artifact_digest:'',report:{}};
+ const tree=harness(run).render();
+ assert.equal(nodes(tree).filter(n=>n.type==='approval').length,0);
+ const panel=nodes(tree).find(n=>n.type==='runtime-approvals');assert.ok(panel);
+ assert.equal(panel.props.run.id,run.id);assert.equal(panel.props.writer,true);assert.equal(panel.props.visible,true);
+ assert.match(text(tree),/运行时请求你的授权/);assert.doesNotMatch(text(tree),/请确认这份执行计划/);
+ assert.equal(helpers.taskActivity(run,[]).status,'等待 Codex 运行时授权');
 });

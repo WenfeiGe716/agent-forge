@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "runtime": "fixture",
+  "owner": "rust",
+  "status": "accepted",
+  "execution": {
+    "connection": {
+      "worker_id": "fixture-agent",
+      "connection_id": "911cb5b6-f71e-4233-a147-e2526ce52eda",
+      "generation": 1
+    },
+    "thread_id": "fixture-thread",
+    "turn_id": "fixture-turn-1"
+  },
+  "runtime_version": "sha256:a70576669ccf65fe8d9ac069ed6473ac88ae33e61f6302a0d8fb5f1129d24f28",
+  "product_database_unchanged": true,
+  "python_runs": 0,
+  "python_tasks": 0,
+  "provider_revision_id": "fixture-revision",
+  "route_digest": "2c7825e85e3d3bb2078acc72eb9c90217a908907f2d6a57c4b5596ad7a3131be",
+  "runtime_events": 9,
+  "event_count": 23,
+  "provider_requests": [],
+  "artifact_sha256": "6d9d316fa9d3c4504c168cbe00d810e309d18374f4e96f6c281d6c7c44a6d4fe",
+  "separate_acceptance": true,
+  "duplicate_execution_rejected": true
+}

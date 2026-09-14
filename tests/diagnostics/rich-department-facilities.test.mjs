@@ -37,7 +37,10 @@ test('original-style uneven department layout retains twelve physical desks and 
  const world=makeOffice(agents,floor,config);
  assert.equal(world.desks.length,12);assert.equal(world.agents.length,4);
  const tags=new Set(world.parts.map(p=>p.tag));
- for(const tag of ['meeting-glass','meeting-board','sofa-cushion','coffee-table','water-cooler','restroom-door','department-window-frame','ceramic-planter'])assert.ok(tags.has(tag),tag);
+ for(const tag of ['meeting-glass','meeting-board','sofa-cushion','coffee-table','water-cooler','restroom-door','department-window-frame','department-window-frame-extension','department-window-extension','amenity-gym-floor','amenity-training-glass','amenity-pet-floor','pet-cat-body','ceramic-planter'])assert.ok(tags.has(tag),tag);
+ const perimeter=world.parts.find(p=>p.tag==='department-perimeter');
+ const perimeterDimensions=perimeter?.mesh?.startsWith('bevel:')?perimeter.mesh.slice(6).split(':').map(Number).slice(0,3):perimeter?.s;
+ assert.deepEqual(perimeterDimensions,[40,.08,20]);assert.equal(perimeter?.p[0],-4);
  assert.equal(world.facilities.drink.length,2);assert.equal(world.facilities.nap.length,2);assert.equal(world.facilities.restroom.length,1);assert.equal(world.meetingSeats.length,6);
  assert.ok(world.facilities.restroom[0].id.startsWith('restroom:'));
  assert.ok(world.zones.every(z=>z.name.length<42),'Zone labels stay concise');

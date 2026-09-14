@@ -1,4 +1,5 @@
 from typing import Any, Literal
+import base64
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class Strict(BaseModel):
@@ -289,6 +290,23 @@ class OfficeLayoutReference(DesignReference):
     version: int = Field(ge=1, strict=True)
     digest: str = Field(pattern=r'^[0-9a-f]{64}$')
 
+class AttachmentInput(Strict):
+    filename: str = Field(min_length=1, max_length=240, pattern=r'^[^/\\\x00]+$')
+    content_base64: str = Field(min_length=1, max_length=12_000_000)
+    media_type: str = Field(default='application/octet-stream', max_length=120)
+
+    @model_validator(mode='after')
+    def validate_content(self):
+        if self.filename in {'.', '..'}:
+            raise ValueError('附件文件名无效')
+        try:
+            raw = base64.b64decode(self.content_base64, validate=True)
+        except Exception as exc:
+            raise ValueError('附件内容不是有效的 base64') from exc
+        if len(raw) > 8 * 1024 * 1024:
+            raise ValueError('单个附件不能超过 8 MB')
+        return self
+
 class RunInput(Strict):
     execution_strategy: Literal['autonomous'] = 'autonomous'
     run_project_checks: bool = False
@@ -309,6 +327,7 @@ class RunInput(Strict):
     agent_ids: list[str] = Field(min_length=1, max_length=30)
     runtime: dict[str, Any] = Field(default_factory=dict)
     parent_run_id: str | None = None
+    attachments: list[AttachmentInput] = Field(default_factory=list, max_length=8)
     @model_validator(mode='after')
     def check(self):
         validate_runtime_patch(self.runtime)
@@ -332,6 +351,8 @@ class RunInput(Strict):
             raise ValueError('模板版本必须对应模板ID')
         if len(set(self.agent_ids)) != len(self.agent_ids):
             raise ValueError('Agent不能重复')
+        if sum(len(base64.b64decode(item.content_base64)) for item in self.attachments) > 20 * 1024 * 1024:
+            raise ValueError('附件总大小不能超过 20 MB')
         return self
 
 class AutonomousFinish(Strict):
@@ -391,4 +412,11 @@ class Decision(Strict):
     note: str = Field('', max_length=4000)
 
 class Control(Strict):
-    action: Literal['pause', 'resume', 'cancel']
+    action: Literal['pause', 'resume', 'cancel', 'retry', 'reassign', 'continue', 'steer']
+    # Recovery controls operate on an existing autonomous activation.  They
+    # intentionally identify the source task instead of accepting a new run
+    # payload, so the original failure and its workspace remain auditable.
+    task_key: str | None = Field(None, min_length=1, max_length=64)
+    agent_id: str | None = Field(None, min_length=1, max_length=32)
+    reason: str = Field('', max_length=4000)
+    prompt: str | None = Field(None, min_length=1, max_length=100_000)

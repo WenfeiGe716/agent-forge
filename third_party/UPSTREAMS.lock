@@ -1,0 +1,13 @@
+# Agent Forge upstream source lock
+#
+# These repositories are checked out as git submodules. They are built and
+# executed from Agent Forge's own application data directory; ~/.codex is never
+# used as a runtime dependency and is never modified by the desktop client.
+
+codex.repository = "https://github.com/openai/codex.git"
+codex.commit = "624ccf794703e2d84e748fc3ef547d6191a8c0a4"
+codex.license = "Apache-2.0"
+
+opencodex.repository = "https://github.com/lidge-jun/opencodex.git"
+opencodex.commit = "c155cc7923dbc0102e27d79185505a85d4357b2c"
+opencodex.license = "MIT"

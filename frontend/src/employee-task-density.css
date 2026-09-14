@@ -61,6 +61,29 @@
 .employee-task-panel .employee-delivery-link p,.employee-task-panel .employee-delivery-link button{font-size:11px;overflow-wrap:anywhere}
 .employee-task-panel .employee-open-task{margin-top:10px;padding:11px 0}
 .employee-task-panel :is(.form-error,.callout){overflow-wrap:anywhere}
+.employee-steer-composer{margin:10px 0;padding:10px;border:1px solid #9c8bd244;border-radius:9px;background:#151e31cc}
+.employee-steer-composer textarea{width:100%;resize:vertical;min-height:58px;padding:8px;border:1px solid #ffffff18;border-radius:7px;background:#0f1727;color:#d9e3f2;font-size:11px;line-height:1.6}
+.employee-steer-composer textarea:focus{outline:2px solid #b9a8ee88;outline-offset:1px;border-color:#b9a8ee99}
+.employee-attachment-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.employee-attachment-chip{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;padding:5px 7px;border:1px solid #8bd6e833;border-radius:7px;background:#15283a;color:#c8d9eb;font-size:10px}
+.employee-attachment-chip svg{flex:0 0 auto;color:#8bd6e8}
+.employee-attachment-chip b{min-width:0;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.employee-attachment-chip small{color:#879bb5;white-space:nowrap}
+.employee-attachment-chip button{width:17px;height:17px;padding:0;border:0;border-radius:50%;background:#ffffff12;color:#adc1d8;line-height:15px;cursor:pointer}
+.employee-attachment-chip button:hover{background:#ffffff22;color:#fff}
+.employee-steer-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:10px;color:#98a8bf}
+.employee-steer-actions label{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.employee-steer-actions>span{flex:1;min-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.employee-live-output{margin:10px 0;padding:10px;border:1px solid #85a8cf36;border-radius:9px;background:#0d1928aa;max-height:220px;overflow:auto}
+.employee-live-output header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#b8d1ee;font-size:11px}
+.employee-live-output header small{font-size:10px;color:#82a0c1}
+.employee-live-output>div{display:flex;gap:8px;padding:4px 0;border-top:1px solid #ffffff0b;font:11px/1.6 ui-monospace,SFMono-Regular,monospace;color:#d5e2f0}
+.employee-live-output>.employee-live-bubble{display:block;margin:5px 0 7px;padding:8px 10px;border:1px solid #8bd6e840;border-radius:9px;background:#182d3c;color:#e2edf8;font:12px/1.7 system-ui,SFMono-Regular,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}
+.employee-live-output>.employee-live-bubble span{display:block;white-space:pre-wrap}
+.employee-live-output>.employee-live-event{font-size:10px;color:#a8bcd4}
+.employee-live-output>.event-tool-started{color:#e4c896}.employee-live-output>.event-tool-completed{color:#9ed4bb}
+.employee-live-output time{flex:0 0 auto;color:#7890ad;font:10px/1.6 system-ui}
+.employee-live-output span{overflow-wrap:anywhere;white-space:pre-wrap}
 .employee-task-panel .run-issues{max-height:360px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;margin:10px 0 6px}
 .employee-task-panel .run-issue{padding:11px;font-size:11px;border-radius:9px}
 .employee-task-panel .run-issue header b{font-size:12px}.employee-task-panel .run-issue header span{font-size:10px}

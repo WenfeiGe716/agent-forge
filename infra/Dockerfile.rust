@@ -1,0 +1,16 @@
+FROM rust:1.95-bookworm AS build
+WORKDIR /build
+COPY rust ./rust
+RUN cargo build --locked --release --manifest-path rust/Cargo.toml -p forge-server
+
+FROM debian:bookworm-slim
+ARG FORGE_UID=1000
+ARG FORGE_GID=1000
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates git curl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+RUN mkdir -p /state && chown ${FORGE_UID}:${FORGE_GID} /state && chmod 700 /state
+COPY --from=build /build/rust/target/release/forge-server /usr/local/bin/forge-server
+ENV FORGE_CODEX_BINARY=/opt/forge-runtime/codex
+EXPOSE 8000
+ENTRYPOINT ["forge-server"]
+CMD ["--listen","0.0.0.0:8000","--allow-network","--product-db","/state/product.sqlite3","--rust-db","/state/runs.sqlite3","--data-root","/data","--import-root","/imports"]

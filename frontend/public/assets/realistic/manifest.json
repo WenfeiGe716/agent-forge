@@ -1,0 +1,675 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-09-13T14:27:19.306Z",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "sourceApi": "https://api.polyhaven.com/files/",
+  "sourceSite": "https://polyhaven.com/",
+  "offlineOnly": true,
+  "assets": [
+    {
+      "id": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "pilotOnly": true
+    },
+    {
+      "id": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "notForWorkstations": true
+    },
+    {
+      "id": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk"
+    },
+    {
+      "id": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant"
+    },
+    {
+      "id": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant"
+    },
+    {
+      "id": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "pilotOnly": true
+    },
+    {
+      "id": "brown_photostudio_03",
+      "kind": "hdri",
+      "resolution": "1k",
+      "role": "indoor-daylight"
+    },
+    {
+      "id": "wood_floor",
+      "kind": "texture",
+      "resolution": "1k",
+      "role": "neutral-wood-floor"
+    }
+  ],
+  "files": [
+    {
+      "asset": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "path": "frontend/public/assets/realistic/sofa_02/2k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/sofa_02/sofa_02_2k.gltf",
+      "md5": "d58bdde4cb00612fc070bc3e7caba265",
+      "sha256": "bd117710418921ece26af1ecb0b64d66b56ab7f96ff500f96044c11029c962ac",
+      "size": 4183,
+      "reused": true
+    },
+    {
+      "asset": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "path": "frontend/public/assets/realistic/sofa_02/2k/textures/sofa_02_arm_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/sofa_02/sofa_02_arm_2k.jpg",
+      "md5": "4cdaf48033316b61832d220f1dcc48ef",
+      "sha256": "1e6bb97f6c0d2a1b81b9aa3c67c26b65bc02aeed88b19373726f117c16f89980",
+      "size": 401876,
+      "reused": true
+    },
+    {
+      "asset": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "path": "frontend/public/assets/realistic/sofa_02/2k/textures/sofa_02_nor_gl_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/sofa_02/sofa_02_nor_gl_2k.jpg",
+      "md5": "d22e982ab8dac6a54ab06839efb0bafa",
+      "sha256": "7e53cd96fdb33b960a0447c619e028aa833fc9c6bee2838346ab5c752ac95c68",
+      "size": 463146,
+      "reused": true
+    },
+    {
+      "asset": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "path": "frontend/public/assets/realistic/sofa_02/2k/textures/sofa_02_diff_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/sofa_02/sofa_02_diff_2k.jpg",
+      "md5": "37808357cc7d00fd62bda197cf89e6ae",
+      "sha256": "d37c3c65d2bc4dfb9c61b8355cc0e5e0e92e34ae6affa819daa1cabe03d9e135",
+      "size": 323319,
+      "reused": true
+    },
+    {
+      "asset": "sofa_02",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "lounge-sofa",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "path": "frontend/public/assets/realistic/sofa_02/2k/sofa_02.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/sofa_02/sofa_02.bin",
+      "md5": "024d6f57a7c2ee7915430cd6e1c2651e",
+      "sha256": "cb337e03211be0309afa1ded2b6cbb2d402c0f794aaf8828fba559d27a42d3f5",
+      "size": 74864,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/modern_arm_chair_01/modern_arm_chair_01_2k.gltf",
+      "md5": "1fec9694d156cbed5dc8757576cd16a5",
+      "sha256": "eb971ed98af1ce3d4cc93a058ceee5c31dbd185f99aa3d86938d366820943414",
+      "size": 5121,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_pillow_diff_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_pillow_diff_2k.jpg",
+      "md5": "c3def4cb2bcef8ee07c90c55c20a637e",
+      "sha256": "20a8b41bd14552643c1355587ec1198cb8c5f1f7dea50dc71dbb0f6a826adfc1",
+      "size": 843013,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_pillow_nor_gl_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_pillow_nor_gl_2k.jpg",
+      "md5": "2549b1d93eb4ec13e8ad9edd1327d2f0",
+      "sha256": "dfd11d444ba0a6c1a16304f91c10ef2a2a525180f6a46ca57c2d55c196ff39de",
+      "size": 1074878,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/modern_arm_chair_01.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modern_arm_chair_01/modern_arm_chair_01.bin",
+      "md5": "5a8f2ea1c79ea484140e484b2a621670",
+      "sha256": "8755f2f498c0bb165660379d1b045465751c16bbeaf553c8dd76bb14c16d1ff6",
+      "size": 240728,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_legs_diff_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_legs_diff_2k.jpg",
+      "md5": "cfed247a17cafd9f59a7f01ed01fdbf4",
+      "sha256": "a3a289f3265d77e120e81aebdd9107b612609b077190e842389b5cd32bbf9a3d",
+      "size": 1660925,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_legs_arm_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_legs_arm_2k.jpg",
+      "md5": "a62c231c4f42be2f85f6b42a7cc1fc8e",
+      "sha256": "38a2b11cdfb18aeed9804fee38de93d8fd856f53ad9448ee877833ba25643f15",
+      "size": 2144468,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_legs_nor_gl_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_legs_nor_gl_2k.jpg",
+      "md5": "52c08726e839e2c1c87863e6f5a87411",
+      "sha256": "5a57c6b8de10b79d7d2b5540bcb864f4c3c0b4f81c6ef2c5f61470e88620c4a7",
+      "size": 2076117,
+      "reused": true
+    },
+    {
+      "asset": "modern_arm_chair_01",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "modern-lounge-chair",
+      "authors": {
+        "Vibrant Nordic": "All"
+      },
+      "path": "frontend/public/assets/realistic/modern_arm_chair_01/2k/textures/modern_arm_chair_01_pillow_arm_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/modern_arm_chair_01/modern_arm_chair_01_pillow_arm_2k.jpg",
+      "md5": "1984906adcaef79cefe2d20cb5be4c7e",
+      "sha256": "3c98a68f8d4d9045082d1af97994ff564dc4f8378814bea717d9862edf5dae22",
+      "size": 1176399,
+      "reused": true
+    },
+    {
+      "asset": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk",
+      "authors": {
+        "Ulan Cabanilla": "All"
+      },
+      "path": "frontend/public/assets/realistic/metal_office_desk/2k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/metal_office_desk/metal_office_desk_2k.gltf",
+      "md5": "f8b7985eb522e5c3508ccff43c05d922",
+      "sha256": "4323f2e6cae9abb82146449b45445ee9446068c5a9b2ca23e018503b3b0af035",
+      "size": 13510,
+      "reused": true
+    },
+    {
+      "asset": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk",
+      "authors": {
+        "Ulan Cabanilla": "All"
+      },
+      "path": "frontend/public/assets/realistic/metal_office_desk/2k/textures/metal_office_desk_nor_gl_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/metal_office_desk/metal_office_desk_nor_gl_2k.jpg",
+      "md5": "b4bd4cd202f44d16a26e70c3fb6e611c",
+      "sha256": "25392e7682c43ca07abbbbe717388b9e6d40bbca663836916204f99ac0378d34",
+      "size": 490814,
+      "reused": true
+    },
+    {
+      "asset": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk",
+      "authors": {
+        "Ulan Cabanilla": "All"
+      },
+      "path": "frontend/public/assets/realistic/metal_office_desk/2k/textures/metal_office_desk_diff_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/metal_office_desk/metal_office_desk_diff_2k.jpg",
+      "md5": "62e40035b94716516bd932f83e76ba0c",
+      "sha256": "3f5854edc8a7979ed4576b914c184bda64d7e6ee9969357738703be49118da30",
+      "size": 1787420,
+      "reused": true
+    },
+    {
+      "asset": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk",
+      "authors": {
+        "Ulan Cabanilla": "All"
+      },
+      "path": "frontend/public/assets/realistic/metal_office_desk/2k/textures/metal_office_desk_arm_2k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/metal_office_desk/metal_office_desk_arm_2k.jpg",
+      "md5": "69cfca0d98399bbc5dc62c007f1f2a4a",
+      "sha256": "23c94b99aec8c9b105ff4d843ac41f229b0effb97abe921f0f8b506ccfd76952",
+      "size": 2724325,
+      "reused": true
+    },
+    {
+      "asset": "metal_office_desk",
+      "kind": "gltf",
+      "resolution": "2k",
+      "role": "office-desk",
+      "authors": {
+        "Ulan Cabanilla": "All"
+      },
+      "path": "frontend/public/assets/realistic/metal_office_desk/2k/metal_office_desk.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/metal_office_desk/metal_office_desk.bin",
+      "md5": "96f258b9a64d36ca011f44de23da7c65",
+      "sha256": "65b558f41a75ad4822e31cc2a97eb34ed359199279a6bfbd650deb27cef78767",
+      "size": 229700,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_02/potted_plant_02_1k.gltf",
+      "md5": "9999d7e6c51018a85551840e1bdae656",
+      "sha256": "c533dcce0d1aa4379eb7db04601a04983f8df2422b28578de922655a416e64a9",
+      "size": 6653,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_leaves_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+      "md5": "e8a026bd7bfa6497729d855c59da03ce",
+      "sha256": "3643dce6e6c0a9f40129bd837ec1a11802e8f43ea43cb29e58219d82e0ac632b",
+      "size": 167700,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/potted_plant_02.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_02/potted_plant_02.bin",
+      "md5": "cdbd4619b2596c9c469ad34676085fa8",
+      "sha256": "9c9812482c78a59789ed32fa842b4cbd9365e09c900c31ebb998e5efe627fe97",
+      "size": 1852244,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_pot_rough_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_rough_1k.jpg",
+      "md5": "68ed80fa32791fb0e81df61a75de40b4",
+      "sha256": "4e92ad8ee0f098050785d9a025e2c5a7d55bc7a7f7e1916cc7627fc7824a938f",
+      "size": 114886,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_leaves_rough_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_rough_1k.jpg",
+      "md5": "ba934a78cc6496d934c014eb8a33af37",
+      "sha256": "ac8959f70c0e91e77f3cd6fd3f73578b8aed64ac6c33fc34ac027a4e88276960",
+      "size": 102396,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_pot_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_diff_1k.jpg",
+      "md5": "97e149c93eb0d962e491d4c82d3ce477",
+      "sha256": "684949bf24821d7e951d46915366b5a388d2e4ccaaa9d5284e718c83604705e9",
+      "size": 155244,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_leaves_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_nor_gl_1k.jpg",
+      "md5": "2420d5c0ab87426f5318a5e91d1ea3bb",
+      "sha256": "e0fe090ff7a511729c9bbe59df7288b400430fdab178529443dec75e0f06007d",
+      "size": 127232,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-floor-plant",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_02/1k/textures/potted_plant_02_pot_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_nor_gl_1k.jpg",
+      "md5": "fbb44ccc1c6564b2837b79a11ed45d58",
+      "sha256": "981a68721c8b7b9ac26b96d0210334599d5e8f529362f505082c071a0a58e86c",
+      "size": 108343,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_04/1k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_04/potted_plant_04_1k.gltf",
+      "md5": "077d481764145f6e5e256593aab427bb",
+      "sha256": "b3a3bc3e97da75844999c4da07b7104b6c023f729a7c045979929b9504184339",
+      "size": 7081,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_04/1k/potted_plant_04.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_04/potted_plant_04.bin",
+      "md5": "03774ca8e28e2aa30fb26cb68d5e0093",
+      "sha256": "158c1d27503d4845eb3573f00c01ae3f4f77f1d6ca8754c67bf1762745946f7f",
+      "size": 241800,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_04/1k/textures/potted_plant_04_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_nor_gl_1k.jpg",
+      "md5": "1c0b87906fd92c7b7ce5508110976474",
+      "sha256": "66e4627f6691a2d8104a6c53a39b41daddbd5bad8103e73f372c39166a3dcb07",
+      "size": 817786,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_04/1k/textures/potted_plant_04_arm_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_arm_1k.jpg",
+      "md5": "ed0030c6085bba45b6f63f3043b0b237",
+      "sha256": "7f3288345570ef700c851ea382ed267490ffc8c901ccc31f2ec5507e4d098e48",
+      "size": 478413,
+      "reused": true
+    },
+    {
+      "asset": "potted_plant_04",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "office-plant",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "path": "frontend/public/assets/realistic/potted_plant_04/1k/textures/potted_plant_04_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_diff_1k.jpg",
+      "md5": "4a72fb3667fd3686ca4014f6676f59c4",
+      "sha256": "8693a971557fbafb12a24a2e23c1a04ab6b04ecdc4d26808c5ad3516a4971f24",
+      "size": 577545,
+      "reused": true
+    },
+    {
+      "asset": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "authors": {
+        "Josh Dean": "All"
+      },
+      "path": "frontend/public/assets/realistic/street_lamp_02/1k/scene.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/street_lamp_02/street_lamp_02_1k.gltf",
+      "md5": "94023fbd7e6392d9276d91ca36c00144",
+      "sha256": "3a8a42486c5dc4538a8b44aeeef502c64a1c9d0d42fa5610e37886c355337ff8",
+      "size": 6429,
+      "reused": true
+    },
+    {
+      "asset": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "authors": {
+        "Josh Dean": "All"
+      },
+      "path": "frontend/public/assets/realistic/street_lamp_02/1k/textures/street_lamp_02_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/street_lamp_02/street_lamp_02_diff_1k.jpg",
+      "md5": "381097a4c700b86b1c8f7e0d115b1a0a",
+      "sha256": "19882567313dd43fef60f9fa41a4c55f81a957f9fee539e931fc36a32e386b6c",
+      "size": 303714,
+      "reused": true
+    },
+    {
+      "asset": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "authors": {
+        "Josh Dean": "All"
+      },
+      "path": "frontend/public/assets/realistic/street_lamp_02/1k/textures/street_lamp_02_arm_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/street_lamp_02/street_lamp_02_arm_1k.jpg",
+      "md5": "d4d49b0153762ebe5ccde8e87af87dd5",
+      "sha256": "a1e2d654e7d5d48a1fdfbf720840192d171df54e5ea5f055145d0472d617eede",
+      "size": 657710,
+      "reused": true
+    },
+    {
+      "asset": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "authors": {
+        "Josh Dean": "All"
+      },
+      "path": "frontend/public/assets/realistic/street_lamp_02/1k/street_lamp_02.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/street_lamp_02/street_lamp_02.bin",
+      "md5": "5c89269a65d65cdb33d018012f003ef7",
+      "sha256": "e544c04855dcf728ff2724f691f6784690b8ba3ac323a9a332e56b271ffe1d7c",
+      "size": 530092,
+      "reused": true
+    },
+    {
+      "asset": "street_lamp_02",
+      "kind": "gltf",
+      "resolution": "1k",
+      "role": "wall-mounted-lantern",
+      "authors": {
+        "Josh Dean": "All"
+      },
+      "path": "frontend/public/assets/realistic/street_lamp_02/1k/textures/street_lamp_02_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/street_lamp_02/street_lamp_02_nor_gl_1k.jpg",
+      "md5": "39389c9a5c2c467ea559ac3ad3a03218",
+      "sha256": "fdd9fb26ca853020ed156fdd84e90ce3f9a68bf94edf71c0ffe72add67e316c6",
+      "size": 372301,
+      "reused": true
+    },
+    {
+      "asset": "brown_photostudio_03",
+      "kind": "hdri",
+      "resolution": "1k",
+      "role": "indoor-daylight",
+      "authors": {
+        "Sergej Majboroda": "All"
+      },
+      "path": "frontend/public/assets/realistic/brown_photostudio_03/1k/environment.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/brown_photostudio_03_1k.hdr",
+      "md5": "c4361446ffef178947fc726147a0c3f8",
+      "sha256": "34d729f520199532f14149ab3ac3dc7031898b134ef95a5f3ad6d7032f7f507e",
+      "size": 1604365,
+      "reused": true
+    },
+    {
+      "asset": "wood_floor",
+      "kind": "texture",
+      "resolution": "1k",
+      "role": "neutral-wood-floor",
+      "authors": {
+        "Dimitrios Savva": "All"
+      },
+      "path": "frontend/public/assets/realistic/wood_floor/1k/diff.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_floor/wood_floor_diff_1k.jpg",
+      "md5": "b7e927d2bf2f8f103820ff3890c8407c",
+      "sha256": "2a1c07687b6dbb214c4b9213739c6d92d425f1f0fc8ab3ac157f105d78240789",
+      "size": 734493,
+      "reused": true
+    },
+    {
+      "asset": "wood_floor",
+      "kind": "texture",
+      "resolution": "1k",
+      "role": "neutral-wood-floor",
+      "authors": {
+        "Dimitrios Savva": "All"
+      },
+      "path": "frontend/public/assets/realistic/wood_floor/1k/normal.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_floor/wood_floor_nor_gl_1k.jpg",
+      "md5": "620f174d2c09b579c5d02d37b2106668",
+      "sha256": "452247f0d0d1b7fc7f8324ff3b6ed60bcc6de1405f4284eeb8d9bce90d4939c2",
+      "size": 423303,
+      "reused": true
+    },
+    {
+      "asset": "wood_floor",
+      "kind": "texture",
+      "resolution": "1k",
+      "role": "neutral-wood-floor",
+      "authors": {
+        "Dimitrios Savva": "All"
+      },
+      "path": "frontend/public/assets/realistic/wood_floor/1k/roughness.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_floor/wood_floor_rough_1k.jpg",
+      "md5": "36146634f1dbd1bc30cd071857584c10",
+      "sha256": "061f1e1293251b2d28c76e3fac1ea9452b0e8648bb8f9b3728e09db386166e5c",
+      "size": 527754,
+      "reused": true
+    }
+  ],
+  "preferredOfficeAssets": [
+    "metal_office_desk",
+    "potted_plant_02",
+    "potted_plant_04",
+    "brown_photostudio_03",
+    "wood_floor"
+  ],
+  "pilotOnlyAssets": [
+    "sofa_02",
+    "street_lamp_02"
+  ]
+}

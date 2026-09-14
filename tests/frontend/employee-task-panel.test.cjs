@@ -20,6 +20,7 @@ function harness({handler,preview=false,runPatch={},propPatch={}}={}){
   if(id==='./Icons')return new Proxy({},{get:(_,key)=>props=>jsx('icon-'+String(key),props)});
   if(id==='./TaskApprovals')return{__esModule:true,default:props=>jsx('approvals',props)};
   if(id==='./ExecutionCenter')return{__esModule:true,default:props=>jsx('permissions',props)};
+  if(id==='./CodexRuntimeApprovals')return{__esModule:true,default:props=>jsx('runtime-approvals',props)};
  if(id==='./Collaboration')return{Question:props=>jsx('question',props)};
   if(id==='./RunRecovery'){const recovery={};vm.runInNewContext(recoveryCode,{exports:recovery,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return recovery;}
   if(id==='./RunIssues'){const issues={};vm.runInNewContext(issuesCode,{exports:issues,require:id=>id==='react/jsx-runtime'?{jsx,jsxs:jsx}:{} });return issues;}
@@ -49,6 +50,15 @@ test('employee approvals are locked to both the selected task and employee',asyn
 
 test('plan approval belongs to the frozen planner, not every employee',async()=>{
  const h=harness({runPatch:{status:'awaiting_approval'}});h.render();let tree=await h.settle();button(tree,'审批').props.onClick();tree=h.render();assert.equal(nodes(tree).filter(n=>n.type==='approvals').length,0);assert.match(text(tree),/归属 工程师/);
+});
+
+test('Codex employee approval is runtime-scoped and never displays a plan decision',async()=>{
+ const h=harness({runPatch:{execution_engine:'codex',status:'awaiting_approval',snapshot:{...run.snapshot,planner_id:'a'}},propPatch:{initialTab:'approval'}});
+ h.render();const tree=await h.settle();
+ assert.equal(nodes(tree).filter(n=>n.type==='approvals').length,0);
+ const panel=nodes(tree).find(n=>n.type==='runtime-approvals');assert.ok(panel);
+ assert.equal(panel.props.run.id,'run-a');assert.equal(panel.props.agentId,'a');assert.equal(panel.props.visible,true);
+ assert.equal(panel.props.writer,true);assert.doesNotMatch(text(tree),/这份计划归属/);
 });
 
 test('the frozen plan owner can review inside the employee panel',async()=>{
@@ -167,4 +177,29 @@ test('superseded or conflicted old outcomes do not remain labelled blocked or wa
   const h=harness({runPatch:{status:'running',tasks:[{...run.tasks[0],kind:'autonomous',status,result:{outcome,summary:'原始阶段记录'}}]}});h.render();const tree=await h.settle(),card=nodes(tree).find(n=>n.props?.className==='employee-work-card '+status);
   assert.doesNotMatch(text(nodes(card).find(n=>n.type==='summary')),/已报告阻塞 · 未完成|等待成员消息/);assert.match(text(card),/原始阶段记录/);assert.match(text(card),new RegExp(outcome));
  }
+});
+
+test('running member workspace exposes targeted steer composer and attachment contract',async()=>{
+ const calls=[];
+ const h=harness({runPatch:{status:'running'},propPatch:{initialTab:'messages'},handler:(url,method='GET',body)=>{calls.push({url,method,body});if(url.endsWith('/collaboration'))return{run_id:'run-a',decisions:[]};if(url.includes('/trace?'))return{items:[]};return {...run,status:'running'};}});
+ h.render();const tree=await h.settle();
+ assert.ok(nodes(tree).some(n=>n.props?.['aria-label']==='向当前成员发送运行中消息'));
+ assert.match(source,/\/attachments/);assert.match(source,/agent_id:member/);assert.match(source,/new EventSource/);
+ assert.match(source,/value\.workspace_path/);
+});
+
+test('running member composer exposes ChatGPT-like attachment chips, keyboard send and live output bubble',()=>{
+ assert.match(source,/className="employee-attachment-chips"/);
+ assert.match(source,/aria-label=\{`移除附件/);
+ assert.match(source,/e\.metaKey\|\|e\.ctrlKey/);
+ assert.match(source,/className="employee-live-bubble"/);
+});
+
+test('non-empty model delta events render in the selected employee stream without throwing',async()=>{
+ const delta={id:41,kind:'model.delta',run_id:'run-a',created_at:'2026-09-13T09:10:00Z',data:{agent_id:'a',text:'流式输出片段'}};
+ const h=harness({propPatch:{initialTab:'messages'},handler:url=>url.endsWith('/collaboration')?{run_id:'run-a',decisions:[]}:url.includes('/trace?')?{items:[delta],has_more:false}:{...run,status:'running'}});
+ h.render();
+ const tree=await h.settle();
+ assert.match(text(tree),/流式输出片段/);
+ assert.ok(nodes(tree).some(n=>n.props?.className==='employee-live-bubble'));
 });

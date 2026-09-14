@@ -43,15 +43,25 @@ test('false or another failed retry does not claim success or discard the origin
 
 test('ordinary deterministic errors retain configuration repair and never show uncertain retry controls',async()=>{
  const f=fixture(async()=>{throw Object.assign(new Error('成员模型已停用'),{status:422});});studio.field(f.h.render(),'创建任务').props.onClick();await tick();const tree=f.h.render();
- assert.equal(findButton(tree,'重试原需求并确认结果'),undefined);findButton(tree,'检查与修改配置').props.onClick();assert.equal(f.configured.length,1);assert.equal(f.configured[0].request,'原始页面游戏需求');assert.equal(studio.field(tree,'任务需求').props.value,'  原始页面游戏需求  ');
+ assert.equal(findButton(tree,'重试原需求并确认结果'),undefined);findButton(tree,'修改配置').props.onClick();assert.equal(f.configured.length,1);assert.equal(f.configured[0].request,'原始页面游戏需求');assert.equal(studio.field(tree,'任务需求').props.value,'  原始页面游戏需求  ');
 });
 
 test('a conclusive retry rejection releases recovery and restores configuration repair',async()=>{
- for(const failure of [Object.assign(new Error('模型已停用'),{status:422}),Object.assign(new Error('执行条件不满足'),{readiness:{ready:false,checks:[]}})]){
+ for(const failure of [Object.assign(new Error('模型已停用'),{status:422}),Object.assign(new Error('执行条件不满足'),{readiness:{ready:false,checks:[{status:'error',code:'model.enabled',target:'models'}]}})]){
   let attempts=0;const f=fixture(async()=>{if(!attempts++)throw Object.assign(new Error('结果未确认'),{submissionUncertain:true});throw failure;});
   studio.field(f.h.render(),'创建任务').props.onClick();await tick();findButton(f.h.render(),'重试原需求并确认结果').props.onClick();await tick();const tree=f.h.render();
-  assert.equal(findButton(tree,'重试原需求并确认结果'),undefined);assert.ok(findButton(tree,'检查与修改配置'));assert.equal(studio.field(tree,'任务需求').props.value,'  原始页面游戏需求  ');
+  assert.equal(findButton(tree,'重试原需求并确认结果'),undefined);assert.ok(findButton(tree,'修改配置'));assert.equal(studio.field(tree,'任务需求').props.value,'  原始页面游戏需求  ');
  }
+});
+
+test('backend submission errors offer a direct retry of the current draft, not an unrelated configuration dialog',async()=>{
+ const captured=[];const f=fixture(async seed=>{captured.push(seed);if(captured.length===1)throw Object.assign(new Error('任务服务暂不可用'),{readiness:{ready:false,checks:[{status:'error',code:'run.snapshot',target:'runs'}]}});return {id:'retry-created'};});
+ studio.field(f.h.render(),'创建任务').props.onClick();await tick();let tree=f.h.render();
+ assert.equal(findButton(tree,'修改配置'),undefined);assert.equal(findButton(tree,'检查与修改配置'),undefined);
+ studio.field(tree,'任务需求').props.onChange({target:{value:'修改后的当前需求'}});tree=f.h.render();
+ findButton(tree,'重试发送').props.onClick();await tick();
+ assert.equal(captured.length,2);assert.equal(captured[1].request,'修改后的当前需求');assert.equal(f.configured.length,0);
+ assert.equal(studio.field(reopen(f.h),'任务需求').props.value,'');
 });
 
 test('viewing existing tasks remains in the composer and does not dismiss recovery or authorize a retry',async()=>{
@@ -67,5 +77,6 @@ test('successful direct creation pins its returned run before list and detail re
  const panel=studio.nodes(f.h.render()).find(n=>n.props?.initialRunId==='newly-created');
  assert.ok(panel,'must not fall back to the previous run during refresh');
  assert.equal(panel.props.agent.id,'a');assert.equal(panel.props.initialTab,'work');
- assert.match(studio.text(f.h.render()),/任务已开始/);
+ assert.match(studio.text(f.h.render()),/已发送，负责人将自动开始处理/);
+ assert.doesNotMatch(studio.text(f.h.render()),/任务已开始/,'a creation receipt must not claim that execution has already started');
 });

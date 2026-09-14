@@ -5,7 +5,7 @@
 import {V3,M4,identity,multiply,modelMatrix,lookAt,ortho,transform,cubeVertices} from './scene';
 import {modelMeshes,bevelBox} from './visualMeshes';
 import {CameraInsets,officeOverview,officeProjection} from './officeCamera';
-export type Surface='matte'|'skin'|'cloth'|'metal'|'wood'|'screen'|'rubber'|'shadow';
+export type Surface='matte'|'skin'|'cloth'|'metal'|'wood'|'screen'|'rubber'|'shadow'|'glass'|'stone';
 export type Part={p:V3;s:V3;color:V3;mesh?:string;yaw?:number;matrix?:M4;alpha?:number;emissive?:number;roughness?:number;metalness?:number;surface?:Surface;tag?:string;assetOrigin?:V3;layer?:'environment'|'office';nightEmissive?:number;castShadow?:boolean};
 export type RenderQuality='detail'|'balanced'|'economy';
 export const color=(h:number):V3=>[(h>>16&255)/255,(h>>8&255)/255,(h&255)/255];
@@ -22,8 +22,8 @@ export function oriented(p:V3,s:V3,yaw=0,pitch=0,roll=0):M4{
  const rz=new Float32Array([cz,sz,0,0,-sz,cz,0,0,0,0,1,0,0,0,0,1]);
  return multiply(modelMatrix(p,[1,1,1],yaw),multiply(rz,multiply(rx,modelMatrix([0,0,0],s))));
 }
-const SURF:Record<Surface,number>={matte:0,skin:1,cloth:2,metal:3,wood:4,screen:5,rubber:6,shadow:7};
-const defaults:Record<Surface,[number,number]>={matte:[.74,0],skin:[.53,0],cloth:[.92,0],metal:[.27,.82],wood:[.52,0],screen:[.22,.15],rubber:[.9,0],shadow:[1,0]};
+const SURF:Record<Surface,number>={matte:0,skin:1,cloth:2,metal:3,wood:4,screen:5,rubber:6,shadow:7,glass:8,stone:9};
+const defaults:Record<Surface,[number,number]>={matte:[.66,0],skin:[.58,0],cloth:[.94,0],metal:[.28,.82],wood:[.46,0],screen:[.27,.08],rubber:[.92,0],shadow:[1,0],glass:[.17,.05],stone:[.81,0]};
 const varying=`varying vec3 N;varying vec3 C;varying vec3 P;varying vec4 L;varying vec4 K;varying float A;varying vec2 U;`;
 const fs=`precision highp float;${varying}
 uniform sampler2D shadow;uniform float day;uniform vec3 eye;uniform float shadowSize;uniform float softShadows;uniform float environmentQuality;
@@ -37,6 +37,7 @@ float foreground(){
 float depthAt(vec2 uv){return dot(texture2D(shadow,uv),vec4(1./16777216.,1./65536.,1./256.,1.));}
 vec3 linear(vec3 c){return pow(max(c,vec3(0.)),vec3(2.2));}
 vec3 display(vec3 c){return pow(clamp(c,0.,1.),vec3(1./2.2));}
+float noise3(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,37.719)))*43758.5453);}
 float visibility(vec3 n,vec3 lightDir){
  vec3 q=L.xyz/L.w*.5+.5;if(q.x<=0.||q.x>=1.||q.y<=0.||q.y>=1.||q.z<=0.||q.z>=1.)return 1.;
  float bias=max(.00105,.0020*(1.-max(dot(n,lightDir),0.))),lit=0.;
@@ -50,34 +51,42 @@ void main(){
  if(focusPass>.5&&fade<=.001)discard;
  float alpha=A*(1.-fade*.88);
  float surface=mod(K.w,16.);
- if(surface>6.5){float opacity=(1.-smoothstep(.05,.5,length(U)))*A;gl_FragColor=vec4(C,opacity);return;}
+ if(surface>6.5&&surface<7.5){float opacity=(1.-smoothstep(.05,.5,length(U)))*A;gl_FragColor=vec4(C,opacity);return;}
  vec3 n=normalize(N),v=normalize(eye-P),l=normalize(vec3(-.45,.85,.30)),h=normalize(v+l);
  float rough=clamp(K.y,.12,1.),metal=clamp(K.z,0.,1.),nl=max(dot(n,l),0.),nv=max(dot(n,v),.001),nh=max(dot(n,h),0.),vh=max(dot(v,h),0.);
  vec3 base=linear(C);
  if(K.w>15.5&&environmentQuality<1.5){
-  // Exterior-only low-overhead lighting. Indoor v0.9 surface path is unchanged.
-  float hemi=n.y*.5+.5;vec3 amb=mix(vec3(.33,.285,.25),vec3(.67,.77,.91),hemi);amb=mix(amb*vec3(.21,.26,.43),amb,day);
+  // Low-overhead exterior shading retains the same neutral daylight palette.
+  float hemi=n.y*.5+.5;vec3 amb=mix(vec3(.23,.215,.20),vec3(.50,.55,.60),hemi);amb=mix(amb*vec3(.21,.26,.43),amb,day);
   float sh=1.;vec3 sq=L.xyz/L.w*.5+.5;if(sq.x>0.&&sq.x<1.&&sq.y>0.&&sq.y<1.&&sq.z>0.&&sq.z<1.)sh=step(sq.z-.002,depthAt(sq.xy));
-  vec3 light=base*(amb+mix(vec3(.22,.25,.38),vec3(.55,.50,.44),day)*nl*(.3+.7*sh));float em=K.x<0.?(-K.x)*(1.-day):K.x;
+  vec3 light=base*(amb+mix(vec3(.22,.25,.38),vec3(.72,.69,.63),day)*nl*(.18+.82*sh));
+  if(surface>7.5&&surface<8.5){float fresnel=.07+.52*pow(1.-nv,4.);light=mix(light,vec3(.43,.50,.54)*(.4+.6*day),fresnel);}
+  float em=K.x<0.?(-K.x)*(1.-day):K.x;
   if(em>0.)light=mix(light,base*(.9+.25*day),clamp(em,0.,1.));light*=1.13;gl_FragColor=vec4(display(light/(vec3(1.)+light*.14)),alpha);return;
  }
 
- if(surface>3.5&&surface<4.5){float grain=sin(P.x*43.+sin(P.z*2.7)*1.1+sin(P.x*9.)*.13);base*=.975+.025*grain;}
- if(surface>1.5&&surface<2.5){base*=.988+.012*sin(P.x*130.)*sin(P.y*170.);}
+ // Subtle material-scale variation, faded at distance to avoid crawling noise.
+ float detailFade=1.-smoothstep(6.,22.,length(eye-P));
+ if(surface>3.5&&surface<4.5){float grain=sin(P.x*36.+sin(P.z*1.7)*1.8+sin(P.x*7.)*.20);float pore=sin(P.x*107.+P.z*.7);base*=.965+detailFade*(.025*grain+.009*pore);rough=clamp(rough+grain*.025,.12,1.);}
+ if(surface>1.5&&surface<2.5){float weave=sin(P.x*115.)*sin((P.y+P.z)*131.);base*=.988+.012*weave*detailFade;}
+ if(surface>8.5){float mineral=noise3(floor(P*140.));base*=.975+.04*mineral*detailFade;}
  float a=rough*rough,a2=a*a,den=nh*nh*(a2-1.)+1.,D=a2/(3.14159265*den*den+.0001),k=(rough+1.)*(rough+1.)/8.;
  float G=(nv/(nv*(1.-k)+k))*(nl/(nl*(1.-k)+k));
  vec3 f0=mix(vec3(.04),base,metal),F=f0+(1.-f0)*pow(1.-vh,5.);
  vec3 spec=min(vec3(3.),D*G*F/max(4.*nv*nl,.001));
  float vis=visibility(n,l),hemi=n.y*.5+.5;
- vec3 skyAmbient=mix(vec3(.33,.285,.25),vec3(.67,.77,.91),hemi);
+ vec3 skyAmbient=mix(vec3(.23,.215,.20),vec3(.50,.55,.60),hemi);
  // Warm floor bounce and neutral daylight keep white desks and skin from
  // inheriting the exterior's blue sky cast. Night and city lighting stay intact.
- vec3 indoorAmbient=mix(vec3(.38,.345,.30),vec3(.80,.81,.79),hemi);
+ vec3 indoorAmbient=mix(vec3(.24,.225,.21),vec3(.59,.60,.58),hemi);
  vec3 ambient=mix(skyAmbient*vec3(.21,.26,.43),K.w>15.5?skyAmbient:indoorAmbient,day);
- vec3 key=mix(vec3(.45,.52,.85),vec3(1.55,1.39,1.20),day);
- vec3 light=base*ambient*(1.-metal*.68)+(base*(1.-metal)*(1.-F)/3.14159265+spec)*key*nl*(.22+.78*vis);
+ vec3 key=mix(vec3(.45,.52,.85),vec3(1.74,1.65,1.49),day);
+ // Modest ambient attenuation inside cast shadows gives furniture contact and
+ // recesses depth without introducing invented screen-space occlusion.
+ vec3 light=base*ambient*(1.-metal*.68)*(.82+.18*vis)+(base*(1.-metal)*(1.-F)/3.14159265+spec)*key*nl*(.14+.86*vis);
  float rim=pow(1.-nv,3.)*max(dot(n,normalize(vec3(.65,.3,-.6))),0.);
- light+=base*rim*.10+f0*(.16+.32*pow(1.-nv,4.))*(.45+.55*day);
+ light+=base*rim*.065+f0*(.12+.25*pow(1.-nv,4.))*(.45+.55*day);
+ if(surface>7.5&&surface<8.5){float fresnel=.06+.56*pow(1.-nv,4.);vec3 reflection=mix(vec3(.21,.25,.29),vec3(.57,.62,.64),smoothstep(-.4,.8,reflect(-v,n).y));light=mix(light,reflection*(.32+.68*day),fresnel);}
  if(surface>.5&&surface<1.5)light+=base*vec3(.17,.055,.026)*pow(max(dot(-n,l),0.),2.)*(.5+.5*day);
  float emission=K.x<0.?(-K.x)*(1.-day):K.x;
  if(emission>0.)light=mix(light,base*(.9+.25*day),clamp(emission,0.,1.));
@@ -90,7 +99,7 @@ void main(){vec4 p=vec4(pos,1.);P=vec3(dot(row0,p),dot(row1,p),dot(row2,p));vec3
 const shadowFS=`precision highp float;void main(){vec4 v=fract(gl_FragCoord.z*vec4(16777216.,65536.,256.,1.));gl_FragColor=v-v.xxyz*vec4(0.,1./256.,1./256.,1./256.);}`;
 type Group={key:string;buffer:WebGLBuffer;count:number;array:Float32Array};
 export class OfficeRenderer{
- gl:WebGLRenderingContext;vp=identity();meshes=new Map<string,Float32Array>();yaw=officeOverview().yaw;pitch=officeOverview().pitch;zoom=officeOverview().zoom;target:V3=officeOverview().target;focusPoint:V3|null=null;cameraInsets?:CameraInsets;day=true;disposed=false;software=false;quality:RenderQuality='balanced';
+ gl:WebGLRenderingContext;vp=identity();meshes=new Map<string,Float32Array>();yaw=officeOverview().yaw;pitch=officeOverview().pitch;zoom=officeOverview().zoom;target:V3=officeOverview().target;focusPoint:V3|null=null;cameraInsets?:CameraInsets;background?:number;day=true;disposed=false;software=false;quality:RenderQuality='balanced';
  readonly supportsInstancing:boolean;stats={dynamicParts:0,dynamicTriangles:0,staticTriangles:0,drawCalls:0,frameCpuMs:0,shadowSize:1024};
  private inst:ANGLE_instanced_arrays|null;private program:WebGLProgram;private instanceProgram:WebGLProgram|null;private shadowProgram:WebGLProgram;private shadowInstance:WebGLProgram|null;
  private fixed:WebGLBuffer;private fixedShadow:WebGLBuffer;private fixedShadowCount=0;private dynamic:WebGLBuffer;private glass:WebGLBuffer;private fixedCount=0;private glassCount=0;private fb:WebGLFramebuffer;private tex:WebGLTexture;private depth:WebGLRenderbuffer;private light:M4;private dirty=true;private shadowStamp=0;
@@ -134,7 +143,7 @@ export class OfficeRenderer{
    gl.bindFramebuffer(gl.FRAMEBUFFER,this.fb);gl.viewport(0,0,this.shadowSize,this.shadowSize);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(this.shadowProgram);gl.uniformMatrix4fv(this.location(this.shadowProgram,'vp'),false,this.light);this.bindStatic(this.shadowProgram,this.fixedShadow,true);gl.drawArrays(gl.TRIANGLES,0,this.fixedShadowCount);
    if(this.shadowInstance){gl.useProgram(this.shadowInstance);gl.uniformMatrix4fv(this.location(this.shadowInstance,'vp'),false,this.light);this.drawGroups(this.shadowInstance,groups,true);}else{this.bindStatic(this.shadowProgram,this.dynamic,true);gl.drawArrays(gl.TRIANGLES,0,bakedCount);}this.dirty=false;this.shadowStamp=now;
   }
-  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,c.width,c.height);gl.clearColor(...color(this.day?0xe6e9ed:0x111b2a),1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,c.width,c.height);gl.clearColor(...color(this.background??(this.day?0xe6e9ed:0x111b2a)),1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   const {vp,eye}=officeProjection(this,w,h,this.cameraInsets,!!this.focusPoint);this.vp=vp;
   const uniforms=(p:WebGLProgram,focusPass=-1)=>{gl.useProgram(p);gl.uniformMatrix4fv(this.location(p,'vp'),false,this.vp);gl.uniformMatrix4fv(this.location(p,'light'),false,this.light);gl.uniform1f(this.location(p,'day'),this.day?1:0);gl.uniform3fv(this.location(p,'eye'),eye);gl.uniform3fv(this.location(p,'focusPoint'),this.focusPoint||this.target);gl.uniform1f(this.location(p,'focusPass'),focusPass);gl.uniform1f(this.location(p,'shadowSize'),this.shadowSize);gl.uniform1f(this.location(p,'environmentQuality'),this.quality==='detail'?2:this.quality==='economy'?0:1);gl.uniform1f(this.location(p,'softShadows'),this.quality==='economy'?0:this.quality==='detail'?2:1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.tex);gl.uniform1i(this.location(p,'shadow'),0);};
   uniforms(this.program,this.focusPoint?0:-1);this.bindStatic(this.program,this.fixed);gl.drawArrays(gl.TRIANGLES,0,this.fixedCount);this.stats.drawCalls++;

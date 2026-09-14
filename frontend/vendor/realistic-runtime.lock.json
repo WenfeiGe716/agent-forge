@@ -1,0 +1,7 @@
+{
+  "three": "0.180.0",
+  "esbuild": "0.25.10",
+  "source": "https://github.com/mrdoob/three.js/tree/r180",
+  "license": "MIT",
+  "sha256": "7beb1e40bad8a8bcff823d83ac38b44729f621ecd79fac4aeb79e59da2de0ee8"
+}

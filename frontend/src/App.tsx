@@ -18,6 +18,7 @@ import {createRunSubmission,RunPreflightError} from './runSubmission';
 import TeamExecutionPermissions from './components/TeamExecutionPermissions';
 import {desktopBridge,taskNotifications} from './desktop';
 import {Agent,Model,Project,Provider,Run,Task,User,ForgeEvent,Json,OrganizationLayout,agentTitle,roles,states,terminal} from './types';
+import {mergeAgentSnapshot} from './agentPresentation';
 import {Badge,Modal,Field,Empty} from './components/UI';
 import Office from './components/Office';
 import StudioWorkspace from './components/StudioWorkspace';
@@ -46,7 +47,7 @@ const pages:Record<Page,{title:string;subtitle:string;icon:typeof Activity}>={
  users:{title:'团队账号',subtitle:'内部团队使用，不开放注册。项目成员关系决定可见范围。',icon:Users}
 };
 const eventNames:Record<string,string>={'agent.message':'Agent发送消息','agent.message.delivered':'消息进入接收者上下文','task.delegated':'负责人委派任务','task.handoff':'上游成果交接','run.created':'创建团队任务','run.state':'运行状态变化','task.prepared':'准备独立工作区','agent.started':'Agent开始执行','model.started':'模型开始响应','model.delta':'模型输出增量','model.completed':'模型调用完成','model.fallback':'启用备用模型','tool.started':'发起工具调用','tool.completed':'工具返回结果','task.finished':'提交阶段成果','task.integrated':'变更已集成','plan.ready':'计划等待批准','check.completed':'项目验收结果','artifacts.ready':'可下载成果已生成','control.requested':'提交运行控制','decision.requested':'提交人工决定'};
-const friendlyEvent=(e:ForgeEvent)=>e.data.summary||e.data.title||(e.data.status?states[e.data.status]:null)||e.data.tool||e.data.command||e.data.action||'';
+const friendlyEvent=(e:ForgeEvent)=>e.data?.summary||e.data?.title||(e.data?.status?states[e.data.status]:null)||e.data?.tool||e.data?.command||e.data?.action||'';
 
 function Login({onLogin}:{onLogin:(u:User)=>void}){
  const[name,setName]=useState('admin'),[password,setPassword]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -84,20 +85,22 @@ export default function App(){
  const[pendingTeam,setPendingTeam]=useState<DesignAsset|null>(null),[storeTab,setStoreTab]=useState<'browse'|'sources'>('browse');
  const[workspaceMode,setWorkspaceMode]=useState<'studio'|'board'>('studio');
  const[organization,setOrganization]=useState<OrganizationLayout|null>(null);
- const[user,setUser]=useState<User|null>(null),[booting,setBooting]=useState(true),[page,setPage]=useState<Page>('workspace');
+ const[user,setUser]=useState<User|null>(null),[booting,setBooting]=useState(true),[hydrating,setHydrating]=useState(false),[page,setPage]=useState<Page>('workspace');
  const[providers,setProviders]=useState<Provider[]>([]),[models,setModels]=useState<Model[]>([]),[agents,setAgents]=useState<Agent[]>([]),[projects,setProjects]=useState<Project[]>([]),[runs,setRuns]=useState<Run[]>([]),[settings,setSettings]=useState<Json|null>(null),[users,setUsers]=useState<User[]>([]),[audit,setAudit]=useState<ForgeEvent[]>([]);
  const[selected,setSelected]=useState(''),[events,setEvents]=useState<ForgeEvent[]>([]),[view,setView]=useState<'office'|'graph'>('office');
  const {detail,load:loadDetail}=useRunDetail(selected,user);
  const[runDraft,setRunDraft]=useState<Json|null>(null);
  const[dialog,setDialog]=useState<Dialog>(null),[toast,setToast]=useState<{text:string;error:boolean}|null>(null),[decisionNote,setDecisionNote]=useState(''),[live,setLive]=useState(false),[search,setSearch]=useState(''),[busy,setBusy]=useState(false);
+ const[codexRuntimeEnabled,setCodexRuntimeEnabled]=useState(false),[codexDefaultSchedulerEnabled,setCodexDefaultSchedulerEnabled]=useState(false);
  const currentUserRef=useRef(user);currentUserRef.current=user;
  const directSubmission=useRef<{user:User|null;send:ReturnType<typeof createRunSubmission>|null}>({user,send:null});
  if(directSubmission.current.user!==user)directSubmission.current={user,send:null};
  const notify=useCallback((text:string,error=false)=>{setToast({text,error});},[]);
  const fail=useCallback((e:unknown)=>{if(e instanceof APIError&&e.status===401)setUser(null);else notify((e as Error).message,true);},[notify]);
- const refresh=useCallback(async(u:User|null=user)=>{if(!u)return;try{const [p,m,a,pr,r,s,o]=await Promise.all([api<Provider[]>('/providers'),api<Model[]>('/models'),api<Agent[]>('/agents'),api<Project[]>('/projects'),api<Run[]>('/runs'),api<Json>('/settings'),api<OrganizationLayout>('/organization')]);if(currentUserRef.current?.id!==u.id)return;setProviders(p);setModels(m);setAgents(a);setProjects(pr);setRuns(r);setSettings(s);setOrganization(o);if(u.role==='admin'){const users=await api<User[]>('/users');if(currentUserRef.current?.id===u.id)setUsers(users);}}catch(e){fail(e);}},[user,fail]);
+ const refresh=useCallback(async(u:User|null=user)=>{if(!u)return;try{const [p,m,a,pr,r,s,o]=await Promise.all([api<Provider[]>('/providers'),api<Model[]>('/models'),api<Agent[]>('/agents'),api<Project[]>('/projects'),api<Run[]>('/runs'),api<Json>('/settings'),api<OrganizationLayout>('/organization')]);if(currentUserRef.current?.id!==u.id)return;setProviders(p);setModels(m);setAgents(a);setProjects(pr);setRuns(r);setSettings(s);setOrganization(o);if(u.role==='admin'){const users=await api<User[]>('/users');if(currentUserRef.current?.id===u.id)setUsers(users);}}catch(e){fail(e);}finally{if(currentUserRef.current?.id===u.id)setHydrating(false);}},[user,fail]);
  useEffect(()=>{let alive=true;api<User>('/auth/me').then(u=>{if(alive)setUser(u);}).catch(()=>{}).finally(()=>{if(alive)setBooting(false);});return()=>{alive=false;};},[]);
- useEffect(()=>{if(user){void refresh(user);}else{setPage('workspace');setWorkspaceMode('studio');setProviders([]);setModels([]);setAgents([]);setProjects([]);setRuns([]);setUsers([]);setAudit([]);setSettings(null);setSelected('');setEvents([]);setDialog(null);setRunDraft(null);setShowSetup(false);setToast(null);setPendingTeam(null);setStoreTab('browse');setOrganization(null);}},[user]);
+ useEffect(()=>{if(user){setHydrating(true);void refresh(user);}else{setHydrating(false);setPage('workspace');setWorkspaceMode('studio');setProviders([]);setModels([]);setAgents([]);setProjects([]);setRuns([]);setUsers([]);setAudit([]);setSettings(null);setSelected('');setEvents([]);setDialog(null);setRunDraft(null);setShowSetup(false);setToast(null);setPendingTeam(null);setStoreTab('browse');setOrganization(null);}},[user]);
+ useEffect(()=>{if(!user){setCodexRuntimeEnabled(false);setCodexDefaultSchedulerEnabled(false);return;}api<Json>('/runtime/status').then(status=>{setCodexRuntimeEnabled(status.task_execution_enabled===true);setCodexDefaultSchedulerEnabled(status.default_scheduler_enabled===true);}).catch(()=>{setCodexRuntimeEnabled(false);setCodexDefaultSchedulerEnabled(false);});},[user]);
  useEffect(()=>{if(!desktop)return;if(!user){lastDesktopRuns.current.clear();return;}for(const task of taskNotifications(lastDesktopRuns.current,runs))void desktop.notifyTask(task).catch(()=>{});lastDesktopRuns.current=new Map(runs.map(r=>[r.id,r.status]));},[runs,user,desktop]);
  useEffect(()=>{if(!user)return;const timer=setInterval(()=>{Promise.all([api<Run[]>('/runs'),api<Json>('/settings')]).then(([r,s])=>{setRuns(r);setSettings(s);}).catch(fail);},6000);return()=>clearInterval(timer);},[user,fail]);
  useEffect(()=>{if(toast){const t=setTimeout(()=>setToast(null),6500);return()=>clearTimeout(t);}},[toast]);
@@ -135,7 +138,12 @@ export default function App(){
    const run=await submission.send(seed,()=>currentUserRef.current===user&&directSubmission.current===submission);
    if(currentUserRef.current!==user||directSubmission.current!==submission)return false;
    submission.send.acknowledge(seed);
-   setSelected(run.id);void refresh();return {id:run.id};
+   setSelected(run.id);void refresh();
+   // The backend owns the Codex process and persists its events. The renderer
+   // only triggers it when the runtime feature flag is enabled; live output is
+   // then delivered through the normal Run SSE stream.
+   if(codexRuntimeEnabled&&!codexDefaultSchedulerEnabled)void fetch('/api/runs/'+encodeURIComponent(run.id)+'/codex-start',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-Forge-Request':'1'},body:JSON.stringify({})}).then(async response=>{if(!response.ok&&response.status!==409&&response.status!==404)throw new Error('Codex 运行入口启动失败');if(response.body){const reader=response.body.getReader();while(!(await reader.read()).done){}}}).catch(error=>notify((error as Error).message,true));
+   return {id:run.id};
   }catch(error){
    if(error instanceof RunPreflightError){
     const failedChecks=error.readiness.checks.filter(c=>c.status==='error');
@@ -151,7 +159,7 @@ export default function App(){
      messages.unshift('当前项目未开启外部模型访问。请到“项目”→“项目配置”勾选“允许将本项目必要代码与上下文发送给已配置的外部模型”后重试。');
     }
     const toolCheck=failedChecks.find(c=>c.code==='model.tools'&&c.model_profile_id);
-    throw Object.assign(new Error('任务尚未开始。'+(messages.join('\n')||'执行条件未满足，请检查配置。')),
+    throw Object.assign(new Error('暂时无法发送：'+(messages.join('\n')||'执行条件未满足，请检查配置。')),
       {readiness:error.readiness,model_profile_id:toolCheck?.model_profile_id});
    }
    throw error;
@@ -159,15 +167,18 @@ export default function App(){
  };
  const runAction=async(action:string)=>{if(!detail)return;setBusy(true);try{await api(`/runs/${detail.id}/control`,'POST',{action});notify('控制请求已保存，将在下一执行边界生效。');setDialog(null);}catch(e){fail(e);}finally{setBusy(false);}};
  const decide=async(approved:boolean)=>{if(!detail)return;setBusy(true);const phase=detail.status==='awaiting_approval'?'plan':'acceptance';try{await api(`/runs/${detail.id}/decision/${phase}`,'POST',{approved,digest:phase==='plan'?detail.plan_digest:detail.artifact_digest,note:decisionNote});notify('决定已提交，等待编排器应用。');}catch(e){fail(e);}finally{setBusy(false);}};
- const activeRun=runs.filter(r=>!terminal.includes(r.status)&&!r.status.startsWith('awaiting'));
- const waiting=runs.filter(r=>r.status.startsWith('awaiting'));
+ const activeRun=runs.filter(r=>!terminal.includes(r.status)&&!r.status?.startsWith('awaiting'));
+ const waiting=runs.filter(r=>r.status?.startsWith('awaiting'));
  const taskList=detail?.tasks||[];
- const displayAgents=agents.map(a=>{const frozen=detail?.snapshot?.agents?.[a.id];return frozen?{...a,name:frozen.name,role:frozen.role,job_title:frozen.job_title,department:frozen.department,communication:frozen.communication,office_position:frozen.office_position,design_ref:frozen.design_ref,role_template_ref:frozen.role_template_ref,tool_permissions:frozen.tools,model_profile_id:frozen.models[0].profile_id}:a;});
+ const displayAgents=agents.map(a=>mergeAgentSnapshot(a,detail?.snapshot?.agents?.[a.id]));
  const navigateExecution=(target:string,context?:{project_id?:string;agent_id?:string;model_profile_id?:string;provider_id?:string})=>{const mapped=({providers:'models',setup:'execution'} as Record<string,string>)[target]||target;setPage((mapped in pages?mapped:'execution') as Page);if(admin&&target==='projects'&&context?.project_id){const project=projects.find(p=>p.id===context.project_id);if(project)setDialog({kind:'project',item:project});}if(admin&&target==='agents'&&context?.agent_id){const agent=agents.find(a=>a.id===context.agent_id);if(agent)setDialog({kind:'agent',item:agent});}if(admin&&target==='models'&&context?.model_profile_id){const model=models.find(m=>m.id===context.model_profile_id);if(model)setDialog({kind:'model',item:model});}else if(admin&&target==='providers'&&context?.provider_id){const provider=providers.find(p=>p.id===context.provider_id);if(provider)setDialog({kind:'provider',item:provider});}};
  const selectedTask=dialog?.kind==='task'?dialog.item as Task:null;
- const pageInfo=pages[page];
+ // Navigation targets can arrive from persisted runtime errors or older
+ // clients. Keep an unknown target on a valid page instead of rendering a
+ // blank shell when a stale target is received.
+ const pageInfo=pages[page]||pages.workspace;
  const studio=page==='workspace'&&workspaceMode==='studio';
- if(booting)return <div className="boot"><span className="brand-logo"><GitBranch/></span>正在连接本地工作空间…</div>;
+ if(booting|| (user&&hydrating))return <div className="boot"><span className="brand-logo"><GitBranch/></span>{booting?'正在连接本地工作空间…':'正在加载工作空间数据…'}</div>;
  if(!user)return <Login onLogin={u=>{setPage('workspace');setWorkspaceMode('studio');setSelected('');setShowSetup(false);setDialog(null);setPendingTeam(null);setStoreTab('browse');setUser(u);}}/>;
 
  // Authentication alone controls entry. Provider/model readiness is checked per run, never a landing-page gate.
@@ -180,7 +191,7 @@ export default function App(){
    <section className={`page ${page==='workspace'&&!studio?'task-view-page':''}`}><div className="page-heading"><div>{page!=='organization'&&page!=='design'&&<span className="eyebrow">BUILD WITH YOUR AGENTS</span>}<h1>{pageInfo.title}</h1>{pageInfo.subtitle&&<p>{pageInfo.subtitle}</p>}</div><div className="heading-actions">{page==='workspace'&&<>{admin&&<button className="button secondary" onClick={()=>setDialog({kind:'project'})}><FolderGit2 size={16}/>导入项目</button>}{writer&&<button className="button primary" onClick={newRun}><Plus size={17}/>发起任务</button>}</>}{page==='projects'&&admin&&<button className="button primary" onClick={()=>setDialog({kind:'project'})}><Plus size={16}/>导入项目</button>}{page==='agents'&&<button className="button secondary" onClick={()=>setDialog({kind:'execution-policies'})}><ShieldCheck size={16}/>执行权限</button>}{page==='agents'&&admin&&<button className="button primary" onClick={()=>setDialog({kind:'agent'})}><Plus size={16}/>添加Agent</button>}{page==='models'&&admin&&<><button className="button secondary" onClick={()=>setShowSetup(true)}><Zap size={16}/>连接并测试</button><button className="button primary" onClick={()=>setDialog({kind:'provider'})}><Plus size={16}/>添加供应商</button></>}{page==='users'&&admin&&<button className="button primary" onClick={()=>setDialog({kind:'user'})}><Plus size={16}/>创建账号</button>}</div></div>
    {settings?.validation_mode&&<div className="validation-banner" role="status">验证环境：脚本化模型服务，仅验证编排、接口与交互，不代表真实大模型效果。命令执行仅允许固定测试夹具。</div>}{settings&&!settings.dispatcher?.startsWith('connected')&&<div className="service-warning"><AlertCircle size={16}/><span>编排连接：{settings.dispatcher}。任务会保留在队列中，不会模拟执行。</span></div>}
 
-   {studio&&<StudioWorkspace onResumeDraft={runDraft&&!dialog&&!showSetup?newRun:undefined} userName={user.username} onLogout={async()=>{try{await api('/auth/logout','POST',{});setUser(null);setSelected('');}catch(e){fail(e);}}} agents={agents} organization={organization} models={models} providers={providers} projects={projects} runs={runs} detail={detail} events={events} selectedRun={selected} writer={!!writer} admin={admin} validationMode={settings?.validation_mode} onBoard={()=>{setPage('workspace');setWorkspaceMode('board');}} onNavigate={p=>setPage(p as Page)} onCreateAgent={()=>setDialog({kind:'agent'})} onEditAgent={a=>setDialog({kind:'agent',item:a})} onSaveAgent={async(a,patch)=>{const {id,version,...body}=a;await api('/agents/'+id,'PUT',{...body,...patch});await refresh();}} onCreateTask={startOfficeTask} onRepairModel={async modelId=>{await api('/models/'+modelId+'/tool-test','POST',{});await refresh();}} onConfigureTask={seed=>setDialog({kind:'run',item:seed})} onExecutionPermissions={context=>setDialog({kind:'execution-policies',item:context})} onSelectRun={setSelected} onTask={t=>setDialog({kind:'task',item:t})} onRefresh={()=>void refresh()}/>}
+   {studio&&<StudioWorkspace onResumeDraft={runDraft&&!dialog&&!showSetup?newRun:undefined} userName={user.username} onLogout={async()=>{try{await api('/auth/logout','POST',{});setUser(null);setSelected('');}catch(e){fail(e);}}} agents={agents} organization={organization} models={models} providers={providers} projects={projects} runs={runs} detail={detail} events={events} selectedRun={selected} writer={!!writer} admin={admin} validationMode={settings?.validation_mode} onBoard={()=>{setPage('workspace');setWorkspaceMode('board');}} onNavigate={navigateExecution} onCreateAgent={()=>setDialog({kind:'agent'})} onEditAgent={a=>setDialog({kind:'agent',item:a})} onSaveAgent={async(a,patch)=>{const {id,version,...body}=a;await api('/agents/'+id,'PUT',{...body,...patch});await refresh();}} onCreateTask={startOfficeTask} onRepairModel={async modelId=>{await api('/models/'+modelId+'/tool-test','POST',{});await refresh();}} onConfigureTask={seed=>setDialog({kind:'run',item:seed})} onExecutionPermissions={context=>setDialog({kind:'execution-policies',item:context})} onSelectRun={setSelected} onTask={t=>setDialog({kind:'task',item:t})} onRefresh={()=>void refresh()}/>}
    {page==='workspace'&&!studio&&<TaskWorkspace run={detail} runs={runs} selected={selected} projects={projects} agents={agents} events={events} writer={!!writer} admin={admin} busy={busy} live={live} onSelect={setSelected} onNew={seed=>seed?setDialog({kind:'run',item:seed}):newRun()} onResume={()=>void runAction('resume')} onControl={action=>void runAction(action)} onCancel={()=>setDialog({kind:'cancel'})} onSnapshot={()=>setDialog({kind:'snapshot',item:detail?.snapshot})} onTask={task=>setDialog({kind:'task',item:task})} onCollaboration={()=>setPage('collaboration')} onConfigure={()=>setPage('agents')} onNavigate={navigateExecution} onRefresh={async()=>{await refresh();await loadDetail();}}/>}
 
    {(page==='design'||page==='organization')&&<DesignCenter key={page} initialTab={page==='organization'?'office':'hub'} organization={organization} admin={admin} agents={agents} models={models} providers={providers} onRefresh={refresh} onModels={()=>setPage('models')} onSkills={()=>setPage('skills')} onLaunch={seed=>setDialog({kind:'run',item:seed})} openAsset={pendingTeam} onAssetOpened={()=>setPendingTeam(null)}/>}
@@ -195,7 +206,7 @@ export default function App(){
    {page==='models'&&<ProviderCenter admin={admin} providers={providers} models={models} agents={agents} onRefresh={refresh} onEditProvider={provider=>setDialog({kind:'provider',item:provider})} onEditModel={model=>setDialog({kind:'model',item:model})} onConfigureModel={suggested=>setDialog({kind:'model',suggested})} onAgents={()=>setPage('agents')}/>}
    {page==='settings'&&settings&&<section className="panel settings-panel">{admin?<SettingsForm key={JSON.stringify(settings.runtime)+JSON.stringify(settings.roles)} initial={settings} onDone={()=>{void refresh();notify('默认运行配置已更新。');}}/>:<pre className="json-view">{jsonText(settings)}</pre>}<div className="installation-note"><Server size={17}/><p>安装级Worker并发上限：{settings.installation.max_active_activities}；单项目导入上限：{settings.installation.max_project_mb} MB。Docker镜像白名单、gVisor运行时和密钥属于安装配置，不由Agent修改。</p></div></section>}
    {page==='users'&&admin&&<section className="panel"><div className="panel-heading"><div><h2>内部成员</h2><small>{users.length}</small></div></div><div className="users-table">{users.map(u=><div key={u.id}><span className="avatar">{u.username[0].toUpperCase()}</span><b>{u.username}</b><span className="pill">{u.role}</span><span className="muted">{u.enabled?'已启用':'已停用'}</span>{u.id!==user.id&&u.enabled&&<button className="text-button danger-text" onClick={()=>setDialog({kind:'disable-user',item:u})}>停用</button>}</div>)}</div></section>}
-   {page==='audit'&&admin&&<section className="panel"><div className="panel-heading"><div><ShieldCheck size={17}/><h2>配置与账号操作</h2><small>最近300条</small></div><button className="icon-button" aria-label="刷新审计" onClick={()=>api<ForgeEvent[]>('/audit').then(setAudit).catch(fail)}><RefreshCw size={15}/></button></div><div className="timeline">{audit.map(e=><details className="timeline-event" key={e.id}><summary><time>{new Date(e.created_at).toLocaleString()}</time><span className="event-dot"/><b>{e.kind}</b><p>{users.find(u=>u.id===e.data.actor)?.username||e.data.actor||''}</p><ChevronRight size={13}/></summary><pre>{jsonText(e.data)}</pre></details>)}</div></section>}
+   {page==='audit'&&admin&&<section className="panel"><div className="panel-heading"><div><ShieldCheck size={17}/><h2>配置与账号操作</h2><small>最近300条</small></div><button className="icon-button" aria-label="刷新审计" onClick={()=>api<ForgeEvent[]>('/audit').then(setAudit).catch(fail)}><RefreshCw size={15}/></button></div><div className="timeline">{audit.map(e=><details className="timeline-event" key={e.id}><summary><time>{new Date(e.created_at).toLocaleString()}</time><span className="event-dot"/><b>{e.kind}</b><p>{users.find(u=>u.id===e.data?.actor)?.username||e.data?.actor||''}</p><ChevronRight size={13}/></summary><pre>{jsonText(e.data||{})}</pre></details>)}</div></section>}
    <footer className="page-footer"><span>AGENT FORGE / LOCAL FIRST</span><span>真实执行 · 明确权限 · 人工验收</span></footer>
    </section>
   </main>

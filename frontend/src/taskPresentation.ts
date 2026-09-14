@@ -1,23 +1,51 @@
 import {ForgeEvent,Run,Task} from './types';
 
 export type TaskTab='progress'|'actions'|'results'|'activity';
+export function isCodexRun(run:Run){return run.execution_engine==='codex'||run.snapshot?.execution_engine==='codex';}
 /** Display aliases only; unknown runtime tools remain visible under their real names. */
 export function taskToolLabel(value:unknown){const name=typeof value==='string'?value:'';return ({inspect_team:'查看团队能力目录',read_work_result:'读取团队已集成成果'} as Record<string,string>)[name]||name;}
+/**
+ * The Codex bridge keeps the original protocol event lossless under
+ * `runtime.*`.  Convert the small set of well-known notifications into the
+ * existing UI vocabulary without changing the stored event or guessing about
+ * unknown provider-specific messages.
+ */
+function runtimeDisplayEvent(event:ForgeEvent):ForgeEvent{
+ if(!event.kind.startsWith('runtime.'))return {...event,data:event.data||{}};
+ const payload=(event.data?.payload&&typeof event.data.payload==='object'?event.data.payload:{}) as Record<string,any>;
+ const runtimeKind=event.data?.runtime_kind||event.kind.slice('runtime.'.length).replace(/\./g,'/');
+ const item=payload.item&&typeof payload.item==='object'?payload.item:{};
+ const itemType=String(item.type||payload.type||'').toLowerCase();
+ const base={...event.data, ...payload, runtime_kind:runtimeKind, thread_id:event.data?.thread_id, turn_id:event.data?.turn_id, item_id:event.data?.item_id};
+ if(runtimeKind==='item/agentMessage/delta'||runtimeKind==='item/agentMessage/created')
+   return {...event,kind:runtimeKind.endsWith('/delta')?'model.delta':'model.started',data:{...base,text:payload.delta||payload.text||''}};
+ if(runtimeKind==='turn/started')return {...event,kind:'model.started',data:base};
+ if(runtimeKind==='turn/completed'){
+   const turnStatus=String(payload.turn?.status||'').toLowerCase();
+   if(['failed','error','interrupted','cancelled','canceled'].includes(turnStatus))
+     return {...event,kind:'task.failed',data:{...base,summary:payload.turn?.error?.message||payload.error?.message||`模型回合${turnStatus==='interrupted'?'被中断':'失败'}`} };
+   return {...event,kind:'model.completed',data:{...base,summary:payload.turn?.status||'模型回合已结束'}};
+ }
+ if(runtimeKind==='turn/failed'||runtimeKind==='error')return {...event,kind:'task.failed',data:{...base,summary:payload.error?.message||payload.message||'Codex 运行时失败'}};
+ if(runtimeKind==='item/started'&&/(command|mcp|tool|filechange|patch)/.test(itemType))return {...event,kind:'tool.started',data:{...base,tool:item.type||payload.tool||itemType}};
+ if(runtimeKind==='item/completed'&&/(command|mcp|tool|filechange|patch)/.test(itemType))return {...event,kind:'tool.completed',data:{...base,tool:item.type||payload.tool||itemType,summary:payload.output||payload.result||''}};
+ return {...event,data:event.data||{}};
+}
 /** Only this run's evidence may drive its activity; run state wins over stale heartbeats. */
 export function taskActivity(run:Run,events:ForgeEvent[]){
- const scoped=[...new Map(events.filter(e=>e.run_id===run.id).map(e=>[e.id,e])).values()].sort((a,b)=>a.id-b.id);
+ const scoped=[...new Map(events.filter(e=>e.run_id===run.id).map(e=>[e.id,runtimeDisplayEvent(e)])).values()].sort((a,b)=>a.id-b.id);
  const visible=new Set(['model.started','model.progress','model.delta','model.completed','agent.started','tool.started','tool.completed','agent.message','agent.message.delivered','run.state','task.failed','team.issue.opened','team.issue.coordinating','team.issue.resolved','team.issue.escalated']);
  const latest=[...scoped].reverse().find(e=>visible.has(e.kind));
  const latestStart=[...scoped].map((e,i)=>e.kind==='model.started'?i:-1).filter(i=>i>=0).pop()??-1;
  const latestTerminal=[...scoped].map((e,i)=>e.kind==='model.completed'?i:-1).filter(i=>i>=0).pop()??-1;
- const streamEvents=scoped.slice(Math.max(latestStart,latestTerminal+1)+1).filter(e=>e.kind==='model.delta').sort((a,b)=>(a.data.sequence||0)-(b.data.sequence||0));
- const streamText=streamEvents.map(e=>typeof e.data.text==='string'?e.data.text:'').join('');
- const outputText=(e:ForgeEvent)=>e.kind==='agent.message'?(e.data.body||e.data.summary):e.data.summary;
+ const streamEvents=scoped.slice(Math.max(latestStart,latestTerminal+1)+1).filter(e=>e.kind==='model.delta').sort((a,b)=>(a.data?.sequence||0)-(b.data?.sequence||0));
+ const streamText=streamEvents.map(e=>typeof e.data?.text==='string'?e.data.text:'').join('');
+ const outputText=(e:ForgeEvent)=>e.kind==='agent.message'?(e.data?.body||e.data?.summary):e.data?.summary;
  const output=[...scoped].reverse().find(e=>['model.completed','agent.message','tool.completed','task.finished'].includes(e.kind)&&typeof outputText(e)==='string'&&outputText(e).trim());
  const stopped:Record<string,string>={paused:'任务已暂停，等待继续',needs_attention:'任务已停止，查看原因与处理',cancelled:'任务已取消，不再执行',completed:'任务已完成',awaiting_decision:'等待你的回答或授权',awaiting_approval:'等待计划审批',awaiting_acceptance:'等待成果验收'};
- let status=stopped[run.status]||'';
+ let status=isCodexRun(run)&&run.status==='awaiting_approval'?'等待 Codex 运行时授权':stopped[run.status]||'';
  if(!status&&latest){const d=latest.data;status=latest.kind==='model.started'?`正在调用 ${d.provider||'已配置模型'} / ${d.model||''}`:latest.kind==='model.progress'?`模型仍在响应（已等待 ${d.elapsed_s||0} 秒）`:latest.kind==='model.delta'?`正在接收模型输出（已收到 ${streamText.length} 字）`:latest.kind==='model.completed'?'模型已返回，本轮结果已记录':latest.kind==='tool.started'?`正在执行工具 ${taskToolLabel(d.tool)}`:latest.kind==='tool.completed'?`工具 ${taskToolLabel(d.tool)} 已返回`:latest.kind==='agent.message'?'成员消息已发送':latest.kind==='agent.message.delivered'?'消息已进入接收者上下文':latest.kind==='agent.started'?'成员已开始处理':latest.kind==='task.failed'?'成员执行失败，已交给负责人分析':latest.kind==='team.issue.coordinating'?'负责人正在处理执行问题':latest.kind==='team.issue.opened'?'发现执行问题，等待负责人处理':latest.kind==='team.issue.resolved'?'修复依据已核对':latest.kind==='team.issue.escalated'?'负责人处理未解决，等待人工协助':'';}
- return {events:scoped,status,agentId:stopped[run.status]?'':latest?.data.agent_id||latest?.data.from_agent_id||'',output,outputText:output?outputText(output):'',outputAgentId:output?.data.agent_id||output?.data.from_agent_id||'',streamText};
+ return {events:scoped,status,agentId:stopped[run.status]?'':latest?.data?.agent_id||latest?.data?.from_agent_id||'',output,outputText:output?outputText(output):'',outputAgentId:output?.data?.agent_id||output?.data?.from_agent_id||'',streamText};
 }
 export function isAutonomous(run:Run){return run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous'||run.report?.mode==='autonomous';}
 export function isDiscussion(run:Run){return !isAutonomous(run)&&(run.report?.mode==='discussion'||run.snapshot?.orchestration?.mode==='discussion');}
@@ -59,6 +87,7 @@ export function runPresentation(run:Run){
   awaiting_acceptance:['成果已就绪，等待你的验收','核对交付文件、成员结论和实际验证依据，再决定是否接受。','results','检查交付成果'],
   needs_attention:['任务已停止 · 尚未完成','保留已经产生的工作与停止原因，不把用尽额度、等待或成员回复当作成功。','progress','查看原因与处理'],
  });
+ if(isCodexRun(run))copy.awaiting_approval=['运行时请求你的授权','核对具体命令、文件或本回合权限。这不是执行计划审批，不授予会话级或永久权限。','actions','审阅运行时请求'];
  const issue=tasks.map(t=>t.result?.issue_summary).find(i=>i?.status==='open'||i?.status==='escalated');
  if(issue&&run.status==='running')copy.running=['负责人正在处理执行问题',issue.summary||'检查当前成果，在已有权限内组织修复与验证。','progress','查看问题与修复进度'];
  if(issue&&run.status==='needs_attention')copy.needs_attention=['自动处理已停止，需要你的协助',issue.escalation_reason||issue.summary||'查看问题、已尝试的处理和需要你决定的事项。','progress','查看具体问题'];

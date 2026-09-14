@@ -6,7 +6,7 @@
   "description": "Agent Forge macOS desktop client",
   "main": "main.cjs",
   "scripts": {
-    "start": "electron .",
+    "start": "cargo build --manifest-path ../rust/Cargo.toml --locked -p forge-server && electron .",
     "test": "node --test test/*.test.cjs",
     "build": "node ../scripts/build-desktop.mjs"
   },

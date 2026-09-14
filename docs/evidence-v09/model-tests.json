@@ -1,5 +1,5 @@
 {
-  "passed": 15,
+  "passed": 17,
   "failed": 0,
   "results": [
     {
@@ -24,6 +24,14 @@
     },
     {
       "name": "人物各姿态几何有限、没有隐式模型调用",
+      "status": "passed"
+    },
+    {
+      "name": "待命坐姿有呼吸和轻微手部活动，且不改写ActorView",
+      "status": "passed"
+    },
+    {
+      "name": "空闲同事交流只改变渲染姿态，不产生业务字段",
       "status": "passed"
     },
     {

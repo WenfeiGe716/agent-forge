@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "owner": "rust",
+  "runtime": "unmodified-codex",
+  "codex_binary_sha256": "659d70d0137a78c5863a43eca66f15dc399d82fd73afa9ff6edbf283b024e841",
+  "run_id": "eff6f0ab582f0e9456855112d5190733",
+  "status": "completed",
+  "members": 3,
+  "codex_threads": 3,
+  "runtime_connections": 3,
+  "provider_calls": 26,
+  "native_skill_reads": 3,
+  "peer_messages": 2,
+  "native_skill_selection_verified": true,
+  "native_user_input_http_roundtrip_verified": true,
+  "concurrent_member_barrier_verified": true,
+  "isolated_member_native_files_integrated": true,
+  "peer_messages_delivered": 2,
+  "member_results_reviewed": 2,
+  "http_idempotency_verified": true,
+  "paid_provider_used": false
+}

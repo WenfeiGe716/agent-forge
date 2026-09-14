@@ -31,12 +31,12 @@ const recentNotifications = [];
 
 function command() {
   if (app.isPackaged) {
-    return { file: path.join(process.resourcesPath, 'backend', 'forge-desktop-backend'), cwd: process.resourcesPath };
+    return { file: path.join(process.resourcesPath, 'backend', 'forge-server'), args: ['--desktop'], cwd: process.resourcesPath };
   }
   const root = path.resolve(__dirname, '..');
   return {
-    file: path.join(root, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python'),
-    args: [path.join(__dirname, 'backend_entry.py')],
+    file: path.join(root, 'rust', 'target', 'debug', process.platform === 'win32' ? 'forge-server.exe' : 'forge-server'),
+    args: ['--desktop'],
     cwd: root,
   };
 }

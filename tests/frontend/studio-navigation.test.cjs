@@ -32,3 +32,12 @@ test('navigation source uses measured resize handling and keyboard details menu'
  assert.match(source,/ResizeObserver/);assert.match(source,/addEventListener\('resize'/);assert.match(source,/<details className="studio-navigation-more">/);assert.match(source,/summary aria-label/);
  const css=fs.readFileSync(path.resolve('frontend/src/studio-navigation.css'),'utf8');assert.match(css,/studio-header \.studio-navigation-measure button/);assert.match(css,/display:flex!important/);
 });
+
+test('StudioWorkspace routes navigation targets through App unified mapping',()=>{
+ const app=fs.readFileSync(path.resolve('frontend/src/App.tsx'),'utf8');
+ assert.match(app,/const navigateExecution=\(target:string/);
+ assert.match(app,/onNavigate=\{navigateExecution\}/);
+ assert.doesNotMatch(app,/<StudioWorkspace[\s\S]*onNavigate=\{p=>setPage\(p as Page\)\}/);
+ assert.match(app,/providers:'models'/);
+ assert.match(app,/setup:'execution'/);
+});

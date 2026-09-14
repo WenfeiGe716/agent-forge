@@ -51,6 +51,14 @@ test('workspace passes explicit organization to Office and displays business rol
  assert.doesNotMatch(text(tree),/任务分派、读写代码、工具调用和消息交接决定执行动作/);
 });
 
+test('Codex approval shortcut opens the actual requesting employee rather than the legacy planner',()=>{
+ const detail={id:'codex-run',status:'awaiting_approval',execution_engine:'codex',snapshot:{planner_id:'a',entry_agent_id:'a'},tasks:[{agent_id:'b',status:'awaiting_approval'}]};
+ const h=harness('StudioWorkspace',{detail}),tree=h.render();
+ nodes(tree).find(node=>node.props?.className==='approval-link').props.onClick();
+ const opened=nodes(h.render()).find(node=>node.props?.initialTab==='approval');
+ assert.ok(opened);assert.equal(opened.props.agent.id,'b');assert.equal(opened.props.initialRunId,'codex-run');
+});
+
 test('blank project creation defaults external models on, permits opt-out, and selects only the new project',async()=>{
  for(const allow of [true,false]){
   const calls=[],existing={id:'old',name:'历史项目',allow_external_models:false},before=JSON.stringify(existing);

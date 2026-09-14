@@ -99,7 +99,8 @@ def reconcile(s, run):
         # Failed model/tool activations are persisted as blocked results by the
         # runtime.  Surface them to the coordinator just like an explicit
         # member blocker, instead of terminating the entire run.
-        if task.kind != 'autonomous' or task.spec.get('work_issue') or task.spec.get('recovery_issue_keys'):
+        if (task.kind != 'autonomous' or task.spec.get('work_issue')
+            or task.spec.get('recovery_issue_keys') or task.spec.get('recovery_requested')):
             continue
         failed_member = task.status == 'failed' and task.result.get('outcome') == 'blocked'
         blocked_member = task.status == 'integrated' and task.result.get('outcome') == 'blocked'

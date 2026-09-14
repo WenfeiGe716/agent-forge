@@ -1,0 +1,52 @@
+{
+  "id": "rocketbox-male-adult-01",
+  "displayName": "Rocketbox Male Adult 01",
+  "source": {
+    "repository": "https://github.com/microsoft/Microsoft-Rocketbox",
+    "commit": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+    "license": "MIT",
+    "licenseFile": "LICENSE-Rocketbox-MIT.md",
+    "attribution": "Copyright (c) 2020 Microsoft",
+    "assetSpecificLicenseFilesInSource": []
+  },
+  "format": "FBX",
+  "rigged": true,
+  "maps": {
+    "body": {
+      "color": "m002_body_color.png",
+      "normal": "m002_body_normal.png",
+      "specular": "m002_body_specular.png"
+    },
+    "head": {
+      "color": "m002_head_color.png",
+      "normal": "m002_head_normal.png",
+      "specular": "m002_head_specular.png"
+    },
+    "opacity": "m002_opacity_color.png"
+  },
+  "mapDerivatives": {
+    "format": "PNG",
+    "tool": "macOS sips",
+    "sourceFormat": "TGA",
+    "note": "Lossless format conversion; pixel dimensions and channels are retained. Original TGA bytes are not bundled; source commit paths are recorded."
+  },
+  "animationSamples": [
+    {
+      "id": "idle-breathe-01",
+      "file": "animations/f_idle_breathe_01.fbx",
+      "sourceBlob": "64d93cc3d5c38dc107d4dad23da70855a64ddb10"
+    }
+  ],
+  "sha256": {
+    "Male_Adult_01.fbx": "8d1edb51b4dc3427ae2456f4407fc105532c145dd019e53cd42bab31cc948a29",
+    "animations/f_idle_breathe_01.fbx": "e470ba984484149c8269772b7640b754bd996ba83b23ae75535128412997aa45",
+    "m002_body_color.png": "ecbcdde9239aca0330a09e38076f24816b9cd003d5030a582622e7298d992cbe",
+    "m002_body_normal.png": "90db191ffd9aa44f76cce5768cedf0ea95381ae801299dd7f17e94e132f612d8",
+    "m002_body_specular.png": "12a4a13f9630426b307a6e7cf3a1c1d61069d5e4d67dad00f96f9817964efd69",
+    "m002_head_color.png": "df94bc3650174829d8c4d037c2cba59830554507b58b3ceca00b15e8bfab6cec",
+    "m002_head_normal.png": "72f15ee569ebb258ff5c8cd058fccea0365cb4c92ba2d148f3aa6aedf38addf3",
+    "m002_head_specular.png": "b3ae55f0cc4661b0f66a5a57b17a77899bd9e9a82cf60b871435dc6c91a5d5c5",
+    "m002_opacity_color.png": "5d3a8d390d0b22a65d3aa4d140432c566986976a9aeccc88061aeeed213bbeb8"
+  },
+  "notes": "Avatar FBX, PNG texture derivatives, and the verified Rocketbox idle animation are bundled for offline local loading."
+}

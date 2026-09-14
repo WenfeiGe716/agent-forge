@@ -1,5 +1,5 @@
 {
-  "passed": 29,
+  "passed": 30,
   "failed": 0,
   "results": [
     {
@@ -112,6 +112,10 @@
     },
     {
       "name": "人行道散步者在端点回转，不跳跃循环至另一端",
+      "status": "passed"
+    },
+    {
+      "name": "人行道散步者端点平滑减速，步幅不会突然冲刺",
       "status": "passed"
     },
     {

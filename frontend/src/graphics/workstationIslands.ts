@@ -18,7 +18,10 @@ export function workstationIslandInlays(desks:RenderedDesk[],zone:OrganizationZo
   // here too so presentation cannot paint beyond an edited zone's footprint.
   if(left<zone.x-zone.width/2||right>zone.x+zone.width/2||back<zone.z-zone.depth/2||front>zone.z+zone.depth/2)return[];
   const x=(left+right)/2,z=(back+front)/2,width=right-left,depth=front-back;
-  const hue=color(accent),white=color(0xf4f3ed),tint=hue.map((c,i)=>c*.13+white[i]*.87) as Part['color'];
+  // Work zones are soft textile islands, not coloured bounding boxes.  Keep a
+  // tiny neutral value difference between rows so the floor remains legible
+  // without the former blue/pink outlines.
+  const white=color(0xf4f2eb),tint=color(0xd9d7cf) as Part['color'];
   // These millimetre-thin markings sit just above the existing carpet and
   // below furniture contact points. Do not add them to navigation obstacles.
   return[

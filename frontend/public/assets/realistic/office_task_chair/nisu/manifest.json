@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "asset_id": "office_task_chair_nisu",
+  "display_name": "Office Chair (nisu)",
+  "author": "nisu",
+  "license": "CC0 1.0",
+  "source_page": "https://opengameart.org/content/office-chair-1",
+  "source_model": "https://www.3dmodelscc0.com/model/office-chair",
+  "download_url": "https://opengameart.org/sites/default/files/office_chair.zip",
+  "archive_sha256": "27a794de9d818ff0bfa410b7fbc454c937b0d829b03ddbd70b61668cfe68234b",
+  "format": "FBX",
+  "features": [
+    "ergonomic office chair silhouette",
+    "upholstered high back and seat",
+    "armrests",
+    "central gas lift",
+    "five-star caster base"
+  ],
+  "textures": {
+    "base_color": "Office_Chair_Base_Color.png",
+    "normal": "Office_Chair_Normal.png",
+    "roughness": "Office_Chair_Roughness.png",
+    "metallic": "Office_Chair_Metallic.png",
+    "height": "Office_Chair_Height.png"
+  },
+  "files": [
+    {"path": "Office_Chair.fbx", "sha256": "5e20f60171524b8826c11ff5bc892a40ac0711fa80bd1e1d95d1c7422c587724"},
+    {"path": "Office_Chair_Base_Color.png", "sha256": "414dabc7b1fac638770e837d83cadf683299ddff782146f3f6ad9543880049cc"},
+    {"path": "Office_Chair_Height.png", "sha256": "22b0fffedcc5de9a77181e124ea811d85fb365ad2ff550e20c617d74f4430e15"},
+    {"path": "Office_Chair_Metallic.png", "sha256": "cf9ceb41f66da974d8fca4e03f2339c9824b610ee58a86d29c60987891a0bb80"},
+    {"path": "Office_Chair_Normal.png", "sha256": "4d924afc0b801ec14dee1c5842ce6a25358d0dad6b0c7e6cd56a556b8e838de9"},
+    {"path": "Office_Chair_Roughness.png", "sha256": "33da7be3a9d55a07941269b7cd34aaf8034dd232d81625de613d2b9ff2be1c72"}
+  ]
+}

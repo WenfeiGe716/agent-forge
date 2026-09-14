@@ -22,7 +22,8 @@ test('office send shows one actionable project restriction, retains model-specif
   setSelected:()=>assert.fail('failed preflight cannot select a run'),refresh:()=>assert.fail('failed preflight cannot refresh a created run'),
  });
  await assert.rejects(exports.startOfficeTask({project_id:'project',request:'需求',agent_ids:['a','b','c','d']}),error=>{
-  assert.match(error.message,/任务尚未开始/);
+  assert.match(error.message,/暂时无法发送/);
+  assert.doesNotMatch(error.message,/任务尚未开始|请先开始/);
   assert.equal((error.message.match(/当前项目未开启外部模型访问/g)||[]).length,1);
   assert.match(error.message,/项目配置.*后重试/);
   assert.match(error.message,/Atlas · 模型甲 · 供应商甲：模型已停用/);
@@ -31,4 +32,19 @@ test('office send shows one actionable project restriction, retains model-specif
  });
  assert.equal(calls.length,1);assert.equal(calls[0][0],'/execution/preflight');
  assert.equal(JSON.stringify(result),before);
+});
+
+test('one office send creates and selects the task without a separate start or configuration step',async()=>{
+ const calls=[],user={id:'admin'},directSubmission={current:{}},exports={},selected=[];
+ let refreshed=0;
+ vm.runInNewContext(compiled,{exports,RunPreflightError,user,writer:true,directSubmission,currentUserRef:{current:user},
+  createRunSubmission:()=>createRunSubmission(async(...args)=>{calls.push(args);return args[0]==='/execution/preflight'?{ready:true,checks:[]}:{id:'started-task'};},()=> 'once'),
+  setSelected:id=>selected.push(id),refresh:()=>{refreshed++;},codexRuntimeEnabled:true,codexDefaultSchedulerEnabled:true,
+  fetch:()=>assert.fail('the server owns automatic dispatch; no second start request'),
+ });
+ const run=await exports.startOfficeTask({project_id:'project',request:'需求',agent_ids:['a','b'],entry_agent_id:'a',office_team_id:'team',office_layout_ref:{id:'layout',version:2,digest:'digest'}});
+ assert.equal(run.id,'started-task');
+ assert.deepEqual(calls.map(call=>call[0]),['/execution/preflight','/runs']);
+ assert.deepEqual(selected,['started-task']);assert.equal(refreshed,1);
+ assert.equal(calls[1][2].office_team_id,'team');assert.equal(calls[1][3]['Idempotency-Key'],'once');
 });

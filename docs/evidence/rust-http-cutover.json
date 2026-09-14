@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-12",
+  "ok": true,
+  "owner": "rust",
+  "runtime": "unmodified-codex",
+  "gateway": true,
+  "run_id": "d122cb457088eb714c08dd66cea2f48f",
+  "status": "completed",
+  "provider_calls": 2,
+  "tool_output_returned": true,
+  "artifact_zip_sha256": "f3afd7aa288e1827be9a371bc65bb41257b6a09e79c83685501cf27c78f6af82",
+  "http_idempotency_verified": true,
+  "paid_provider_used": false,
+  "source_product_migration": {
+    "source_sha256_unchanged": "6a331de5a5ceca3ffabba8a15fa5a66205920623b2fff71455ae46a1714b1f2c",
+    "users": 1,
+    "providers": 1,
+    "agents": 8,
+    "skills": 0,
+    "projects": 1,
+    "existing_login_verified": true
+  },
+  "validation": {
+    "rust_workspace": "passed",
+    "clippy_all_targets": "passed",
+    "electron_tests_passed": 21,
+    "packaged_backend_tests_passed": 1,
+    "postgres_export_contract_tests_passed": 2,
+    "browser_pages": 15,
+    "browser_javascript_errors": 0,
+    "browser_failed_api_requests": 0,
+    "compose_configuration": "passed",
+    "docker_runtime": "not_tested_daemon_unavailable",
+    "live_postgres_export": "not_tested"
+  }
+}

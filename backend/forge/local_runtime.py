@@ -12,7 +12,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from sqlalchemy import select
 from .config import settings
-from .db import session, Run, Outbox, ActivityJournal
+from .db import session, Run, Outbox, ActivityJournal, emit
 from .workflow_core import DevelopmentFlow
 from . import engine
 
@@ -85,6 +85,10 @@ class LocalScheduler:
             app.state.dispatch_status='unavailable: another local runner owns the process lock'
             raise RuntimeError('本地模式仅允许一个API进程；发现另一个运行器，拒绝重复执行')
         app.state.dispatch_status='connected (local journal)'
+        # A callback belongs to the exited app-server connection, not merely a
+        # persisted Thread. Never replay its approval after a backend restart.
+        from .runtime_approvals import expire_requests
+        expire_requests()
         try:
             while True:
                 with session() as s:
@@ -94,17 +98,37 @@ class LocalScheduler:
                     candidates=[]
                     for run in s.scalars(select(Run).order_by(Run.created_at)):
                         if run.status in {'completed','cancelled'}: continue
-                        if run.status == 'needs_attention':
+                        # A Codex process/thread may have side effects that
+                        # cannot be inferred after an API restart. Do not
+                        # replay a non-queued Codex Run; the recovery control
+                        # will explicitly resume it once thread state is
+                        # available. Legacy runs keep their existing replay
+                        # journal semantics.
+                        if ((run.snapshot or {}).get('execution_engine') == 'codex'
+                                and run.status not in {'queued', 'paused', 'needs_attention'}):
+                            continue
+                        if run.status in {'paused', 'needs_attention'}:
                             resume = s.scalar(select(Outbox).where(
                                 Outbox.run_id == run.id, Outbox.action == 'control',
                                 Outbox.sent == False,
-                                Outbox.payload['action'].as_string() == 'resume'))
+                                Outbox.payload['action'].as_string().in_(['resume', 'retry', 'continue', 'reassign'])))
                             if not resume: continue
                         candidates.append(run)
                 for run in candidates:
                     if run.id in self.running: continue
                     # Limit total active runs; awaiting approvals consumes one slot.
                     if len(self.running)>=settings.max_active_runs: break
+                    if (run.snapshot or {}).get('execution_engine') == 'codex':
+                        # Codex owns model/tool execution for opted-in new
+                        # runs. Legacy snapshots remain on DevelopmentFlow.
+                        from .codex_scheduler import CodexRunExecutor
+                        executor = CodexRunExecutor(run.id)
+                        # Keep the same executor object in the registry so
+                        # pause/cancel controls can reach its live Codex
+                        # client and active Thread/Turn.
+                        job = asyncio.create_task(executor.run())
+                        self.running[run.id] = (executor, job)
+                        continue
                     runtime=LocalRuntime(run.id,self.semaphore)
                     flow=DevelopmentFlow(runtime)
                     # All prior durable controls/decisions reconstruct the latest intent.
@@ -121,6 +145,43 @@ class LocalScheduler:
                 for m in commands:
                     if m.run_id not in self.running: continue
                     flow,job=self.running[m.run_id]
+                    if flow is not None and hasattr(flow, 'request_cancel'):
+                        # The Codex executor owns its Thread/Turn. Controls are
+                        # delivered to that live object rather than replayed as
+                        # a second business task.
+                        action = m.payload.get('action') if m.action == 'control' else None
+                        if m.action == 'runtime_approval':
+                            try:
+                                await flow.deliver_approval(m.payload.get('approval_id', ''))
+                            except Exception:
+                                with session() as s:
+                                    row = s.get(Outbox, m.id)
+                                    row.sent, row.error = True, '审批送达结果未确认，请检查运行记录；不会自动重发'
+                                continue
+                        elif action == 'cancel':
+                            flow.request_cancel(); job.cancel()
+                        elif action == 'pause':
+                            async def interrupt_live(executor=flow, run_id=m.run_id,
+                                                     task_key=m.payload.get('task_key')):
+                                try:
+                                    await executor.interrupt(task_key)
+                                except Exception as exc:
+                                    with session() as db:
+                                        emit(db, run_id, 'runtime.control.failed', {'action':'pause','error':str(exc)[:800]})
+                            asyncio.create_task(interrupt_live())
+                        elif action == 'steer':
+                            async def steer_live(executor=flow, run_id=m.run_id,
+                                                 prompt=m.payload.get('prompt',''),
+                                                 task_key=m.payload.get('task_key') or 'codex'):
+                                try:
+                                    await executor.steer(prompt, task_key)
+                                except Exception as exc:
+                                    with session() as db:
+                                        emit(db, run_id, 'runtime.control.failed', {'action':'steer','error':str(exc)[:800]})
+                            asyncio.create_task(steer_live())
+                        with session() as s:
+                            row=s.get(Outbox,m.id);row.sent,row.error=True,''
+                        continue
                     if m.action=='control': flow.control({**m.payload,'command_id':m.id})
                     elif m.action=='decide': flow.decide({**m.payload,'command_id':m.id})
                     elif m.action=='respond': flow.respond({**m.payload,'command_id':m.id})
@@ -129,8 +190,13 @@ class LocalScheduler:
                 for rid,(flow,job) in list(self.running.items()):
                     if job.done():
                         try: job.result()
+                        except asyncio.CancelledError:
+                            # A user cancellation is a normal task boundary;
+                            # it must not tear down the process-wide scheduler.
+                            pass
                         except Exception as exc:
-                            await asyncio.to_thread(engine.set_stage,{'run_id':rid,'status':'needs_attention','error':f'本地编排异常：{type(exc).__name__}: {exc}'[:2000]})
+                            message = '本地 Codex 调度异常' if hasattr(flow, 'request_cancel') else '本地编排异常'
+                            await asyncio.to_thread(engine.set_stage,{'run_id':rid,'status':'needs_attention','error':f'{message}：{type(exc).__name__}: {exc}'[:2000]})
                         del self.running[rid]
                 await asyncio.sleep(.15)
         finally:

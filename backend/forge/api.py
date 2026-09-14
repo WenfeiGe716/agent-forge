@@ -1,4 +1,5 @@
 import asyncio
+import base64
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
@@ -21,6 +22,8 @@ from .model_compatibility import model_errors, validate_provider_change
 from .snapshots import freeze_run
 from .workspace import import_project, run_root
 from . import desktop
+from .runtime_bridge import runtime_binary_status
+from .runtime_poc_api import register as register_runtime_poc
 
 TERMINAL = {'completed', 'cancelled', 'needs_attention'}
 ACTIVE = {'intake','awaiting_decision','discussing','planning','running','verifying','reviewing','reworking','paused','awaiting_approval','awaiting_acceptance'}
@@ -184,7 +187,8 @@ def run_out(r, detailed=False):
               'error':r.error, 'created_at':r.created_at, 'updated_at':r.updated_at,
               'agent_ids':list((r.snapshot or {}).get('agents', {})),
               'mode':'autonomous' if strategy == 'autonomous' else ((r.snapshot or {}).get('orchestration') or {}).get('mode', 'development'),
-              'execution_strategy':strategy, 'run_project_checks':(r.snapshot or {}).get('run_project_checks', strategy == 'workflow'),
+              'execution_strategy':strategy, 'execution_engine':(r.snapshot or {}).get('execution_engine', 'legacy'),
+              'run_project_checks':(r.snapshot or {}).get('run_project_checks', strategy == 'workflow'),
               **{key:(r.snapshot or {}).get(key) for key in ('entry_agent_id', 'planner_id', 'reviewer_id')}}
     if detailed:
         output.update({'snapshot':r.snapshot, 'plan':r.plan, 'plan_digest':r.plan_digest, 'artifact_digest':r.artifact_digest, 'report':r.report})
@@ -194,6 +198,23 @@ def run_out(r, detailed=False):
 def health():
     return {'ok':True, 'version':'0.14.0',
             **({'desktop_instance': desktop.instance_fingerprint()} if desktop.enabled() else {})}
+
+@app.get('/api/runtime/status')
+def runtime_status(user=Depends(current_user)):
+    """Show the project-owned execution runtimes without starting them.
+
+    This is intentionally read-only. It does not inspect or mutate ~/.codex,
+    and it does not claim that a provider/model is executable until a real
+    task performs its own capability probe.
+    """
+    return runtime_binary_status(codex=settings.codex_binary, opencodex=settings.opencodex_binary) | {
+        'runtime_data_root': str(settings.runtime_data_root),
+        'configured_transport': 'stdio',
+        'integration_stage': 'codex-first' if settings.codex_runtime_enabled else 'foundation',
+        'task_execution_enabled': settings.codex_runtime_enabled,
+        'default_scheduler_enabled': settings.codex_default_scheduler_enabled,
+        'team_mcp_enabled': settings.codex_team_mcp_enabled,
+    }
 
 @app.post('/api/auth/login')
 def login(data: Login, request: Request, response: Response):
@@ -571,6 +592,9 @@ def build_snapshot(s,data,user):
     if problems:
         raise ValueError('新任务成员尚未就绪：' + '；'.join(problems))
     snap['design']['workstations'] = {item['agent_id']: item['workstation'] for item in seating}
+    # Pin the execution engine into the immutable Run snapshot. This allows a
+    # staged Codex-first rollout without altering already-created legacy runs.
+    snap['execution_engine'] = 'codex' if settings.codex_default_scheduler_enabled else 'legacy'
     return snap
 
 @app.post('/api/runs/preview-config')
@@ -594,6 +618,25 @@ def create_run(data: RunInput,user=Depends(developer),idempotency_key: str | Non
                   .values(value=PlatformConfig.value).execution_options(synchronize_session=False))
         s.expire_all()
         snap=build_snapshot(s,data,user)
+        # Materialize user-provided attachments before enqueueing the run.  The
+        # worker may start immediately after commit, so files must already be
+        # present in the run-owned input directory.  Names/content are
+        # validated by RunInput and never escape this directory.
+        attachment_root = run_root(run_id) / 'input-attachments'
+        if data.attachments:
+            attachment_root.mkdir(parents=True, exist_ok=True)
+            manifest=[]
+            if len({item.filename for item in data.attachments}) != len(data.attachments):
+                raise HTTPException(422, '附件名称不能重复')
+            for item in data.attachments:
+                raw=base64.b64decode(item.content_base64, validate=True)
+                destination=attachment_root / item.filename
+                if destination.exists() or destination.is_symlink():
+                    raise HTTPException(409, '附件名称重复，请重新选择文件')
+                with destination.open('xb') as stream:
+                    stream.write(raw)
+                manifest.append({'filename':item.filename,'media_type':item.media_type,'size':len(raw)})
+            snap['attachments']=manifest
         snap['request_hash']=checksum
         r=Run(id=run_id,project_id=data.project_id,owner_id=user.id,title=data.title,request=data.request,snapshot=snap,status='queued')
         s.add(r);s.flush()
@@ -622,6 +665,97 @@ def get_run(run_id: str,user=Depends(current_user)):
 def control_run(run_id: str,data: Control,user=Depends(developer)):
     with session() as s:
         r=run_access(s,run_id,user)
+        if data.action == 'steer':
+            if (r.snapshot or {}).get('execution_engine') != 'codex':
+                raise HTTPException(409, '只有 Codex 运行支持在当前回合追加指令')
+            if not data.prompt:
+                raise HTTPException(422, '追加指令不能为空')
+            if r.status not in {'running', 'awaiting_approval'}:
+                raise HTTPException(409, '当前任务没有可追加指令的活动回合')
+            target_key = data.task_key or 'codex'
+            target = s.get(Task, f'{run_id}:{target_key}')
+            if not target:
+                raise HTTPException(404, '指定的成员任务不存在')
+            if target_key != 'codex' and not settings.codex_team_mcp_enabled:
+                raise HTTPException(409, '当前运行未启用团队 Codex 会话')
+            command = Outbox(run_id=run_id, action='control', payload={
+                'action':'steer', 'task_key':target_key, 'prompt':data.prompt, 'actor':user.id})
+            s.add(command); s.flush()
+            emit(s, run_id, 'control.requested', {
+                'actor':user.id, 'action':'steer', 'command_id':command.id,
+                'task_key':target_key, 'prompt_length':len(data.prompt),
+            })
+            return {'accepted':True,'command_id':command.id,
+                    'effect':'已将追加指令排入当前 Codex 回合，不会创建新任务'}
+        if data.action in {'retry', 'reassign', 'continue'}:
+            if r.snapshot.get('execution_strategy') != 'autonomous':
+                raise HTTPException(409, '只有团队自治运行支持在原任务中恢复')
+            if not data.task_key:
+                raise HTTPException(409, '恢复操作需要指定失败的成员任务')
+            if r.status in TERMINAL and r.status not in {'needs_attention'}:
+                raise HTTPException(409, '运行已结束；恢复必须在原运行中进行')
+            # A Codex-first Run already has one durable Thread/Task. Do not
+            # create a legacy recovery activation beside it: queue the same
+            # task so the local scheduler resumes its frozen Thread instead.
+            if (r.snapshot or {}).get('execution_engine') == 'codex':
+                source = s.get(Task, f'{run_id}:{data.task_key}')
+                if not source or source.status not in {'failed', 'needs_attention', 'paused'}:
+                    raise HTTPException(409, '指定任务没有可恢复的失败或中断边界')
+                if data.task_key != 'codex':
+                    if not settings.codex_team_mcp_enabled:
+                        raise HTTPException(409, '当前运行未启用团队 Codex 会话')
+                    if data.action == 'reassign':
+                        # Reassignment remains an explicit same-Run activation;
+                        # the source task and its evidence are retained.
+                        from .autonomy import request_recovery
+                        try:
+                            recovery = request_recovery(s, r, data.task_key, data.action,
+                                                        data.agent_id, data.reason)
+                        except ValueError as exc:
+                            raise HTTPException(409, str(exc))
+                        command = Outbox(run_id=run_id, action='control', payload={
+                            'action': data.action, 'task_key': data.task_key,
+                            'agent_id': data.agent_id, 'reason': data.reason,
+                            'recovery_task_key': recovery.key, 'actor': user.id})
+                        s.add(command); s.flush()
+                        emit(s, run_id, 'team.recovery.requested', {
+                            'source_task_key': data.task_key,
+                            'recovery_task_key': recovery.key, 'action': data.action,
+                            'agent_id': data.agent_id, 'same_run': True})
+                        return {'accepted': True, 'command_id': command.id,
+                                'recovery_task_key': recovery.key, 'same_run': True,
+                                'effect': '已在原运行内转派，原成员任务与失败证据保留'}
+                source.status = 'queued'
+                r.status, r.error, r.updated_at = 'queued', '', now()
+                command=Outbox(run_id=run_id,action='control',payload={
+                    'action':data.action, 'task_key':data.task_key, 'reason':data.reason,
+                    'actor':user.id})
+                s.add(command); s.flush()
+                emit(s,run_id,'team.recovery.requested',{
+                    'source_task_key':data.task_key,'recovery_task_key':data.task_key,
+                    'action':data.action,'agent_id':source.agent_id,
+                    'reason':str(data.reason or '')[:1000],'same_thread':True,
+                    'same_run':True})
+                return {'accepted':True,'command_id':command.id,
+                        'recovery_task_key':data.task_key,'same_run':True,'same_thread':True,
+                        'effect':'已在原 Codex Thread 中排队继续；不会创建新任务或重写运行配置'}
+            from .autonomy import request_recovery
+            try:
+                recovery = request_recovery(s, r, data.task_key, data.action,
+                                            data.agent_id, data.reason)
+            except ValueError as exc:
+                raise HTTPException(409, str(exc))
+            command=Outbox(run_id=run_id,action='control',payload={
+                'action':data.action, 'task_key':data.task_key,
+                'agent_id':data.agent_id, 'reason':data.reason, 'actor':user.id,
+                'recovery_task_key': recovery.key})
+            s.add(command); s.flush()
+            emit(s,run_id,'control.requested',{'actor':user.id,'action':data.action,
+                'task_key':data.task_key,'agent_id':data.agent_id,
+                'recovery_task_key':recovery.key,'command_id':command.id})
+            return {'accepted':True,'command_id':command.id,
+                    'recovery_task_key':recovery.key,'same_run':True,
+                    'effect':'已在原任务中创建恢复激活；失败源任务保留为审计证据'}
         # A failed autonomous run is recoverable in place.  Re-opening the
         # same run preserves its frozen team, workspace and audit trail; the
         # coordinator gets a fresh activation to inspect the failure and may
@@ -808,6 +942,9 @@ from .execution_permissions import register as register_execution_permissions
 register_execution_permissions(app)
 from .execution_tools import register as register_execution_tools
 register_execution_tools(app)
+register_runtime_poc(app)
+from .runtime_approvals import register as register_runtime_approvals
+register_runtime_approvals(app)
 
 # API routes have priority over static assets; unknown API paths must remain JSON 404.
 @app.api_route('/api/{unmatched:path}', methods=['GET','POST','PUT','DELETE','PATCH'], include_in_schema=False)

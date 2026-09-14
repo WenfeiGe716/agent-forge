@@ -2,7 +2,7 @@
 
 ## 使用
 
-双击 `desktop/release/Agent Forge-darwin-arm64/Agent Forge.app`。这是内置 Electron、Python 和前端资源的本机应用，运行不依赖仓库中的 `.venv` 或终端进程。当前版本支持 Apple Silicon macOS；执行工具（例如 Git、项目语言运行时）仍需在本机具备，就绪检查会报告缺项。
+双击 `desktop/release/Agent Forge-darwin-arm64/Agent Forge.app`。这是内置 Electron、Rust 后端、固定版本 Codex 和前端资源的本机应用，运行不依赖仓库中的 `.venv` 或终端进程。当前版本支持 Apple Silicon macOS；执行工具（例如 Git、项目语言运行时）仍需在本机具备，就绪检查会报告缺项。
 
 首次启动可导入包含 `.local/config.json` 的原项目目录。应用保留数据库、任务成果、项目工作副本、供应商密钥、角色模板、Skill 和组织布局，清除副本中的旧网页登录会话。原工作空间不被改写；它与新桌面工作空间是两个独立实例，不会双向同步。请后续主要使用桌面入口，避免在两个实例重复下发相同任务。
 
@@ -41,13 +41,13 @@
 在 Apple Silicon Mac 上执行：
 
 ```sh
-.venv/bin/python -m venv .local/desktop-build-venv
-.local/desktop-build-venv/bin/python -m pip install -r desktop/requirements-build.txt
+bash scripts/build-upstreams.sh
+npm install --prefix .local/build/gateway-toolchain --save-exact bun@1.4.2
 npm ci --prefix desktop
 node scripts/build-desktop.mjs
 ```
 
-构建工具依赖网络；应用启动本身不下载 Python 或 Electron。Electron 固定为 `44.3.0`、PyInstaller 固定为 `6.22.2`；npm 依赖由 `desktop/package-lock.json` 锁定。现有离线 Linux wheels 不能用于 macOS 打包。
+构建工具依赖网络；应用启动本身不下载运行时。Electron 固定为 `44.3.0`，gateway 的 Bun 固定为 `1.4.2`；npm 依赖由 `desktop/package-lock.json` 锁定，Rust 依赖由 `rust/Cargo.lock` 锁定。构建脚本验证 OpenCodex 的固定提交和认证补丁，再将 gateway 源码及其依赖一并打包。桌面打包不再使用 Python 或 PyInstaller。
 
 如果官方运行时下载不可达，可将同版本的 `electron-v44.3.0-darwin-arm64.zip` 放到 `desktop/build/`；脚本必须通过 Electron npm 包提供的 SHA-256 校验才会使用它。不要禁用校验。打包只复制显式列出的客户端代码和冻结资源，不打包 `.local`、用户数据库、凭据或项目。
 
@@ -58,12 +58,12 @@ node scripts/build-desktop.mjs
 ```sh
 node --test tests/frontend/*.test.cjs
 npm test --prefix desktop
-PYTHONPATH=backend .venv/bin/python -m pytest backend/tests -q
+cargo test --manifest-path rust/Cargo.toml --locked --workspace
 .venv/bin/python -m pytest tests/desktop -q
 ```
 
-`test_frozen_backend.py` 使用真实冻结后的后端程序和隔离临时数据，验证启动、会话、目录导入、文件排除和退出，不调用外部模型，也不读取生产凭据。可用 `FORGE_DESKTOP_TEST_BINARY` 指定 `.app/Contents/Resources/backend/forge-desktop-backend`，验证真正打包后的副本。
+`test_frozen_backend.py` 使用真正打包的 Rust 后端和隔离临时数据，验证启动、会话、目录导入、文件排除和退出，不调用外部模型，也不读取生产凭据。可用 `FORGE_DESKTOP_TEST_BINARY` 指定 `.app/Contents/Resources/backend/forge-server`。Rust 的 `desktop` 集成测试还覆盖一次性目录票据、旧 SQLite 只读迁移和进程身份。
 
 本机构建使用 ad-hoc 签名并执行严格签名结构检查。面向其他用户公开发布需要合法的 Apple Developer ID 签名、公证和额外分发验收；本版没有购买证书、上传应用、公证或自动更新配置。Windows 仍需文件安全访问、进程管理和受控执行适配，不能只把 `.app` 换成 `.exe`。
 
-实现依据：[Electron 安全建议](https://www.electronjs.org/docs/latest/tutorial/security)、[safeStorage](https://www.electronjs.org/docs/latest/api/safe-storage)、[PyInstaller 打包说明](https://pyinstaller.org/en/stable/usage.html)。
+实现依据：[Electron 安全建议](https://www.electronjs.org/docs/latest/tutorial/security)、[safeStorage](https://www.electronjs.org/docs/latest/api/safe-storage)。容器与旧数据库迁移见 [Rust 部署说明](RUST_DESKTOP_DEPLOYMENT.md)。

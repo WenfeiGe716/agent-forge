@@ -1,0 +1,52 @@
+{
+  "id": "rocketbox-business-male-01",
+  "displayName": "Rocketbox Business Male 01",
+  "source": {
+    "repository": "https://github.com/microsoft/Microsoft-Rocketbox",
+    "commit": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+    "license": "MIT",
+    "licenseFile": "LICENSE-Rocketbox-MIT.md",
+    "attribution": "Copyright (c) 2020 Microsoft",
+    "assetSpecificLicenseFilesInSource": []
+  },
+  "format": "FBX",
+  "rigged": true,
+  "maps": {
+    "body": {
+      "color": "m005_body_color.png",
+      "normal": "m005_body_normal.png",
+      "specular": "m005_body_specular.png"
+    },
+    "head": {
+      "color": "m005_head_color.png",
+      "normal": "m005_head_normal.png",
+      "specular": "m005_head_specular.png"
+    },
+    "opacity": "m005_opacity_color.png"
+  },
+  "mapDerivatives": {
+    "format": "PNG",
+    "tool": "macOS sips",
+    "sourceFormat": "TGA",
+    "note": "Lossless format conversion; original TGA source was read from the pinned commit and is not bundled."
+  },
+  "animationSamples": [
+    {
+      "id": "idle-breathe-01",
+      "file": "animations/f_idle_breathe_01.fbx",
+      "sourceBlob": "64d93cc3d5c38dc107d4dad23da70855a64ddb10"
+    }
+  ],
+  "sha256": {
+    "Business_Male_01.fbx": "c39987e44c031674946c2a6929abceb99b21ef3322023bbf2e31bd1705e8a130",
+    "animations/f_idle_breathe_01.fbx": "e470ba984484149c8269772b7640b754bd996ba83b23ae75535128412997aa45",
+    "m005_body_color.png": "c07df033e582ff3317f523d4260190546b028818998082bf47c459030342ad5a",
+    "m005_body_normal.png": "ad2c850126cbb8509f0306ed5fe6c7c04a8b691f1e52905dcd530739842176fd",
+    "m005_body_specular.png": "cb2ae7cdb35c01e3b393e32e6d7c9398c24f92754721f9b623b0ff241e08139d",
+    "m005_head_color.png": "5535cfee46836e05f2e02c5542c03e3d92967366a2575bf642061ecdf07ba407",
+    "m005_head_normal.png": "f36cd82df28007ec0709521ff9ff4be41ea01f365270df784b60b4ec9f04682a",
+    "m005_head_specular.png": "925679c179d7c610c30cc7676c6da983780817144d3dc16341f4f1f2799571e2",
+    "m005_opacity_color.png": "e1bf1a259ece48ef1b0397c1dc695fdd43eaf16d246b147e31ebf4fff9c82012"
+  },
+  "notes": "Business profession avatar with original FBX rig and offline PNG texture derivatives."
+}

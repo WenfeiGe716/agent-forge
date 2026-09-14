@@ -14,11 +14,22 @@ export function appearanceFor(id:string,role='developer'):CharacterLook{
 export function detailedActor(actor:ActorView,index:number,hue:number,selected=false,role?:string):Part[]{
  if(!actor.visible)return[];
  role=role||({0x9c8cde:'planner',0x54b2cc:'developer',0xe0b65d:'tester',0xda91b0:'reviewer'} as Record<number,string>)[hue]||'developer';
- const look=appearanceFor(actor.id,role),out:Part[]=[],p=actor.position,yaw=actor.yaw,t=actor.poseTime||0,pose=actor.pose;
+ const look=appearanceFor(actor.id,role),out:Part[]=[],p=actor.position,yaw=actor.yaw,t=actor.poseTime||0;
+ // Ambient conversation is deliberately a render-only gesture.  It is
+ // deterministic (the stable hash assigns members to two-person windows)
+ // and never changes ActorView, task state, messages, or meeting evidence.
+ // This keeps idle colleagues from looking frozen while preserving the
+ // backend as the sole source of truth for real communication.
+ const talkWindow=actor.source==='idle'&&actor.pose==='idle'&&t>=8&&(Math.floor(t/12)%4===stableHash(actor.id)%4||Math.floor(t/12)%4===(stableHash(actor.id)+1)%4)&&t%12<3.8;
+ const pose=talkWindow?'communicating':actor.pose;
+ const phase=stableHash(actor.id)%17;
+ // Keep feet, seat and contact shadow invariant; idle breathing is applied
+ // only to the upper body below, never as a global vertical translation.
  const walking=pose==='walking',seat=actor.sitBlend??(['typing','reading','thinking','testing','reviewing','phone','nap'].includes(pose)?1:0),nap=pose==='nap',bob=walking?Math.abs(Math.sin(t*8))*.018:0;
+ const breathe=Math.sin(t*1.65+phase)*.012,headSway=Math.sin(t*.82+phase)*.025;
  const hip=1.14-.295*seat,up=hip-.82,head=(nap?1.49:1.75)+up,torso=(nap?1.06:1.16)+up,lean=nap?-.25:0;
  const skin=color(look.skin),hair=color(look.hair),cloth=color(look.coat),pants=color(look.style===1?0x354e68:0x394352),ivory=color(0xe7e7df),dark=color(0x222b38);
- const point=(v:V3):V3=>[p[0]+v[0]*Math.cos(yaw)+v[2]*Math.sin(yaw),p[1]+v[1]+bob,p[2]-v[0]*Math.sin(yaw)+v[2]*Math.cos(yaw)];
+ const point=(v:V3):V3=>{const x=v[0]+(v[1]>1.48?headSway:0);return[p[0]+x*Math.cos(yaw)+v[2]*Math.sin(yaw),p[1]+v[1]+bob+(v[1]>1.45?breathe:0),p[2]-x*Math.sin(yaw)+v[2]*Math.cos(yaw)];};
  const part=(v:V3,s:V3,c:V3,mesh='sphere',surface:Surface='matte',tag='',pitch=0,roll=0,emission=0)=>{
   const q:Part={p:point(v),s,color:c,mesh,yaw,surface,tag,emissive:emission};
   if(pitch||roll)q.matrix=multiply(modelMatrix(p,[1,1,1],yaw),oriented([v[0],v[1]+bob,v[2]],s,0,pitch,roll));out.push(q);return q;
@@ -36,10 +47,12 @@ export function detailedActor(actor:ActorView,index:number,hue:number,selected=f
   const blink=nap||Math.sin(t*.92+(stableHash(actor.id)%13))>.9992;
   if(blink){limb([side*.116-.045,head+.029,lean+.256],[side*.116+.045,head+.025,lean+.260],.013,dark,'matte','eyelid');}
   else{
-   part([side*.116,head+.035,lean+.248],[.094,.078,.028],color(0xf6f1e9),'eye','matte','eye-white');
-   part([side*.115,head+.033,lean+.268],[.048,.058,.018],color(0x423629),'eye','matte','iris');
-   part([side*.115,head+.033,lean+.279],[.030,.041,.011],dark,'eye','matte','pupil');
-   part([side*.115-.01,head+.048,lean+.284],[.016,.018,.01],color(0xffffff),'eye','matte','eye-catchlight',0,0,.8);
+   // Restrained eye scale and inset catchlights read as crafted faces instead
+   // of toy-like cartoon eyes at the office overview zoom.
+   part([side*.116,head+.035,lean+.248],[.072,.060,.024],color(0xf6f1e9),'eye','matte','eye-white');
+   part([side*.115,head+.033,lean+.268],[.037,.047,.016],color(0x423629),'eye','matte','iris');
+   part([side*.115,head+.033,lean+.279],[.022,.032,.010],dark,'eye','matte','pupil');
+   part([side*.115-.008,head+.047,lean+.284],[.012,.014,.008],color(0xffffff),'eye','matte','eye-catchlight',0,0,.8);
   }
   limb([side*.116-.056,head+.116,lean+.257],[side*.116+.052,head+.125-(side===1?.012:0),lean+.253],.022,hair,'cloth','eyebrow');
  }
@@ -93,7 +106,12 @@ export function detailedActor(actor:ActorView,index:number,hue:number,selected=f
  part([.165,torso+.142,lean+.201],[.067,.034,.004],color(look.accent),'round','matte','badge-band');
  part([.16,torso+.087,lean+.202],[.047,.009,.004],color(0x65778b),'cube','matte','badge-detail');
  for(const side of[-1,1]){
-  const x=side*.14,swing=walking?Math.sin(t*8)*side*.30:0,knee:V3=[x,.58+.23*seat,swing*.5*(1-seat)+.43*seat],foot:V3=[x,.233,(nap?.68:.54)*seat+swing*(1-seat)];
+  // Nap animation keeps the knees on the cushion but lets the lower legs
+  // peek just past the sofa front.  Fully tucking them under the cushion
+  // made a resting employee look legless; the authored offset below leaves a
+  // small, readable shoe silhouette without pushing the whole body through
+  // the sofa side.
+  const x=side*.14,swing=walking?Math.sin(t*8)*side*.30:0,knee:V3=[x,.58+.23*seat,swing*.5*(1-seat)+(nap?.48:.43)*seat],foot:V3=[x,.233,(nap?.70:.54)*seat+swing*(1-seat)];
   limb([x,hip,0],knee,.213,pants,'cloth','thigh');part(knee,[.21,.19,.20],pants,'sphere','cloth','knee');limb(knee,foot,.181,pants,'cloth','shin');
   const shoeColor=look.style===0?color(0x353440):color(0xdddeda);
   part([foot[0],foot[1]-.054,foot[2]+.083],[.243,.126,.342],shoeColor,'sphere',look.style===0?'rubber':'cloth','shoe');
@@ -101,7 +119,10 @@ export function detailedActor(actor:ActorView,index:number,hue:number,selected=f
   part([foot[0],foot[1]-.023,foot[2]-.021],[.18,.063,.094],color(look.accent),'round','cloth','shoe-collar');
   if(look.style!==0)for(let j=0;j<3;j++)limb([foot[0]-.065,foot[1]+.012,foot[2]+.04+j*.04],[foot[0]+.065,foot[1]+.012,foot[2]+.048+j*.04],.010,color(0xfaf5e9),'cloth','shoelace');
   const shoulder:V3=[side*.271,1.39+up,lean],elbow:V3=[side*.355,1.07+up,-swing*.40],hand:V3=[side*.34,.87+up,-swing*.75];
-  if(['typing','reading','reviewing','phone','testing'].includes(pose)){elbow[2]=.20;hand[0]=side*.22;hand[1]=1.10+(pose==='typing'?Math.sin(t*12+side)*.014:0);hand[2]=.41;}
+ if(['typing','reading','reviewing','phone','testing'].includes(pose)){elbow[2]=.20;hand[0]=side*.22;hand[1]=1.10+(pose==='typing'?Math.sin(t*12+side)*.014:0);hand[2]=.41;}
+ // A seated idle member keeps a light hand-on-keyboard posture with tiny
+ // alternating movement; the label remains “待命” and no task is inferred.
+ if(pose==='idle'&&seat>.5){elbow[2]=.18;hand[0]=side*.20;hand[1]=1.10+Math.sin(t*2.4+side+phase)*.010;hand[2]=.40;}
   if(pose==='thinking'&&side===1){elbow[2]=.24;hand[0]=.12;hand[1]=1.49+up;hand[2]=.30;}
   if(pose==='drink'&&side===1){elbow[2]=.20;hand[0]=.12;hand[1]=1.57+up+Math.sin(t*1.6)*.030;hand[2]=.36;}
   if(pose==='stretch'){elbow[0]=side*.39;elbow[1]=1.79+up;hand[0]=side*.29;hand[1]=2.18+up+Math.sin(t*1.3)*.04;}
@@ -127,5 +148,55 @@ export function detailedActor(actor:ActorView,index:number,hue:number,selected=f
  }
  out.push({p:[p[0],.128,p[2]],s:[1.06,.012,.82],color:color(0x485267),mesh:'cylinder',alpha:.20,surface:'shadow',tag:'contact-shadow'});
  if(selected)out.push({p:[p[0],.135,p[2]],s:[1.04,1.04,.035],matrix:oriented([p[0],.135,p[2]],[1.04,1.04,.035],0,Math.PI/2),color:color(look.accent),mesh:'ring',surface:'matte',emissive:.45,tag:'selection-ring'});
+ return out;
+}
+
+/**
+ * Compact office avatar used by the overview renderer.  The reference office
+ * uses a calm, low-poly silhouette rather than a detailed portrait: one small
+ * head, a tapered torso and a few articulated capsules.  Identity is carried
+ * by the floor ring (and the selection glow), so the room stays readable when
+ * many members are visible at once.  Keep the first three parts in the same
+ * torso/pelvis/head order as detailedActor; several layout contracts rely on
+ * those stable semantic positions.
+ */
+export function stylizedActor(actor:ActorView,index:number,hue:number,selected=false):Part[]{
+ if(!actor.visible)return[];
+ const out:Part[]=[],p=actor.position,yaw=actor.yaw,t=actor.poseTime||0;
+ const pose=actor.pose,walking=pose==='walking',seat=actor.sitBlend??(['typing','reading','thinking','testing','reviewing','phone','nap'].includes(pose)?1:0);
+ const nap=pose==='nap',hip=1.14-.295*seat,up=hip-.82,head=(nap?1.49:1.75)+up,torso=(nap?1.08:1.16)+up;
+ const bob=walking?Math.abs(Math.sin(t*8))*.018:Math.sin(t*1.8)*.006;
+ // Neutral cool-white materials match the reference; hue is deliberately
+ // reserved for the identity ring and tiny status marker.
+ const body=color(0xd8e0e3),bodyShade=color(0xbecbd0),sole=color(0x34414a),accent=color(hue);
+ const point=(v:V3):V3=>[p[0]+v[0]*Math.cos(yaw)+v[2]*Math.sin(yaw),p[1]+v[1]+bob,p[2]-v[0]*Math.sin(yaw)+v[2]*Math.cos(yaw)];
+ const add=(v:V3,s:V3,c:V3,mesh='round',surface:Surface='matte',tag='')=>{out.push({p:point(v),s,color:c,mesh,yaw,surface,tag});return out.at(-1)!;};
+ const limb=(a:V3,b:V3,w:number,c:V3,surface:Surface='matte',tag='')=>{const q=segment(point(a),point(b),w,c);q.surface=surface;q.tag=tag;out.push(q);return q;};
+ // Stable order: torso, pelvis, head.  Head diameter is .34m because the
+ // sphere geometry has a .5m radius and is rendered at scale .34.
+ add([0,torso,nap?-.16:0],[.56,.98,.34],body,'torso','cloth','torso');
+ add([0,hip,0],[.42,.26,.30],bodyShade,'round','cloth','pelvis');
+ add([0,head,nap?-.16:0],[.34,.34,.34],body,'sphere','matte','head');
+ add([0,head-.235,nap?-.15:0],[.12,.16,.12],bodyShade,'capsule','matte','neck');
+ const swing=walking?Math.sin(t*8)*.28:0;
+ for(const side of[-1,1]){
+  const x=side*.14,knee:V3=[x,.58+.20*seat,.43*seat+swing*.08],foot:V3=[x,.235,.54*seat+swing*(1-seat)];
+  limb([x,hip,0],knee,.13,bodyShade,'cloth','thigh');
+  limb(knee,foot,.115,bodyShade,'cloth','shin');
+  add([foot[0],foot[1]-.054,foot[2]+.075],[.21,.12,.30],body,'round','matte','shoe');
+  // Keep the exact contact invariant (0.128 - .033/2 = .1115).
+  add([foot[0],.128,foot[2]+.075],[.22,.033,.31],sole,'round','rubber','shoe-sole');
+  const shoulder:V3=[side*.27,1.37+up,nap?-.12:0],elbow:V3=[side*.34,1.08+up,-swing*.3],hand:V3=[side*.29,.91+up,-swing*.55];
+  if(['typing','reading','reviewing','testing'].includes(pose)){elbow[2]=.19;hand[0]=side*.20;hand[1]=1.10+Math.sin(t*10+side)*.012;hand[2]=.38;}
+  if(pose==='thinking'&&side===1){elbow[2]=.21;hand[0]=.10;hand[1]=1.46+up;hand[2]=.27;}
+  if(pose==='communicating'&&side===1){elbow[0]=.40;hand[0]=.43;hand[1]=1.37+up;hand[2]=.19;}
+  if(pose==='attention'&&side===1){elbow[1]=1.58+up;hand[1]=1.95+up;}
+  limb(shoulder,elbow,.125,bodyShade,'cloth','upper-arm');limb(elbow,hand,.105,bodyShade,'cloth','fore-arm');add(hand,[.13,.13,.10],body,'round','matte','hand');
+ }
+ // A subtle ring is the only persistent identity colour.  It doubles as the
+ // selected/busy affordance without adding labels or coloured body panels.
+ add([0,.132,0],[selected ? .88 : .72,.018,selected ? .88 : .72],accent,'ring','matte','identity-ring').emissive=selected ? .32 : .14;
+ out.at(-1)!.alpha=selected ? .9 : .55;
+ out.push({p:[p[0],.128,p[2]],s:[1.06,.012,.82],color:color(0x485267),mesh:'cylinder',alpha:.20,surface:'shadow',tag:'contact-shadow'});
  return out;
 }

@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "owner": "rust",
+  "runtime": "unmodified-codex",
+  "codex_binary_sha256": "659d70d0137a78c5863a43eca66f15dc399d82fd73afa9ff6edbf283b024e841",
+  "run_id": "758151c261c90ba3befd7287656e7479",
+  "status": "completed",
+  "members": 3,
+  "codex_threads": 3,
+  "runtime_connections": 3,
+  "provider_calls": 23,
+  "native_skill_reads": 3,
+  "peer_messages": 1,
+  "native_skill_selection_verified": true,
+  "native_user_input_http_roundtrip_verified": true,
+  "peer_messages_delivered": 1,
+  "member_results_reviewed": 2,
+  "http_idempotency_verified": true,
+  "paid_provider_used": false,
+  "validation": {
+    "rust_workspace_passed": 184,
+    "rust_workspace_failed": 0,
+    "optional_smoke_tests_ignored": 2,
+    "clippy_workspace_all_targets": "passed",
+    "frontend_syntax_files": 61,
+    "frontend_syntax_errors": 0,
+    "codex_source_status": "clean"
+  }
+}

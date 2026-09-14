@@ -22,3 +22,4 @@ dist/
 frontend/dist-desktop/
 desktop/build/
 desktop/release/
+rust/target/

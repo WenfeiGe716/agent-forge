@@ -1,0 +1,65 @@
+{
+  "id": "rocketbox-female-adult-01",
+  "displayName": "Rocketbox Female Adult 01",
+  "source": {
+    "repository": "https://github.com/microsoft/Microsoft-Rocketbox",
+    "commit": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+    "license": "MIT",
+    "licenseFile": "LICENSE-Rocketbox-MIT.md",
+    "attribution": "Copyright (c) 2020 Microsoft",
+    "assetSpecificLicenseFilesInSource": []
+  },
+  "format": "FBX",
+  "rigged": true,
+  "maps": {
+    "body": { "color": "f001_body_color.png", "normal": "f001_body_normal.png", "specular": "f001_body_specular.png" },
+    "head": { "color": "f001_head_color.png", "normal": "f001_head_normal.png", "specular": "f001_head_specular.png" },
+    "opacity": "f001_opacity_color.png"
+  },
+  "mapDerivatives": {
+    "format": "PNG",
+    "tool": "macOS sips",
+    "sourceFormat": "TGA",
+    "note": "Lossless format conversion; pixel dimensions and channels are retained. Source blob IDs and original SHA-256 values are listed below."
+  },
+  "animationSamples": [
+    {
+      "id": "idle-breathe-01",
+      "file": "animations/f_idle_breathe_01.fbx",
+      "sourceBlob": "64d93cc3d5c38dc107d4dad23da70855a64ddb10"
+    }
+  ],
+  "sourceBlobs": {
+    "Female_Adult_01.fbx": "59e6c03fa86691cda806ef5d5b040e462c0fb9c1",
+    "preview.png": "58adfb9b4ce686b7255ac75d93cf21ecb1306d43",
+    "f001_body_color.tga": "25852db0db1f44a0de0643ce1e09c88aef587e6f",
+    "f001_body_normal.tga": "345ba24adc6d429a1e0967c0010588b88892be46",
+    "f001_body_specular.tga": "4cb0a66433aac02a3899c2ceeceb4e11880e6395",
+    "f001_head_color.tga": "0cdc62ab47da3dca01aff0bb179159865a559c63",
+    "f001_head_normal.tga": "6de1fb458c746154713e8c34039add24f4ba9f6d",
+    "f001_head_specular.tga": "47a70e2ff5ed71ff3152019bc46845ef7ff3fbf8",
+    "f001_opacity_color.tga": "de21a9e69c88e539da6a5050eaceadd026e99b62"
+  },
+  "sha256": {
+    "Female_Adult_01.fbx": "8cbaf86576004b96469bc80df123b97fef788f4a7bb3f3eaa616fcfaf55698a3",
+    "preview.png": "b380856dcfa982bdb178317530d1d7b8331b26a1f01cb9aa08d0b55ac2c502ce",
+    "f001_body_color.png": "762fa95f94705018c785f0160640f0073ebf236d684d6a9ce8a2f8fcec591760",
+    "f001_body_normal.png": "797a46165794db6425a460bbe3fd6e21dc6f04b6892288f85e89df8cb42c343a",
+    "f001_body_specular.png": "806a21f78766d91f9f2cb7188bf8c11c94cede2c6c3d258a4f6c29a9c702afc7",
+    "f001_head_color.png": "854859abac80589f9d10579532cf7d4ed188fa032d80cad66ca2f04aa2bdd621",
+    "f001_head_normal.png": "2f4226c121f397717e7d7c2f72c5e589f799e1f16192dac47894aa1d6f056684",
+    "f001_head_specular.png": "c18943ec2288f413ba992ef3981933577be34245c5a8901dff004465afcf79ae",
+    "f001_opacity_color.png": "f07aac6119176e7e804dfb4814f7833bb9f672c2729aa8865d7a52c5c6943043",
+    "animations/f_idle_breathe_01.fbx": "e470ba984484149c8269772b7640b754bd996ba83b23ae75535128412997aa45"
+  },
+  "sourceSha256": {
+    "f001_body_color.tga": "c038b01c5d05831c3f4e8c6daa18394e8a4851372acd3fcbdf30e7ee53c56cae",
+    "f001_body_normal.tga": "86b9b5a5aa73bd97244b35f97f3799c31b3db70426d7d607cbdc2dd271ace346",
+    "f001_body_specular.tga": "9b813e68b243074f74c4bbfb26d41cce2a70361efa09fcabe1962b4267bedb90",
+    "f001_head_color.tga": "0d3153c59c54908d5f5194ffe3a7d882351f0dd74f9ef44ab3a2f164a3bf9d8e",
+    "f001_head_normal.tga": "522f3372283ea4161ed56d85471be15e02628df73a966447e4456bc169d310b2",
+    "f001_head_specular.tga": "302c56927d1d032084fb4faca784591dd8ab42e8bafb1029db157f73608eb251",
+    "f001_opacity_color.tga": "12c9c366814e665687fe64056421213686b50a972a5ad47295f247d6a8ff7369"
+  },
+  "notes": "The FBX references body/head color, normal, specular and opacity maps. PNG derivatives are used by the browser loader; the original TGA source files are retained outside the package and their blob IDs/SHA-256 values are recorded above."
+}
