@@ -49,6 +49,9 @@
 }
 .studio-composer>header::-webkit-scrollbar {display:none}
 .studio-composer>header>select {min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.studio-composer>header>select {flex:0 0 auto;min-width:95px;width:95px;max-width:190px}
+.studio-composer>header>select[aria-label="需求办公团队"] {width:155px;min-width:155px;max-width:260px}
+.studio-composer>header>span:first-child>select {width:110px;min-width:110px}
 .studio-composer>div {
   align-items:flex-end;
   flex-wrap:wrap;
