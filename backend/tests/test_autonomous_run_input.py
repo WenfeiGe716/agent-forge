@@ -119,7 +119,7 @@ def test_autonomous_pool_leader_and_directed_recipients_cannot_escape_selection(
     assert counts()[0] == 0
 
 
-@pytest.mark.parametrize('invalid', ['disabled', 'unseated', 'unbound', 'model-disabled', 'tools-unconfirmed', 'invalid-permission'])
+@pytest.mark.parametrize('invalid', ['disabled', 'unseated', 'unbound', 'model-disabled', 'invalid-permission'])
 def test_autonomous_pool_never_bypasses_member_readiness(client, configured, ready_environment, invalid):
     body = autonomous_body(configured)
     aid = body['agent_ids'][0]
@@ -133,7 +133,7 @@ def test_autonomous_pool_never_bypasses_member_readiness(client, configured, rea
             elif invalid == 'invalid-permission': agent.config = {**agent.config, 'tool_permissions': ['finish', 'unapproved_global_shell']}
             else:
                 model = s.get(ModelProfile, agent.config['model_profile_id'])
-                model.config = {**model.config, 'enabled': invalid != 'model-disabled', 'supports_tools': invalid != 'tools-unconfirmed'}
+                model.config = {**model.config, 'enabled': invalid != 'model-disabled'}
     before = counts()
     assert client.post('/api/runs/preview-config', json=body).status_code == 422
     result = client.post('/api/execution/preflight', json=body)
@@ -141,6 +141,18 @@ def test_autonomous_pool_never_bypasses_member_readiness(client, configured, rea
     assert not result.json()['ready'] and not result.json()['snapshot_valid']
     assert client.post('/api/runs', json=body).status_code == 422
     assert counts() == before
+
+
+def test_autonomous_pool_allows_unprobed_tool_capability(client, configured, ready_environment):
+    body = autonomous_body(configured)
+    with session() as s:
+        agent = s.get(Agent, body['agent_ids'][0])
+        model = s.get(ModelProfile, agent.config['model_profile_id'])
+        model.config = {**model.config, 'supports_tools': False}
+    result = client.post('/api/execution/preflight', json=body)
+    assert result.status_code == 200, result.text
+    assert result.json()['ready'] and result.json()['snapshot_valid']
+    assert any(c['code'] == 'model.tools' and c['status'] == 'warning' for c in result.json()['checks'])
 
 
 def test_autonomous_team_selection_freezes_only_confirmed_pool_and_layout_version(client, configured):

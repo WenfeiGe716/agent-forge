@@ -9,6 +9,7 @@ import CodexRuntimeApprovals from './CodexRuntimeApprovals';
 import {Question} from './Collaboration';
 import {summarizeRunFailure} from './RunRecovery';
 import RunIssues,{runIssues} from './RunIssues';
+import {subscribeRunEvents} from '../runEventStream';
 import '../employee-task-density.css';
 
 const submittedStatus=(status:string)=>['done','integrated','conflicted','superseded'].includes(status);
@@ -67,11 +68,17 @@ function EmployeeRun({id,...p}:Props&{id:string}){
  const [steerTaskKey,setSteerTaskKey]=useState('');
  const [steerBusy,setSteerBusy]=useState(false),[steerError,setSteerError]=useState(''),[steerNotice,setSteerNotice]=useState('');
  useEffect(()=>{setTab(p.initialTab||'work');},[p.initialTab]);
- const lifecycle=useRef(0),sequence=useRef(0);
+ const lifecycle=useRef(0),sequence=useRef(0),replayed=useRef(false);
  const load=async()=>{if(p.preview)return;const life=lifecycle.current,ticket=++sequence.current;const current=()=>life===lifecycle.current&&ticket===sequence.current;
-  try{const [run,collaboration,trace]=await Promise.all([api<Run>('/runs/'+id),api<Json>('/runs/'+id+'/collaboration'),api<Json>(`/runs/${id}/trace?agent_id=${encodeURIComponent(p.agent.id)}&limit=${limit}`)]);
+  try{const [run,collaboration]=await Promise.all([api<Run>('/runs/'+id),api<Json>('/runs/'+id+'/collaboration')]);
    if(!current())return;if(run.id!==id||collaboration.run_id!==id||!Object.hasOwn(run.snapshot?.agents||{},p.agent.id))throw new Error('该员工不在这个任务的冻结成员范围内，请重新选择任务。');
-   setData({run,collaboration,events:(trace.items||[]).filter((e:ForgeEvent)=>e.run_id===id),more:trace.has_more===true});setError('');
+   // The shared EventSource owns live delivery. This replay is a durable,
+   // member-filtered fallback for a panel opened without the main App view;
+   // page until the server cursor is exhausted so long runs are lossless.
+   const replay:ForgeEvent[]=[];let cursor=0,more=false;const initialReplay=!replayed.current;
+   if(initialReplay){more=true;while(more&&current()){const page=await api<{items:ForgeEvent[];has_more?:boolean;next_cursor?:number}>(`/runs/${id}/trace?agent_id=${encodeURIComponent(p.agent.id)}&after=${cursor}&limit=300`);replay.push(...(page.items||[]).filter(e=>e.run_id===id));const next=Number(page.next_cursor||0);more=page.has_more===true;if(next<=cursor){break;}cursor=next;}replayed.current=true;}
+   if(!current())return;
+   setData(old=>({run,collaboration,events:initialReplay&&replay.length?replay:(old?.events||[]),more:initialReplay?more:(old?.more||false)}));setError('');
   }catch(e){if(current())setError((e as Error).message);}
  };
  useEffect(()=>{lifecycle.current++;void load();const timer=setInterval(()=>void load(),6000);return()=>{lifecycle.current++;clearInterval(timer);};},[id,p.agent.id,p.preview,limit]);
@@ -79,11 +86,7 @@ function EmployeeRun({id,...p}:Props&{id:string}){
  // replayable from the last event id, so reconnects cannot silently skip output.
  useEffect(()=>{
   if(p.preview||!data||typeof EventSource==='undefined')return;
-  let alive=true;let source:EventSource|null=null;
-  const after=data.events.reduce((n,e)=>Math.max(n,e.id),0);
-  source=new EventSource(`/api/runs/${id}/stream?after=${after}`);
-  source.onmessage=e=>{if(!alive)return;try{const event=JSON.parse(e.data) as ForgeEvent;if(event.run_id!==id)return;const d=event.data||{};const visible=[d.agent_id,d.from_agent_id,d.to_agent_id,d.worker_id,d.recipient_id].includes(p.agent.id)||(Array.isArray(d.recipients)&&d.recipients.includes(p.agent.id));if(!visible)return;setData(old=>old?{...old,events:old.events.some(x=>x.id===event.id)?old.events:[...old.events,event].slice(-300)}:old);}catch{ /* malformed events are ignored; polling repairs the view */ }};
-  return()=>{alive=false;source?.close();};
+  return subscribeRunEvents(id,{events:items=>setData(old=>old?{...old,events:items.filter(event=>{const d=event.data||{};return [d.agent_id,d.from_agent_id,d.to_agent_id,d.worker_id,d.recipient_id].includes(p.agent.id)||(Array.isArray(d.recipients)&&d.recipients.includes(p.agent.id));})}:old),error:error=>setError((error as Error).message)});
  },[id,p.agent.id,p.preview,Boolean(data)]);
  const sendSteer=async()=>{
   if(!steerText.trim()&&!steerFiles.length||steerBusy||closed)return;
@@ -121,8 +124,8 @@ function EmployeeRun({id,...p}:Props&{id:string}){
  const issues=runIssues(run),failure=run.error&&!issues.length?summarizeRunFailure(run):null;
  const workstation=run.snapshot?.design?.workstations?.[member];
  const messages=events.filter(e=>['agent.message','agent.message.delivered','team.attachment.uploaded','task.handoff','task.delegated','orchestration.handoff'].includes(e.kind));
- const normalized=(e:ForgeEvent)=>{const k=e.kind.startsWith('runtime.')?String(e.data?.runtime_kind||e.kind.slice(8).replaceAll('.','/')):e.kind;const payload=e.data?.payload&&typeof e.data.payload==='object'?e.data.payload as Json:{};const item=payload.item&&typeof payload.item==='object'?payload.item as Json:{};const text=String(e.data?.text||e.data?.delta||payload.delta||payload.text||item.text||e.data?.summary||e.data?.tool||'');return {...e,kind:k,data:{...e.data,text,delta:text},k,text};};
- const liveCandidates=events.map(normalized).filter(({data,k})=>data?.agent_id===member&&['model.delta','model.progress','model.completed','agent.started','tool.started','tool.completed','item/agentMessage/delta','item/started','item/completed'].includes(k)).slice(-80);
+ const normalized=(e:ForgeEvent):ForgeEvent&{k:string;text:string}=>{const k=e.kind.startsWith('runtime.')?String(e.data?.runtime_kind||e.kind.slice(8).replaceAll('.','/')):e.kind;const payload=e.data?.payload&&typeof e.data.payload==='object'?e.data.payload as Json:{};const item=payload.item&&typeof payload.item==='object'?payload.item as Json:{};const text=String(e.data?.text||e.data?.delta||payload.delta||payload.text||item.text||e.data?.summary||e.data?.tool||'');return {...e,kind:k,data:{...e.data,text,delta:text},k,text};};
+ const liveCandidates=events.map(normalized).filter(({data,k})=>data?.agent_id===member&&['model.delta','model.progress','model.completed','agent.started','tool.started','tool.completed','item/agentMessage/delta','item/started','item/completed'].includes(k));
  const liveText=liveCandidates.filter(({k})=>k==='model.delta'||k==='model.progress'||k==='item/agentMessage/delta').map(({text})=>text).join('');
  const liveEvents=liveCandidates.filter(({k})=>!['model.delta','model.progress','item/agentMessage/delta'].includes(k)).slice(-24);
  const submitted=mine.filter(task=>submittedStatus(task.status)).length;

@@ -56,13 +56,16 @@ node scripts/build-desktop.mjs
 ## 验证与发布范围
 
 ```sh
-node --test tests/frontend/*.test.cjs
+node scripts/check-source.mjs
+node scripts/typecheck.mjs
 npm test --prefix desktop
 cargo test --manifest-path rust/Cargo.toml --locked --workspace
 .venv/bin/python -m pytest tests/desktop -q
 ```
 
-`test_frozen_backend.py` 使用真正打包的 Rust 后端和隔离临时数据，验证启动、会话、目录导入、文件排除和退出，不调用外部模型，也不读取生产凭据。可用 `FORGE_DESKTOP_TEST_BINARY` 指定 `.app/Contents/Resources/backend/forge-server`。Rust 的 `desktop` 集成测试还覆盖一次性目录票据、旧 SQLite 只读迁移和进程身份。
+`build-desktop.mjs` 会在打包前强制执行语义 TypeScript 检查，并在复制到 `.app` 后逐文件比较前端资源 SHA-256；资源不一致或签名结构错误会直接失败。`test_frozen_backend.py` 使用真正打包的 Rust 后端和隔离临时数据，验证启动、会话、目录导入、文件排除和退出，不调用外部模型，也不读取生产凭据。可用 `FORGE_DESKTOP_TEST_BINARY` 指定 `.app/Contents/Resources/backend/forge-server`。Rust 的 `desktop` 集成测试还覆盖一次性目录票据、旧 SQLite 只读迁移和进程身份。
+
+真实供应商、多成员并行、故障恢复和 Skill 原生工具读取属于带凭据的验收层，不会在默认离线构建中伪造通过；在准备好供应商和固定 Codex 后运行 `python3 scripts/verify-rust-team-live.py --help` 查看参数，再把输出证据保存到独立临时目录。这样能把“构建通过”和“真实模型链路通过”分开，避免桌面发布误把 fixture 结果当作供应商验收。
 
 本机构建使用 ad-hoc 签名并执行严格签名结构检查。面向其他用户公开发布需要合法的 Apple Developer ID 签名、公证和额外分发验收；本版没有购买证书、上传应用、公证或自动更新配置。Windows 仍需文件安全访问、进程管理和受控执行适配，不能只把 `.app` 换成 `.exe`。
 

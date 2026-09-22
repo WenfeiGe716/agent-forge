@@ -54,7 +54,8 @@ def test_preflight_accumulates_binding_model_parameter_and_skill_issues(client, 
     body = client.post('/api/execution/preflight', json=run_body(configured)).json()
     errors = {c['code'] for c in body['checks'] if c['status'] == 'error'}
     assert not body['ready'] and not body['snapshot_valid']
-    assert {'model.bound', 'model.enabled', 'model.tools', 'model.parameters', 'run.snapshot'} <= errors
+    assert {'model.bound', 'model.enabled', 'model.parameters', 'run.snapshot'} <= errors
+    assert any(c['code'] == 'model.tools' and c['status'] == 'warning' for c in body['checks'])
 
 
 def test_autonomous_member_without_command_permission_does_not_require_command_environment(client, configured, ready_environment, monkeypatch):

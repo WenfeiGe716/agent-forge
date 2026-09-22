@@ -1,7 +1,7 @@
 from copy import deepcopy
 from .db import Agent, ModelProfile, Provider, ProviderRevision, PlatformConfig
 from .schema import resolve_runtime, ROLES, TOOLS_BY_ROLE
-from .providers import validate_parameters
+from .providers import normalize_parameters, validate_parameters, validate_output_limit
 from . import skills
 
 def freeze_model(s, profile_id: str, overrides: dict, allow_external: bool) -> dict:
@@ -15,9 +15,17 @@ def freeze_model(s, profile_id: str, overrides: dict, allow_external: bool) -> d
     if not revision: raise ValueError('供应商连接版本不存在，请重新保存连接')
     connection = deepcopy(revision.config)
     if connection['external'] and not allow_external: raise ValueError('项目未授权向外部模型发送代码')
-    if not model['supports_tools']: raise ValueError('当前模型配置尚未确认支持工具调用；请先执行模型工具调用验证')
+    # supports_tools is an informational capability hint.  Do not require a
+    # paid synthetic probe before creating a run: Forge owns the actual tools
+    # and the provider is validated by the real request path.
+    model['allowed_parameters'], model['parameters'] = normalize_parameters(
+        connection['protocol'], model.get('allowed_parameters', []), model.get('parameters', {}), apply_default=True,
+        model_id=model.get('model_id', ''), context_window=model.get('context_window'))
     model['parameters'].update(overrides)
+    model['allowed_parameters'], model['parameters'] = normalize_parameters(
+        connection['protocol'], model['allowed_parameters'], model['parameters'])
     validate_parameters(connection['protocol'], model['allowed_parameters'], model['parameters'], connection.get('protocol_config'))
+    validate_output_limit(connection['protocol'], model.get('model_id', ''), model.get('context_window'), model['parameters'])
     return {'profile_id': profile_id, 'profile_version': profile.version, 'credential_revision': revision.id,
             'provider_name': provider.name, 'connection': connection, 'model': model}
 

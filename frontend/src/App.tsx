@@ -18,6 +18,7 @@ import {createRunSubmission,RunPreflightError} from './runSubmission';
 import TeamExecutionPermissions from './components/TeamExecutionPermissions';
 import {desktopBridge,taskNotifications} from './desktop';
 import {Agent,Model,Project,Provider,Run,Task,User,ForgeEvent,Json,OrganizationLayout,agentTitle,roles,states,terminal} from './types';
+import {subscribeRunEvents,clearRunEvents} from './runEventStream';
 import {mergeAgentSnapshot} from './agentPresentation';
 import {Badge,Modal,Field,Empty} from './components/UI';
 import Office from './components/Office';
@@ -99,7 +100,7 @@ export default function App(){
  const fail=useCallback((e:unknown)=>{if(e instanceof APIError&&e.status===401)setUser(null);else notify((e as Error).message,true);},[notify]);
  const refresh=useCallback(async(u:User|null=user)=>{if(!u)return;try{const [p,m,a,pr,r,s,o]=await Promise.all([api<Provider[]>('/providers'),api<Model[]>('/models'),api<Agent[]>('/agents'),api<Project[]>('/projects'),api<Run[]>('/runs'),api<Json>('/settings'),api<OrganizationLayout>('/organization')]);if(currentUserRef.current?.id!==u.id)return;setProviders(p);setModels(m);setAgents(a);setProjects(pr);setRuns(r);setSettings(s);setOrganization(o);if(u.role==='admin'){const users=await api<User[]>('/users');if(currentUserRef.current?.id===u.id)setUsers(users);}}catch(e){fail(e);}finally{if(currentUserRef.current?.id===u.id)setHydrating(false);}},[user,fail]);
  useEffect(()=>{let alive=true;api<User>('/auth/me').then(u=>{if(alive)setUser(u);}).catch(()=>{}).finally(()=>{if(alive)setBooting(false);});return()=>{alive=false;};},[]);
- useEffect(()=>{if(user){setHydrating(true);void refresh(user);}else{setHydrating(false);setPage('workspace');setWorkspaceMode('studio');setProviders([]);setModels([]);setAgents([]);setProjects([]);setRuns([]);setUsers([]);setAudit([]);setSettings(null);setSelected('');setEvents([]);setDialog(null);setRunDraft(null);setShowSetup(false);setToast(null);setPendingTeam(null);setStoreTab('browse');setOrganization(null);}},[user]);
+ useEffect(()=>{if(user){setHydrating(true);void refresh(user);}else{clearRunEvents();setHydrating(false);setPage('workspace');setWorkspaceMode('studio');setProviders([]);setModels([]);setAgents([]);setProjects([]);setRuns([]);setUsers([]);setAudit([]);setSettings(null);setSelected('');setEvents([]);setDialog(null);setRunDraft(null);setShowSetup(false);setToast(null);setPendingTeam(null);setStoreTab('browse');setOrganization(null);}},[user]);
  useEffect(()=>{if(!user){setCodexRuntimeEnabled(false);setCodexDefaultSchedulerEnabled(false);return;}api<Json>('/runtime/status').then(status=>{setCodexRuntimeEnabled(status.task_execution_enabled===true);setCodexDefaultSchedulerEnabled(status.default_scheduler_enabled===true);}).catch(()=>{setCodexRuntimeEnabled(false);setCodexDefaultSchedulerEnabled(false);});},[user]);
  useEffect(()=>{if(!desktop)return;if(!user){lastDesktopRuns.current.clear();return;}for(const task of taskNotifications(lastDesktopRuns.current,runs))void desktop.notifyTask(task).catch(()=>{});lastDesktopRuns.current=new Map(runs.map(r=>[r.id,r.status]));},[runs,user,desktop]);
  useEffect(()=>{if(!user)return;const timer=setInterval(()=>{Promise.all([api<Run[]>('/runs'),api<Json>('/settings')]).then(([r,s])=>{setRuns(r);setSettings(s);}).catch(fail);},6000);return()=>clearInterval(timer);},[user,fail]);
@@ -108,19 +109,13 @@ export default function App(){
  useEffect(()=>{if(page==='audit'&&user?.role==='admin')api<ForgeEvent[]>('/audit').then(setAudit).catch(fail);},[page,user,fail]);
  useEffect(()=>{
   if(!user||!selected){setEvents([]);return;}
-  let alive=true;let source:EventSource|null=null;let refreshTimer:ReturnType<typeof setTimeout>|undefined;
+  let alive=true;let unsubscribe:(()=>void)|undefined;let refreshTimer:ReturnType<typeof setTimeout>|undefined;
   setEvents([]);setDecisionNote('');setLive(false);
   const update=()=>loadDetail().catch(fail);
   void update();
-  const load=async()=>{let cursor=0;let collected:ForgeEvent[]=[];let more=true;
-    while(more&&alive){const page=await api<{events:ForgeEvent[];has_more:boolean}>(`/runs/${selected}/events?after=${cursor}&limit=1000`);collected=[...collected,...page.events].slice(-250);if(page.events.length)cursor=page.events.at(-1)!.id;more=page.has_more;}
-    if(!alive)return;setEvents(collected);source=new EventSource(`/api/runs/${selected}/stream?after=${cursor}`);
-    source.onopen=()=>{if(alive)setLive(true);};source.onerror=()=>{if(alive)setLive(false);};
-    source.onmessage=e=>{if(!alive)return;try{const event=JSON.parse(e.data) as ForgeEvent;setEvents(old=>old.some(x=>x.id===event.id)?old:[...old,event].slice(-250));if(refreshTimer)clearTimeout(refreshTimer);refreshTimer=setTimeout(update,150);}catch{notify('收到无效事件，正在重新同步',true);}};
-    source.addEventListener('revoked',()=>{source?.close();setUser(null);});
-  };load().catch(fail);
+  unsubscribe=subscribeRunEvents(selected,{events:items=>{if(!alive)return;setEvents(items);if(!refreshTimer)refreshTimer=setTimeout(()=>{refreshTimer=undefined;void update();},150);},state:state=>{if(!alive)return;setLive(state==='open');if(state==='closed')setUser(null);}});
   const poll=setInterval(update,6000);
-  return()=>{alive=false;source?.close();clearInterval(poll);if(refreshTimer)clearTimeout(refreshTimer);};
+  return()=>{alive=false;unsubscribe?.();clearInterval(poll);if(refreshTimer)clearTimeout(refreshTimer);};
  },[selected,user,fail,notify,loadDetail]);
 
  useEffect(()=>{if(!user){environment.stop();return;}environment.start(user.id);const save=()=>environment.save();window.addEventListener('pagehide',save);return()=>{window.removeEventListener('pagehide',save);environment.stop();};},[user?.id]);
@@ -150,17 +145,13 @@ export default function App(){
     const externalModels=failedChecks.filter(c=>c.code==='project.external_models');
     const messages=failedChecks.filter(c=>c.code!=='project.external_models').map(c=>{
      const context=[c.agent_id&&(agents.find(a=>a.id===c.agent_id)?.name||'成员 '+c.agent_id.slice(0,8)),c.model_profile_id&&(models.find(m=>m.id===c.model_profile_id)?.name||'模型 '+c.model_profile_id.slice(0,8)),c.provider_id&&(providers.find(p=>p.id===c.provider_id)?.name||'供应商')].filter(Boolean).join(' · ');
-     const message=c.code==='model.tools'
-       ? '当前模型配置尚未验证能否发起工具调用；工具实际由 Agent Forge 本机执行。可以直接验证，成功后会自动启用并重试需求。'
-       : c.message;
-     return (context?context+'：':'')+message;
+     return (context?context+'：':'')+c.message;
     });
     if(externalModels.length){
      messages.unshift('当前项目未开启外部模型访问。请到“项目”→“项目配置”勾选“允许将本项目必要代码与上下文发送给已配置的外部模型”后重试。');
     }
-    const toolCheck=failedChecks.find(c=>c.code==='model.tools'&&c.model_profile_id);
     throw Object.assign(new Error('暂时无法发送：'+(messages.join('\n')||'执行条件未满足，请检查配置。')),
-      {readiness:error.readiness,model_profile_id:toolCheck?.model_profile_id});
+      {readiness:error.readiness});
    }
    throw error;
   }

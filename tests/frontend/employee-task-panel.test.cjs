@@ -16,6 +16,7 @@ function harness({handler,preview=false,runPatch={},propPatch={}}={}){
   if(id==='react')return React;if(id==='react/jsx-runtime')return{jsx,jsxs:jsx,Fragment:'fragment'};
   if(id==='../types')return{terminal:['completed','cancelled','needs_attention'],states:{awaiting_decision:'待决定'}};
   if(id==='../api')return{jsonText:JSON.stringify,api:async(url,method='GET',body)=>{calls.push({url,method,body});if(handler)return handler(url,method,body);if(url.endsWith('/collaboration'))return{run_id:run.id,decisions:[]};if(url.includes('/trace?'))return{items:[]};return{...run,...runPatch};}};
+  if(id==='../runEventStream')return{subscribeRunEvents:()=>()=>{}};
   if(id==='./UI')return{Badge:props=>jsx('badge',props)};
   if(id==='./Icons')return new Proxy({},{get:(_,key)=>props=>jsx('icon-'+String(key),props)});
   if(id==='./TaskApprovals')return{__esModule:true,default:props=>jsx('approvals',props)};
@@ -184,7 +185,7 @@ test('running member workspace exposes targeted steer composer and attachment co
  const h=harness({runPatch:{status:'running'},propPatch:{initialTab:'messages'},handler:(url,method='GET',body)=>{calls.push({url,method,body});if(url.endsWith('/collaboration'))return{run_id:'run-a',decisions:[]};if(url.includes('/trace?'))return{items:[]};return {...run,status:'running'};}});
  h.render();const tree=await h.settle();
  assert.ok(nodes(tree).some(n=>n.props?.['aria-label']==='向当前成员发送运行中消息'));
- assert.match(source,/\/attachments/);assert.match(source,/agent_id:member/);assert.match(source,/new EventSource/);
+ assert.match(source,/\/attachments/);assert.match(source,/agent_id:member/);assert.match(source,/subscribeRunEvents/);
  assert.match(source,/value\.workspace_path/);
 });
 

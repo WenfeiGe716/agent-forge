@@ -1,11 +1,10 @@
-/** Offline build. Uses the pinned, licensed compiler/runtime shipped in vendor/.
- * This is transpilation plus syntax diagnostics, NOT a full TypeScript type check.
- */
+/** Offline production build. Uses the pinned, licensed compiler/runtime shipped in vendor/. */
 import fs from 'node:fs';
 import path from 'node:path';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const require=createRequire(import.meta.url),ts=require(path.join(root,'frontend/vendor/typescript.cjs'));
 const source=path.join(root,'frontend/src'),out=path.join(root,'frontend/dist');
@@ -23,13 +22,15 @@ for(const p of emittedFiles){const relative=path.relative(source,p).replace(/\.t
  const target=path.join(out,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,code);if(result.sourceMapText)fs.writeFileSync(target+'.map',result.sourceMapText);
 }
 if(diagnostics.length){console.error(diagnostics);process.exit(1);}
+const typecheck=spawnSync(process.execPath,[path.join(root,'scripts/typecheck.mjs')],{cwd:root,stdio:'inherit'});
+if(typecheck.status!==0)throw new Error('TypeScript semantic type check failed');
 const combinedCSS=['styles.css','studio.css','design.css','provider-center.css','role-templates.css','execution.css','organization-inventory.css','agent-directory.css','task-workspace.css','task-approvals.css','employee-task.css','task-flow.css','run-board.css','employee-task-density.css','workspace-density.css','team-execution-permissions.css','studio-navigation.css','components/employee-portrait.css'].map(name=>fs.readFileSync(path.join(source,name),'utf8')).join('\n');
 fs.writeFileSync(path.join(out,'styles.css'),combinedCSS);
 fs.mkdirSync(path.join(out,'vendor'),{recursive:true});
 for(const name of ['react-runtime.js','react.js','react-dom-client.js','jsx-runtime.js','THIRD_PARTY_NOTICES.md'])fs.copyFileSync(path.join(root,'frontend/vendor',name),path.join(out,'vendor',name));
 const imports={react:'/vendor/react.js','react-dom/client':'/vendor/react-dom-client.js','react/jsx-runtime':'/vendor/jsx-runtime.js'};
 fs.writeFileSync(path.join(out,'index.html'),`<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111719"><title>Agent Forge · 协作工坊</title><link rel="stylesheet" href="/styles.css"><script type="importmap">${JSON.stringify({imports})}</script></head><body><div id="root"></div><script type="module" src="/main.js"></script></body></html>`);
-const result={compiler:ts.version,mode:'offline-transpile-and-browser-validation',semantic_typecheck:false,source_files:emittedFiles.length,syntax_errors:diagnostics.length,react:'18.2.0',output:'frontend/dist'};
+const result={compiler:ts.version,mode:'offline-transpile-and-browser-validation',semantic_typecheck:true,source_files:emittedFiles.length,syntax_errors:diagnostics.length,react:'18.2.0',output:'frontend/dist'};
 fs.mkdirSync(path.join(root,'docs/evidence'),{recursive:true});fs.writeFileSync(path.join(root,'docs/evidence/offline-build.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
 // Also emit a single-file page: no module/package network requests at runtime.
 const realisticVendor=fs.readFileSync(path.join(root,'frontend/vendor/realistic-runtime.js'),'utf8');

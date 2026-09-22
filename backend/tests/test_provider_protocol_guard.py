@@ -204,7 +204,9 @@ def test_repair_legacy_responses_configuration_versions_then_unblocks_original_b
     assert fixed['allowed_parameters'] == ['max_output_tokens']
     after = state(client)
     assert after['providers'] == before['providers'] and after['agents'] == before['agents']
-    assert next(m for m in after['models'] if m['id'] == sibling['id']) == sibling
+    returned_sibling = next(m for m in after['models'] if m['id'] == sibling['id'])
+    assert {k: v for k, v in returned_sibling.items() if k != 'capability'} == sibling
+    assert returned_sibling['capability']['max_output_tokens'] == 4096
     with session() as s:
         assert s.get(ModelRevision, broken['id'] + ':1').config['parameters'] == {'max_tokens': 4096}
         assert s.get(ModelRevision, broken['id'] + ':2').config['parameters'] == {'max_output_tokens': 4096}

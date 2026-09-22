@@ -1030,6 +1030,7 @@ impl RunService {
                     }),
                 },
             )?;
+            self.notify_events();
             if let Some(request) = &event.request_id {
                 if let Some(item_id) = &event.item_id {
                     active_commands.remove(item_id);

@@ -673,8 +673,9 @@ async fn stream(
         Ok(())
     })
     .await?;
-    // The body owns the polling loop: disconnect drops it, with no detached
-    // producer, subscription queue, or background task to leak.
+    // Subscribe before the first read: a commit racing that read remains a
+    // pending wake-up. The durable cursor, not a bounded channel, owns replay.
+    let mut notifications = host.backend.event_notifications();
     let body = async_stream::stream! {
         loop {
             let live_host = host.clone();
@@ -689,11 +690,13 @@ async fn stream(
                     if page.events.is_empty() {
                         yield Ok::<_, Infallible>(": keepalive\n\n".to_owned());
                     }
+                    let has_more = page.has_more;
                     for event in page.events {
                         cursor = event.id;
                         let data = serde_json::to_string(&event).expect("event contains JSON values");
                         yield Ok(format!("id: {}\ndata: {data}\n\n", event.id));
                     }
+                    if has_more { continue; }
                 }
                 Err(error) => {
                     if matches!(error.0, StatusCode::UNAUTHORIZED | StatusCode::NOT_FOUND | StatusCode::FORBIDDEN) {
@@ -704,7 +707,17 @@ async fn stream(
                     break;
                 }
             }
-            tokio::time::sleep(host.config.poll_interval).await;
+            if let Some(receiver) = notifications.as_mut() {
+                // Periodic ACL/state reconciliation remains for writes from
+                // other processes and non-runtime commands; token deltas wake
+                // immediately after their durable journal commit.
+                tokio::select! {
+                    result = receiver.changed() => { if result.is_err() { notifications = None; } },
+                    _ = tokio::time::sleep(Duration::from_secs(1)) => {},
+                }
+            } else {
+                tokio::time::sleep(host.config.poll_interval).await;
+            }
         }
     };
     let mut response = Body::from_stream(body).into_response();

@@ -11,6 +11,8 @@ if(process.platform!=='darwin'||process.arch!=='arm64')throw new Error('当前�
 const require=createRequire(path.join(desktop,'package.json'));
 const {packager}=require('@electron/packager');
 function run(command,args){const result=spawnSync(command,args,{cwd:root,stdio:'inherit',env:process.env});if(result.status!==0)throw new Error(`构建失败：${path.basename(command)} (${result.status})`);}
+function digestTree(dir){const files=[];function walk(current){for(const entry of fs.readdirSync(current,{withFileTypes:true})){const full=path.join(current,entry.name);if(entry.isDirectory())walk(full);else files.push([path.relative(dir,full),crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex')]);}}walk(dir);return files.sort((a,b)=>a[0].localeCompare(b[0]));}
+function assertSameResources(source,target){const left=digestTree(source),right=digestTree(target);if(JSON.stringify(left)!==JSON.stringify(right))throw new Error(`桌面前端资源与构建产物不一致：${source} -> ${target}`);}
 fs.mkdirSync(build,{recursive:true});
 run('/usr/bin/clang',['-fobjc-arc','-fno-modules','-framework','AppKit',path.join(desktop,'assets/icon.m'),'-o',path.join(build,'icon-renderer')]);
 run(path.join(build,'icon-renderer'),[build]);
@@ -67,6 +69,7 @@ for(const folder of results){
  // Stage only explicit Rust/runtime/frontend assets; no Python environment or
  // workspace credentials enter the packaged application.
  fs.cpSync(backend,path.join(app,'Contents/Resources/backend'),{recursive:true,verbatimSymlinks:true});
+ assertSameResources(path.join(root,'frontend/dist-desktop'),path.join(app,'Contents/Resources/backend/frontend'));
  run('/usr/bin/codesign',['--force','--deep','--sign','-',app]);
  run('/usr/bin/codesign',['--verify','--deep','--strict',app]);
  console.log('macOS 本地应用：'+app);

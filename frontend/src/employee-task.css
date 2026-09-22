@@ -418,7 +418,10 @@
 @media(max-width:740px){.studio-utility-dock{right:12px;bottom:10px}.studio-utility-dock .activity-toggle,.studio-utility-dock .live-output-toggle{min-height:34px;padding:8px 9px;font-size:10px}.live-output-dock{left:12px;right:12px;bottom:154px;transform:none;width:auto;height:min(420px,48vh)}.live-output-body{grid-template-columns:145px minmax(0,1fr)}.live-output-body>aside{padding:7px}.live-output-body>main{padding:10px}.live-output-event{grid-template-columns:55px 1fr}.live-output-event b{grid-column:2}.live-output-event span{grid-column:2}.live-output-dock>header{padding:11px 12px}.live-output-composer{padding:10px 12px;gap:7px}.live-output-composer button{min-width:64px}.live-output-composer textarea{font-size:12px}}
 .studio-workspace .live-output-tool summary{position:relative;display:grid;grid-template-columns:1fr;align-items:start;gap:3px;padding-left:24px}.studio-workspace .live-output-tool summary:before{position:absolute;left:10px;top:9px}.studio-workspace .live-output-tool summary>div{display:grid;gap:3px;min-width:0}.studio-workspace .live-output-tool summary span{white-space:normal;overflow-wrap:anywhere}.studio-workspace .live-output-tool summary time{line-height:1.5;padding-left:0}.studio-workspace .live-output-tool summary time.is-muted{display:none}.studio-workspace .live-output-date{padding:8px 4px 2px;color:#7b8493;font-size:10px;font-weight:600}.studio-workspace .live-output-status{display:flex;align-items:flex-start;padding:4px;color:#727b89;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.studio-workspace .live-output-status.error{color:#b33732}
 .studio-workspace .studio-utility-dock{right:12px;bottom:58px;max-width:calc(100% - 32px);flex-wrap:wrap;justify-content:flex-end}
-@media (min-width:741px) and (max-width:980px){.studio-workspace .studio-utility-dock{bottom:0}}
+@media (min-width:741px) and (max-width:980px){
+ .studio-workspace .studio-utility-dock{bottom:206px}
+ .studio-workspace .studio-utility-dock .activity-toggle,.studio-workspace .studio-utility-dock .live-output-toggle,.studio-workspace .studio-scene-tools>summary{min-height:28px;padding:5px 9px;font-size:11px}
+}
 .studio-workspace .studio-utility-dock>button{white-space:nowrap;flex:0 0 auto}
 /* The scene controls and activity controls are siblings in one bottom
    toolbar. The nested utility group must stay in normal flow; positioning it
@@ -474,3 +477,9 @@
    full labels and must opt out of that footprint. */
 .studio-composer .composer-failure button{width:auto!important;min-width:112px;min-height:30px;height:auto!important;flex:0 0 auto;white-space:nowrap!important;overflow:visible;text-overflow:clip;padding:7px 12px!important}
 .studio-composer .composer-failure details{min-width:0;max-width:100%;flex:1 1 100%}
+@media (max-width:740px){
+ .studio-workspace .studio-utility-dock{right:12px;bottom:210px}
+ .studio-workspace .studio-utility-dock .activity-toggle,.studio-workspace .studio-utility-dock .live-output-toggle,.studio-workspace .studio-scene-tools>summary{min-height:28px;padding:5px 9px;font-size:11px}
+ .studio-workspace .studio-scene-tools-popover{max-height:calc(100vh - 342px)}
+ .studio-workspace .studio-scene-tools .ambient-settings{max-height:145px;overflow:auto}
+}

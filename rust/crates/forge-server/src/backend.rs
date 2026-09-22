@@ -167,6 +167,7 @@ pub trait Backend: Send + Sync + 'static {
         Err(BackendError::Unsupported)
     }
     fn run(&self, user: &User, run_id: &str) -> Result<Value, BackendError>;
+    fn event_notifications(&self) -> Option<tokio::sync::watch::Receiver<u64>> { None }
     fn events(
         &self,
         user: &User,

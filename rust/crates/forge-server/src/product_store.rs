@@ -5,6 +5,7 @@ use crate::{Backend, BackendError, PythonSqliteBackend, User};
 use base64::{engine::general_purpose::STANDARD, Engine};
 use fernet::Fernet;
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
@@ -24,7 +25,7 @@ const OWNER: &str = "forge-rust-product";
 // Bump this whenever the extension catalog grows.  Existing databases are
 // upgraded transactionally in `verify_owner`; the extension DDL is
 // idempotent, so a partially upgraded process can safely be retried.
-const VERSION: i64 = 3;
+const VERSION: i64 = 4;
 
 pub struct ProductStore {
     path: PathBuf,
@@ -84,11 +85,35 @@ impl ProductStore {
                 .map(|key| Fernet::new(&key).ok_or(BackendError::InvalidData))
                 .transpose()?,
         };
-        let mut db = store.connect()?;
-        verify_owner(&mut db)?;
-        validate_schema(&db)?;
-        db.pragma_update(None, "journal_mode", "WAL")
-            .map_err(db_error)?;
+        // Several desktop processes can race during the first launch.  The
+        // winner publishes a complete database atomically, while the other
+        // openers may briefly contend on the owner migration or WAL pragma.
+        // Reopen the connection with bounded backoff instead of surfacing a
+        // transient SQLITE_BUSY as an unfriendly startup failure.
+        let mut ready = false;
+        for attempt in 0..12_u64 {
+            let result = (|| {
+                let mut db = store.connect()?;
+                verify_owner(&mut db)?;
+                validate_schema(&db)?;
+                db.pragma_update(None, "journal_mode", "WAL")
+                    .map_err(db_error)?;
+                Ok::<(), BackendError>(())
+            })();
+            match result {
+                Ok(()) => {
+                    ready = true;
+                    break;
+                }
+                Err(BackendError::Unavailable) if attempt < 11 => {
+                    std::thread::sleep(Duration::from_millis(15 * (attempt + 1)));
+                }
+                Err(error) => return Err(error),
+            }
+        }
+        if !ready {
+            return Err(BackendError::Unavailable);
+        }
         Ok(store)
     }
 
@@ -325,24 +350,137 @@ fn verify_owner(db: &mut Connection) -> Result<(), BackendError> {
         .map_err(|_| BackendError::InvalidData)?;
     if marker
         .as_ref()
-        .is_some_and(|(owner, version)| owner == OWNER && (1..VERSION).contains(version))
+        .is_some_and(|(owner, version)| owner == OWNER && (1..=VERSION).contains(version))
     {
         let transaction = db
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(db_error)?;
-        transaction
-            .execute_batch(EXTENSIONS)
-            .map_err(|_| BackendError::InvalidData)?;
+        transaction.execute_batch(EXTENSIONS).map_err(|_| BackendError::InvalidData)?;
+        migrate_model_parameter_defaults(&transaction)?;
         validate_schema(&transaction)?;
-        transaction
-            .execute(
-                "UPDATE forge_product_meta SET version=?1 WHERE id=1",
-                [VERSION],
-            )
-            .map_err(db_error)?;
+        if marker.as_ref().is_some_and(|(_, version)| *version != VERSION) {
+            transaction
+                .execute("UPDATE forge_product_meta SET version=?1 WHERE id=1", [VERSION])
+                .map_err(db_error)?;
+        }
         transaction.commit().map_err(db_error)?;
     } else if marker != Some((OWNER.to_owned(), VERSION)) {
         return Err(BackendError::InvalidData);
+    }
+    Ok(())
+}
+
+/// Repair model profiles imported from the legacy catalog before any runtime
+/// validates them.  Older OpenAI-compatible profiles used `max_tokens`; the
+/// Responses API requires `max_output_tokens`.  The migration keeps the
+/// explicit numeric value, adds the protocol default when an enabled profile
+/// has no output limit, and records the previous profile in the immutable
+/// revision table before updating the live row.
+fn migrate_model_parameter_defaults(db: &rusqlite::Transaction<'_>) -> Result<(), BackendError> {
+    let mut statement = db
+        .prepare(
+            "SELECT m.id,m.version,m.config,r.config FROM model_profiles m \
+             JOIN providers p ON p.id=json_extract(m.config,'$.provider_id') \
+             JOIN provider_revisions r ON r.id=p.revision_id AND r.provider_id=p.id",
+        )
+        .map_err(db_error)?;
+    let rows = statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, i64>(1)?,
+                row.get::<_, String>(2)?,
+                row.get::<_, String>(3)?,
+            ))
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)?;
+    drop(statement);
+    for (id, version, raw, provider_raw) in rows {
+        let mut config: Value = serde_json::from_str(&raw).map_err(|_| BackendError::InvalidData)?;
+        let provider: Value = serde_json::from_str(&provider_raw).map_err(|_| BackendError::InvalidData)?;
+        let protocol = provider.get("protocol").and_then(Value::as_str).unwrap_or("");
+        let enabled = config.get("enabled").and_then(Value::as_bool).unwrap_or(true);
+        let mut changed = false;
+        let Some(mut parameters) = config
+            .get("parameters")
+            .and_then(Value::as_object)
+            .cloned()
+        else {
+            continue;
+        };
+        let Some(mut allowed) = config
+            .get("allowed_parameters")
+            .and_then(Value::as_array)
+            .cloned()
+        else {
+            continue;
+        };
+        let output_key = match protocol {
+            "openai_responses" => Some("max_output_tokens"),
+            "google_gemini" => Some("maxOutputTokens"),
+            "anthropic_messages" | "openai_chat" => Some("max_tokens"),
+            _ => None,
+        };
+        if protocol == "openai_responses" {
+            if !parameters.contains_key("max_output_tokens") {
+                if let Some(value) = parameters.remove("max_tokens") {
+                    parameters.insert("max_output_tokens".into(), value);
+                    changed = true;
+                } else if let Some(value) = parameters.remove("max_completion_tokens") {
+                    parameters.insert("max_output_tokens".into(), value);
+                    changed = true;
+                }
+            } else if parameters.remove("max_tokens").is_some() {
+                changed = true;
+            }
+            if parameters.remove("max_completion_tokens").is_some() {
+                changed = true;
+            }
+            if allowed.iter().any(|value| value.as_str() == Some("max_tokens")) {
+                for value in allowed.iter_mut() {
+                    if value.as_str() == Some("max_tokens") {
+                        *value = json!("max_output_tokens");
+                        changed = true;
+                    }
+                }
+            }
+            let allowed_len = allowed.len();
+            allowed.retain(|value| value.as_str() != Some("max_completion_tokens"));
+            changed |= allowed.len() != allowed_len;
+        }
+        if enabled {
+            if let Some(key) = output_key {
+                if !parameters.contains_key(key) {
+                    parameters.insert(key.into(), json!(4096));
+                    changed = true;
+                }
+                if !allowed.iter().any(|value| value.as_str() == Some(key)) {
+                    allowed.push(json!(key));
+                    changed = true;
+                }
+            }
+        }
+        if !changed {
+            continue;
+        }
+        config["parameters"] = Value::Object(parameters);
+        config["allowed_parameters"] = Value::Array(allowed);
+        let next_version = version.checked_add(1).ok_or(BackendError::InvalidData)?;
+        let timestamp: String = db
+            .query_row("SELECT strftime('%Y-%m-%dT%H:%M:%fZ','now')", [], |row| row.get(0))
+            .map_err(db_error)?;
+        db.execute(
+            "INSERT OR IGNORE INTO model_asset_revisions(id,model_id,version,config,actor,created_at) VALUES(?1,?2,?3,?4,?5,?6)",
+            params![format!("{id}:{version}"), id, version, raw, "system:model-parameter-migration-v4", timestamp],
+        )
+        .map_err(db_error)?;
+        db.execute(
+            "UPDATE model_profiles SET config=?1,version=?2 WHERE id=?3 AND version=?4",
+            params![config.to_string(), next_version, id, version],
+        )
+        .map_err(db_error)?;
     }
     Ok(())
 }
@@ -516,6 +654,29 @@ fn validate_data(db: &Connection) -> Result<(), BackendError> {
 #[cfg(test)]
 mod outbox_tests {
     use super::*;
+
+    #[test]
+    fn imported_responses_profiles_are_repaired_before_runtime_use() {
+        let root = std::env::temp_dir().join(format!("forge-product-model-migration-{}", Uuid::new_v4()));
+        fs::create_dir_all(&root).unwrap();
+        let path = root.join("product.db");
+        let db = Connection::open(&path).unwrap();
+        db.execute_batch(PRODUCT_SCHEMA).unwrap();
+        db.execute("CREATE TABLE forge_product_meta(id INTEGER PRIMARY KEY CHECK(id=1),owner TEXT NOT NULL,version INTEGER NOT NULL,source_path TEXT,imported_at TEXT NOT NULL)", []).unwrap();
+        db.execute("INSERT INTO forge_product_meta VALUES(1,?1,3,NULL,'2026-01-01')", [OWNER]).unwrap();
+        db.execute("INSERT INTO providers(id,name,revision_id,enabled) VALUES('p','OpenAI','r',1)", []).unwrap();
+        db.execute("INSERT INTO provider_revisions(id,provider_id,config,encrypted_key,created_at) VALUES('r','p',?1,'','2026-01-01')", [json!({"protocol":"openai_responses","base_url":"http://127.0.0.1:1/v1","external":false,"protocol_config":{}}).to_string()]).unwrap();
+        db.execute("INSERT INTO model_profiles(id,config,version) VALUES('m',?1,1)", [json!({"enabled":true,"name":"Legacy","provider_id":"p","model_id":"gpt","allowed_parameters":["max_tokens"],"parameters":{"max_tokens":3072},"supports_tools":true}).to_string()]).unwrap();
+        drop(db);
+        let store = ProductStore::open(&path, None, None).unwrap();
+        let config: String = store.connect().unwrap().query_row("SELECT config FROM model_profiles WHERE id='m'", [], |row| row.get(0)).unwrap();
+        let config: Value = serde_json::from_str(&config).unwrap();
+        assert_eq!(config["parameters"], json!({"max_output_tokens":3072}));
+        assert_eq!(config["allowed_parameters"], json!(["max_output_tokens"]));
+        let version: i64 = store.connect().unwrap().query_row("SELECT version FROM model_profiles WHERE id='m'", [], |row| row.get(0)).unwrap();
+        assert_eq!(version, 2);
+        let _ = fs::remove_dir_all(root);
+    }
 
     #[test]
     fn outbox_delivery_is_retryable_and_idempotent() {

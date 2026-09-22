@@ -44,6 +44,7 @@ impl ProductApi {
                 |r| r.get(0),
             )?;
             let mut s=db.prepare("SELECT id,run_id,kind,payload_json,strftime('%Y-%m-%dT%H:%M:%fZ',created_at_ms/1000.0,'unixepoch') FROM events WHERE id>?1 ORDER BY id")?;
+            let mut pending = Vec::new();
             for item in s.query_map([cursor], |r| {
                 Ok((
                     r.get::<_, i64>(0)?,
@@ -54,16 +55,18 @@ impl ProductApi {
                 ))
             })? {
                 let (id, rid, kind, data, at) = item?;
-                let mut event = crate::Event {
+                pending.push(crate::Event {
                     id,
                     run_id: rid,
                     kind,
                     data,
                     created_at: at,
-                };
-                if let Some(service) = self.runtime.as_ref().and_then(|r| r.service.upgrade()) {
-                    service.enrich_event(&mut event)?;
-                }
+                });
+            }
+            if let Some(service) = self.runtime.as_ref().and_then(|r| r.service.upgrade()) {
+                service.enrich_events(&mut pending)?;
+            }
+            for event in pending {
                 c.execute("INSERT INTO forge_office_events(source,source_id,run_id,kind,data,created_at) VALUES('rust',?1,?2,?3,?4,?5)",params![event.id,event.run_id,event.kind,crate::python_sqlite::redact(event.data).to_string(),event.created_at])?;
             }
         }

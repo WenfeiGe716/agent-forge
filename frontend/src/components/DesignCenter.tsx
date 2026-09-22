@@ -239,7 +239,7 @@ export function OfficeEditor({value,onChange,agents,readOnly,organization=false}
  const write=(patch:Json)=>{if(readOnly)return;onChange({...value,...patch});setMessage('');};
  const set=(id:string,patch:Json)=>write({positions:{...positions,[id]:{...positions[id],...patch}}});
  const changeFloor=(patch:Json)=>write({floors:definitions.map(f=>f.floor===activeFloor?{...f,...patch}:f)});
- const changeZone=(id:string,patch:Json)=>changeFloor({zones:definition.zones.map((z:Json)=>z.id===id?{...z,...patch}:z)});
+ const changeZone=(id:string,patch:Json)=>changeFloor({zones:(definition?.zones||[]).map((z:Json)=>z.id===id?{...z,...patch}:z)});
  const assign=(id:string,targetFloor:number,zoneId?:string)=>{
   if(readOnly)return;
   const f=definitions.find(f=>f.floor===targetFloor),zones=f?.zones.filter((z:Json)=>z.kind==='work'&&(!zoneId||z.id===zoneId))||[];

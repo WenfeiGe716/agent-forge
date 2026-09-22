@@ -516,6 +516,9 @@ impl Backend for RustOwnedBackend {
         }
         Ok(value)
     }
+    fn event_notifications(&self) -> Option<tokio::sync::watch::Receiver<u64>> {
+        self.service.as_ref().map(|service| service.subscribe_events())
+    }
     fn events(
         &self,
         user: &User,
@@ -537,9 +540,7 @@ impl Backend for RustOwnedBackend {
             let has_more = events.len() > limit; events.truncate(limit); Ok(EventPage { events, has_more })
         })?;
         if let Some(service) = &self.service {
-            for event in &mut page.events {
-                service.enrich_event(event)?;
-            }
+            service.enrich_events(&mut page.events)?;
         }
         Ok(page)
     }

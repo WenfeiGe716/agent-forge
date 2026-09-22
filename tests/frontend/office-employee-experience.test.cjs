@@ -8,8 +8,8 @@ const studioHarness=reuse();
 const baseRun={id:'run-a',title:'本次实际交付',request:'完成文档和测试',status:'completed',artifact_digest:'frozen',snapshot:{agents:{}},tasks:[],report:{},plan:{tasks:[]}};
 function componentHarness(name,props={},handler){
  let cursor=0;const slots=[],pending=[],cleanups=[],calls=[],listeners={};
- const React={useState(v){const i=cursor++;if(!(i in slots))slots[i]=typeof v==='function'?v():v;return[slots[i],v=>slots[i]=typeof v==='function'?v(slots[i]):v];},useRef(v){const i=cursor++;return slots[i]||(slots[i]={current:v});},useEffect(fn,deps){const i=cursor++;if(!(i in slots)||deps.some((v,j)=>!Object.is(v,slots[i][j]))){cleanups[i]?.();slots[i]=deps;pending.push(()=>cleanups[i]=fn());}}};
- const jsx=(type,props)=>typeof type==='function'?type(props||{}):{type,props:props||{}};
+ const React={Component:class{constructor(props){this.props=props;this.state={};}setState(next){this.state={...this.state,...next};}},useState(v){const i=cursor++;if(!(i in slots))slots[i]=typeof v==='function'?v():v;return[slots[i],v=>slots[i]=typeof v==='function'?v(slots[i]):v];},useRef(v){const i=cursor++;return slots[i]||(slots[i]={current:v});},useEffect(fn,deps){const i=cursor++;if(!(i in slots)||deps.some((v,j)=>!Object.is(v,slots[i][j]))){cleanups[i]?.();slots[i]=deps;pending.push(()=>cleanups[i]=fn());}}};
+ const jsx=(type,props)=>typeof type==='function'?(type.prototype?.render?{type,props:props||{}}:type(props||{})):{type,props:props||{}};
  const exports={},source=fs.readFileSync(path.resolve(__dirname,`../../frontend/src/components/${name}.tsx`),'utf8');
  const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
  vm.runInNewContext(code,{exports,console,AbortController,TextDecoder,setInterval:()=>1,clearInterval(){},window:{innerWidth:1400,innerHeight:850,addEventListener:(n,fn)=>listeners[n]=fn,removeEventListener:n=>delete listeners[n]},fetch:()=>assert.fail('no file fetch before explicit preview'),require:id=>{

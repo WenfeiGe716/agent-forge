@@ -473,7 +473,7 @@ fn product_schema_v1_adds_delayed_module_tables_in_one_upgrade() {
         db.query_row("SELECT version FROM forge_product_meta", [], |r| r
             .get::<_, i64>(0))
             .unwrap(),
-        3
+        4
     );
     for table in [
         "design_assets",
@@ -532,7 +532,7 @@ fn product_schema_v2_adds_team_tables_and_is_idempotent() {
         db.query_row("SELECT version FROM forge_product_meta", [], |r| r
             .get::<_, i64>(0))
             .unwrap(),
-        3
+        4
     );
     for table in ["forge_team_runs", "forge_team_decision_callbacks"] {
         assert_eq!(
@@ -556,7 +556,7 @@ fn product_schema_v2_adds_team_tables_and_is_idempotent() {
             .query_row("SELECT version FROM forge_product_meta", [], |r| r
                 .get::<_, i64>(0))
             .unwrap(),
-        3
+        4
     );
 }
 
@@ -614,7 +614,7 @@ fn product_schema_future_version_is_rejected_without_mutation() {
         .unwrap();
     db.execute_batch(
         "CREATE TABLE forge_product_meta(id INTEGER PRIMARY KEY CHECK(id=1), owner TEXT NOT NULL, version INTEGER NOT NULL, source_path TEXT, imported_at TEXT NOT NULL);
-         INSERT INTO forge_product_meta VALUES(1, 'forge-rust-product', 4, NULL, '2026-09-12');",
+         INSERT INTO forge_product_meta VALUES(1, 'forge-rust-product', 5, NULL, '2026-09-12');",
     )
     .unwrap();
     drop(db);
@@ -628,6 +628,6 @@ fn product_schema_future_version_is_rejected_without_mutation() {
         db.query_row("SELECT version FROM forge_product_meta", [], |r| r
             .get::<_, i64>(0))
             .unwrap(),
-        4
+        5
     );
 }

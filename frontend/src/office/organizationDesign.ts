@@ -80,7 +80,7 @@ export function upgradeLayout(value:Json):Json{
  if(Array.isArray(value.desks))return reconcileDraft(value);
  if(!value.floors?.length)fail('请先生成或配置部门楼层，再启用团队与独立工位管理。');
  const next={...clone(value),teams:[] as Json[],desks:[] as Json[]};
- for(const floor of next.floors){
+ for(const floor of (next as Json).floors||[]){
   const entries=Object.entries(value.positions||{}).filter(([,p]:[string,any])=>p.floor===floor.floor);
   const team={id:'team_floor_'+floor.floor,name:floor.department+'团队',floor:floor.floor,zone_ids:floor.zones.filter((z:Json)=>z.kind==='work').map((z:Json)=>z.id),headcount:entries.length,member_ids:entries.map(([id])=>id)};
   next.teams.push(team);

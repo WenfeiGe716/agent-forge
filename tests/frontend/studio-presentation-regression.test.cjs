@@ -89,7 +89,7 @@ test('employee metrics count actual selected-run stages, scoped communication re
    {id:'other-member',run_id:'run-a',agent_id:'b',status:'pending',kind:'question'},
    {id:'other-run',run_id:'run-b',agent_id:'a',status:'pending',kind:'question'}
   ]};
-  if(url.startsWith('/runs/run-a/trace?')){const query=new URL(url,'http://test.invalid').searchParams;assert.equal(query.get('agent_id'),'a');assert.equal(query.get('communication_only'),'true');return{items:trace,has_more:false};}
+  if(url.startsWith('/runs/run-a/trace?')){const query=new URL(url,'http://test.invalid').searchParams;assert.equal(query.get('agent_id'),'a');assert.equal(query.get('after'),'0');assert.equal(query.get('limit'),'300');return{items:trace,has_more:false};}
   assert.equal(url,'/runs/run-a');return current;
  }});
  h.render();let tree=await h.settle();const metrics=classNode(tree,'employee-task-metrics',employee);assert.ok(metrics);

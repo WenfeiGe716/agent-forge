@@ -7,13 +7,14 @@ connection bodies, credentials, or frozen runtime snapshots.
 from sqlalchemy import select
 
 from .db import Agent, ModelProfile
-from .providers import PARAMETERS, RESERVED, validate_parameters
+from .providers import PARAMETERS, RESERVED, validate_parameters, validate_output_limit
 
 
-def _parameter_error(connection, declared, parameters):
+def _parameter_error(connection, declared, parameters, model_id='', context_window=None):
     protocol = connection['protocol']
     try:
         validate_parameters(protocol, declared, parameters, connection.get('protocol_config'))
+        validate_output_limit(protocol, model_id, context_window, parameters)
     except ValueError as error:
         reason = str(error)
         supported = (set(connection.get('protocol_config', {}).get('supported_parameters', []))
@@ -37,7 +38,7 @@ def model_errors(config, connection, config_id=None, agents=()):
                f'协议 {connection["protocol"]}）')
     errors = []
     declared, parameters = config.get('allowed_parameters', []), config.get('parameters', {})
-    reason = _parameter_error(connection, declared, parameters)
+    reason = _parameter_error(connection, declared, parameters, config.get('model_id', ''), config.get('context_window'))
     if reason:
         errors.append(f'{context}：{reason}')
     if (connection['protocol'] == 'custom_http' and config.get('supports_tools') and
@@ -49,7 +50,7 @@ def model_errors(config, connection, config_id=None, agents=()):
         if (config_id not in [cfg.get('model_profile_id'), *cfg.get('fallback_model_ids', [])]
                 or not cfg.get('model_parameters')):
             continue
-        reason = _parameter_error(connection, declared, parameters | cfg['model_parameters'])
+        reason = _parameter_error(connection, declared, parameters | cfg['model_parameters'], config.get('model_id', ''), config.get('context_window'))
         if reason:
             errors.append(f'{context}：Agent「{cfg.get("name", agent.id)}」（Agent ID {agent.id}）'
                           f'的模型参数覆盖不兼容：{reason}；请编辑该成员的模型参数覆盖')

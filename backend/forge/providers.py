@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 import httpx
 from .security import validate_url
 from . import protocols
+from .model_capabilities import output_limit
 
 RESERVED = {'model', 'messages', 'tools', 'tool_choice', 'system', 'stream', 'api_key', 'base_url', 'headers'}
 OPENAI_PARAMS = {'temperature', 'top_p', 'max_tokens', 'max_completion_tokens', 'reasoning_effort', 'presence_penalty', 'frequency_penalty', 'seed', 'stop', 'thinking'}
@@ -18,6 +19,67 @@ ANTHROPIC_PARAMS = {'temperature', 'top_p', 'top_k', 'max_tokens', 'stop_sequenc
 RESPONSES_PARAMS = {'temperature', 'top_p', 'max_output_tokens', 'reasoning', 'text', 'parallel_tool_calls'}
 GEMINI_PARAMS = {'temperature', 'topP', 'topK', 'maxOutputTokens', 'stopSequences', 'thinkingConfig', 'responseMimeType', 'responseSchema', 'seed'}
 PARAMETERS = {'openai_chat': OPENAI_PARAMS, 'anthropic_messages': ANTHROPIC_PARAMS, 'openai_responses': RESPONSES_PARAMS, 'google_gemini': GEMINI_PARAMS}
+DEFAULT_OUTPUT_LIMIT = 4096
+
+def parameter_defaults(protocol: str, protocol_config: dict | None = None, model_id: str = '', context_window: int | None = None) -> tuple[list[str], dict[str, Any]]:
+    """Return a safe editable starting profile for a protocol.
+
+    The limit is a default, not a cap: callers may replace it or add any
+    parameter declared by the selected adapter.  Custom protocols own their
+    parameter schema, so they intentionally start empty.
+    """
+    from .model_capabilities import output_limit
+    limit = output_limit(model_id, context_window) if model_id else DEFAULT_OUTPUT_LIMIT
+    if protocol == 'openai_responses':
+        return ['temperature', 'top_p', 'max_output_tokens'], {'max_output_tokens': limit}
+    if protocol == 'google_gemini':
+        return ['temperature', 'topP', 'maxOutputTokens'], {'maxOutputTokens': limit}
+    if protocol == 'anthropic_messages':
+        return ['temperature', 'top_p', 'max_tokens'], {'max_tokens': limit}
+    if protocol == 'openai_chat':
+        return ['temperature', 'top_p', 'max_tokens'], {'max_tokens': limit}
+    return [], {}
+
+
+def validate_output_limit(protocol: str, model_id: str, context_window: int | None, parameters: dict[str, Any]) -> None:
+    """Reject a configured output ceiling above the model's known capability."""
+    if protocol == 'custom_http':
+        return
+    key = {'openai_responses': 'max_output_tokens', 'google_gemini': 'maxOutputTokens'}.get(protocol, 'max_tokens')
+    value = parameters.get(key)
+    if value is None:
+        return
+    if value > output_limit(model_id, context_window):
+        raise ValueError(f'{key} 超过模型 {model_id} 的已知上限 {output_limit(model_id, context_window)}；请填写模型能力元数据或降低参数')
+
+def normalize_parameters(protocol: str, declared: list[str], parameters: dict[str, Any], *, apply_default: bool = False, model_id: str = '', context_window: int | None = None) -> tuple[list[str], dict[str, Any]]:
+    """Canonicalize known legacy output-limit names before a run starts.
+
+    This is deliberately limited to protocol-owned aliases.  Arbitrary
+    parameters remain subject to the strict validator, while an imported
+    Responses profile using the old Chat Completions name can be resumed and
+    retains its explicit numeric value.
+    """
+    names = list(dict.fromkeys(declared))
+    values = dict(parameters)
+    if protocol == 'openai_responses':
+        if 'max_output_tokens' not in values:
+            for legacy in ('max_tokens', 'max_completion_tokens'):
+                if legacy in values:
+                    values['max_output_tokens'] = values[legacy]
+                    break
+        values.pop('max_tokens', None)
+        values.pop('max_completion_tokens', None)
+        names = ['max_output_tokens' if name in {'max_tokens', 'max_completion_tokens'} else name for name in names]
+        names = list(dict.fromkeys(names))
+    if apply_default:
+        key = {'openai_responses': 'max_output_tokens', 'google_gemini': 'maxOutputTokens',
+               'anthropic_messages': 'max_tokens', 'openai_chat': 'max_tokens'}.get(protocol)
+        if key and key not in values:
+            values[key] = output_limit(model_id, context_window) if model_id else DEFAULT_OUTPUT_LIMIT
+        if key and key not in names:
+            names.append(key)
+    return names, values
 
 class ProviderError(RuntimeError):
     def __init__(self, message: str, retryable: bool = False):
@@ -278,8 +340,9 @@ async def _read_sse(response, protocol: str, on_delta) -> dict:
 async def complete(connection: dict, model: dict, messages: list[dict], tools: list[dict], key: str, timeout: int, transport=None, on_delta: Callable[[dict], Awaitable[None] | None] | None = None) -> Reply:
     base = validate_url(connection['base_url'])
     protocol = connection['protocol']
-    params = model['parameters']
-    validate_parameters(protocol, model['allowed_parameters'], params, connection.get('protocol_config'))
+    declared, params = normalize_parameters(protocol, model.get('allowed_parameters', []), model.get('parameters', {}), apply_default=True, model_id=model.get('model_id', ''), context_window=model.get('context_window'))
+    validate_parameters(protocol, declared, params, connection.get('protocol_config'))
+    validate_output_limit(protocol, model.get('model_id', ''), model.get('context_window'), params)
     if not connection['external'] and transport is None:
         await validate_private_target(base)
     headers = {'content-type': 'application/json'}

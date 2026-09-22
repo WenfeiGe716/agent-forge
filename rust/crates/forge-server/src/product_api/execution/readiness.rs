@@ -185,12 +185,16 @@ impl ProductApi {
                             "Model profile must be enabled",
                             "providers",
                         ));
-                        member.push(check(
-                            "model.tools",
-                            model["supports_tools"] == true,
-                            "Model must support tool calls",
-                            "providers",
-                        ));
+                        member.push(json!({
+                            "code": "model.tools",
+                            "status": if model["supports_tools"] == true { "ok" } else { "warning" },
+                            "message": if model["supports_tools"] == true {
+                                "Tool capability is recorded; tools are still executed by Forge"
+                            } else {
+                                "Tool capability has not been probed; the real run will validate the provider request"
+                            },
+                            "target": "providers",
+                        }));
                         let pid = model["provider_id"].as_str().unwrap_or("");
                         let provider:Option<(String,Value)>=c.query_row("SELECT r.id,r.config FROM providers p JOIN provider_revisions r ON r.id=p.revision_id AND r.provider_id=p.id WHERE p.id=?1 AND p.enabled=1",[pid],|r|Ok((r.get(0)?,decode(r.get(1)?)?))).optional()?;
                         member.push(check(

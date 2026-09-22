@@ -17,7 +17,7 @@ from .config import settings
 from .db import (session, init_db, User, LoginSession, Provider, ProviderRevision, ModelProfile, Agent, Project, Run, Task, Event, Outbox, PlatformConfig, OrchestrationTemplate, emit, uid, now)
 from .schema import (Login, UserCreate, ProviderInput, ModelInput, AgentInput, ProjectInput, RunInput, OrchestrationInput, OrchestrationTemplateInput, Decision, Control, DEFAULT_RUNTIME, ROLES, validate_runtime_patch, validate_agent_runtime_patch)
 from .security import password_hash, password_matches, token_hash, encrypt, validate_url
-from .providers import validate_parameters
+from .providers import parameter_defaults, validate_parameters
 from .model_compatibility import model_errors, validate_provider_change
 from .snapshots import freeze_run
 from .workspace import import_project, run_root
@@ -376,7 +376,14 @@ def update_template(template_id:str,data:OrchestrationTemplateInput,user=Depends
 
 @app.get('/api/models')
 def models(user=Depends(current_user)):
-    with session() as s: return [config_out(p) for p in s.scalars(select(ModelProfile))]
+    from .model_capabilities import capability_for
+    with session() as s:
+        result=[]
+        for profile in s.scalars(select(ModelProfile)):
+            item=config_out(profile); cap=capability_for(item.get('model_id',''),item.get('context_window'))
+            item['capability']={'max_output_tokens':cap.max_output_tokens,'context_window':cap.context_window,'source':cap.source}
+            result.append(item)
+        return result
 
 def save_model(data, user, existing_id=None):
     with session() as s:
@@ -396,6 +403,18 @@ def save_model(data, user, existing_id=None):
         provider=s.get(Provider,data.provider_id)
         if not provider: raise ValueError('供应商不存在')
         connection=s.get(ProviderRevision,provider.revision_id).config
+        # ModelInput has protocol-neutral Pydantic defaults for compatibility
+        # with older clients.  Once the provider is known, replace omitted
+        # fields with the adapter's canonical defaults so Responses profiles
+        # never inherit the Chat Completions `max_tokens` name.
+        if 'allowed_parameters' not in data.model_fields_set or 'parameters' not in data.model_fields_set:
+            allowed, parameters = parameter_defaults(connection['protocol'], connection.get('protocol_config'), data.model_id, data.context_window)
+            payload = data.model_dump()
+            if 'allowed_parameters' not in data.model_fields_set:
+                payload['allowed_parameters'] = allowed
+            if 'parameters' not in data.model_fields_set:
+                payload['parameters'] = parameters
+            data = ModelInput.model_validate(payload)
         errors = model_errors(data.model_dump(), connection, existing_id)
         if errors: raise ValueError('模型配置未保存：\n' + '\n'.join(errors))
         profile=s.get(ModelProfile,existing_id) if existing_id else ModelProfile(config=data.model_dump())

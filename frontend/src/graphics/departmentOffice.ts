@@ -47,7 +47,7 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
  // Shared collision probe used by optional pantry/common decorations.  It
  // must exist before the zone pass, where reception furniture may call it.
  const free=(x:number,z:number,w:number,d:number)=>!obstacles.some(o=>Math.abs(x-o.x)<(w+o.w)/2+.06&&Math.abs(z-o.z)<(d+o.d)/2+.06)
-  &&!places.some(a=>Math.abs(a.reception[0]-x)<w/2+.35&&Math.abs(a.reception[2]-z)<d/2+.35)
+  &&!places.some(a=>a.reception&&Math.abs(a.reception[0]-x)<w/2+.35&&Math.abs(a.reception[2]-z)<d/2+.35)
   &&!Object.values(facilities).flat().some(slot=>Math.abs(slot.position[0]-x)<w/2+.35&&Math.abs(slot.position[2]-z)<d/2+.35);
  const stamp=(zone:OrganizationZone,partStart:number,obstacleStart:number)=>{
   for(const part of parts.slice(partStart))Object.assign(part,{zoneId:zone.id});
@@ -141,8 +141,8 @@ export function makeDepartmentOffice(agents:Agent[],floor:OrganizationFloor,path
  // scale without introducing an employee-like actor or business event.
  round([-19.0,.52,8.35],[.58,.52,.82],0x343d4a,'pet-cat-body','cloth');
  round([-19.0,.96,8.35],[.48,.45,.48],0x424d5a,'pet-cat-head','cloth');
- add([-19.22,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear','leaf');
- add([-18.78,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear','leaf');
+ add([-19.22,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear',{tag:'leaf'});
+ add([-18.78,1.24,8.35],[.20,.28,.18],0x424d5a,'pet-cat-ear',{tag:'leaf'});
  add([-18.55,.72,8.35],[.72,.10,.10],0x424d5a,'pet-cat-tail',{surface:'cloth'});
  add([0,.75,-9.7],[26.8,1.5,.17],0xebece6,'department-wall');
  for(let i=0;i<7;i++){

@@ -57,7 +57,8 @@ class ConnectInput(ConnectionSettings):
             raise ValueError('请填写实际模型ID，或从供应商返回的列表中选择')
         self.model_id = self.model_id.strip()
         if 'parameters' not in self.model_fields_set:
-            self.parameters = {'openai_responses': {'max_output_tokens': 4096}, 'google_gemini': {'maxOutputTokens': 4096}, 'anthropic_messages': {'max_tokens': 4096}}.get(self.protocol, {})
+            from .providers import parameter_defaults
+            _, self.parameters = parameter_defaults(self.protocol, self.protocol_config, self.model_id)
         providers.validate_parameters(self.protocol, list(self.parameters), self.parameters, self.protocol_config)
         if self.protocol == 'custom_http' and self.protocol_config['response'].get('calls') is None:
             raise ValueError('连接检查需要自定义协议配置完整的工具调用响应；纯文本模型请在模型资产中登记')

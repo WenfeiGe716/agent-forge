@@ -473,6 +473,7 @@ pub(crate) struct RunService {
     slots: tokio::sync::Semaphore,
     live: Mutex<HashMap<String, mpsc::Sender<LiveCommand>>>,
     creation: Mutex<()>,
+    events_changed: tokio::sync::watch::Sender<u64>,
     this: Weak<Self>,
     _lock: fs::File,
 }
@@ -551,6 +552,7 @@ impl RunService {
             ),
             live: Mutex::new(HashMap::new()),
             creation: Mutex::new(()),
+            events_changed: tokio::sync::watch::channel(0).0,
             this: this.clone(),
             _lock: lock,
         }))
@@ -623,34 +625,67 @@ impl RunService {
         }
         Ok(())
     }
-    pub(crate) fn enrich_event(&self, event: &mut crate::Event) -> Result<()> {
-        if event.kind == "runtime_event" {
-            let kind = event.data["kind"].as_str().unwrap_or("unknown").to_owned();
-            let cid = event
+    pub(crate) fn subscribe_events(&self) -> tokio::sync::watch::Receiver<u64> {
+        self.events_changed.subscribe()
+    }
+    fn notify_events(&self) {
+        self.events_changed.send_modify(|version| *version = version.wrapping_add(1));
+    }
+
+    fn apply_enriched_event(event: &mut crate::Event, payload: Value) {
+        let kind = event.data["kind"].as_str().unwrap_or("unknown").to_owned();
+        event.data["agent_id"] = event
+            .data
+            .pointer("/connection/worker_id")
+            .cloned()
+            .unwrap_or(Value::Null);
+        if let Some(task_key) = payload.get("_forge_task_key").and_then(Value::as_str) {
+            event.data["task_key"] = json!(task_key);
+        }
+        event.data["payload"] = payload;
+        event.data["runtime_kind"] = json!(kind);
+        event.kind = format!("runtime.{}", kind.replace('/', "."));
+    }
+
+    /// Enrich a page with one query per run instead of one query per event.
+    /// Runtime events are persisted in a normalized message table, so doing
+    /// the lookup inside the SSE loop caused an N+1 query for every burst of
+    /// deltas. Missing payloads remain valid runtime events with an empty body.
+    pub(crate) fn enrich_events(&self, events: &mut [crate::Event]) -> Result<()> {
+        let keys: Vec<Value> = events.iter().filter(|event| event.kind == "runtime_event").map(|event| {
+            json!([event.run_id, event.data.pointer("/connection/connection_id").and_then(Value::as_str).unwrap_or(""), event.data["sequence"]])
+        }).collect();
+        if keys.is_empty() { return Ok(()); }
+        let connection = self.product.connect()?;
+        let mut payloads: HashMap<(String, String, i64), Value> = HashMap::new();
+        // json_each avoids SQLite's parameter limit. Each requested identity
+        // uses the (run, connection, sequence) primary index; old history is
+        // never scanned again when a new delta arrives.
+        for chunk in keys.chunks(1000) {
+            let mut statement = connection.prepare(
+                "SELECT m.run_id,m.connection_id,m.sequence,m.payload FROM json_each(?1) k JOIN forge_runtime_messages m ON m.run_id=json_extract(k.value,'$[0]') AND m.connection_id=json_extract(k.value,'$[1]') AND m.sequence=json_extract(k.value,'$[2]')"
+            ).map_err(db)?;
+            let rows = statement.query_map([json!(chunk).to_string()], |row| Ok((row.get::<_,String>(0)?,row.get::<_,String>(1)?,row.get::<_,i64>(2)?,row.get::<_,String>(3)?))).map_err(db)?;
+            for row in rows {
+                let (run, connection, sequence, raw) = row.map_err(db)?;
+                payloads.insert((run, connection, sequence), serde_json::from_str(&raw).map_err(|_| BackendError::InvalidData)?);
+            }
+        }
+        for event in events.iter_mut().filter(|event| event.kind == "runtime_event") {
+            let connection = event
                 .data
                 .pointer("/connection/connection_id")
                 .and_then(Value::as_str)
                 .unwrap_or("");
-            let sequence = event.data["sequence"].as_u64().unwrap_or(0);
-            let raw:Option<String>=self.product.connect()?.query_row("SELECT payload FROM forge_runtime_messages WHERE run_id=?1 AND connection_id=?2 AND sequence=?3",params![event.run_id,cid,sequence],|r|r.get(0)).optional().map_err(db)?;
-            event.data["agent_id"] = event
-                .data
-                .pointer("/connection/worker_id")
-                .cloned()
-                .unwrap_or(Value::Null);
-            let payload = raw
-                .map(|s| serde_json::from_str::<Value>(&s).map_err(|_| BackendError::InvalidData))
-                .transpose()?
+            let sequence = event.data["sequence"].as_i64().unwrap_or(0);
+            let payload = payloads
+                .remove(&(event.run_id.clone(), connection.to_owned(), sequence))
                 .unwrap_or_else(|| json!({}));
-            if let Some(task_key) = payload.get("_forge_task_key").and_then(Value::as_str) {
-                event.data["task_key"] = json!(task_key);
-            }
-            event.data["payload"] = payload;
-            event.data["runtime_kind"] = json!(kind);
-            event.kind = format!("runtime.{}", kind.replace('/', "."));
+            Self::apply_enriched_event(event, payload);
         }
         Ok(())
     }
+
     fn prepare(&self, user: &User, input: &Value, id: &str) -> Result<Frozen> {
         let ids = input["agent_ids"]
             .as_array()
@@ -1038,7 +1073,7 @@ impl RunService {
             )
             .map_err(db)?;
         let model: Value = serde_json::from_str(&raw).map_err(|_| BackendError::InvalidData)?;
-        if model["enabled"] == false || model["supports_tools"] != true {
+        if model["enabled"] == false {
             return Err(BackendError::Conflict);
         }
         let pid = text(&model, "provider_id")?;
@@ -1095,7 +1130,7 @@ impl RunService {
                 .ok_or(BackendError::NotFound)?;
             let candidate: Value =
                 serde_json::from_str(&candidate_raw).map_err(|_| BackendError::InvalidData)?;
-            if candidate["enabled"] == false || candidate["supports_tools"] != true {
+            if candidate["enabled"] == false {
                 return Err(BackendError::Conflict);
             }
             let candidate_provider = text(&candidate, "provider_id")?;
@@ -1804,6 +1839,7 @@ impl RunService {
                     },
                 )
                 .map_err(kernel)?;
+            self.notify_events();
             if let Some(request_id) = &event.request_id {
                 if let Some(item_id) = &event.item_id {
                     active_commands.remove(item_id);

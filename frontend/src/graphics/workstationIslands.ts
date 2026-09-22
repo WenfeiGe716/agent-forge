@@ -27,6 +27,6 @@ export function workstationIslandInlays(desks:RenderedDesk[],zone:OrganizationZo
   return[
    {p:[x,.113,z],s:[width,.002,depth],color:white,mesh:'cube',tag:'workstation-island-base',zoneId:zone.id,castShadow:false,surface:'matte'},
    {p:[x,.116,z],s:[width-.12,.002,depth-.12],color:tint,mesh:'cube',tag:'workstation-island-inlay',zoneId:zone.id,castShadow:false,surface:'matte'},
-  ] as Part[];
+  ] as unknown as Part[];
  });
 }

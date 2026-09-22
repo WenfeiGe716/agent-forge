@@ -66,12 +66,21 @@ def inspect_agent(s, agent, project, frozen=None, frozen_project=None):
         details = {'model_profile_id': model_id, 'provider_id': model['provider_id']}
         add('model.enabled', bool(model.get('enabled', True)), label + ('已启用' if model.get('enabled', True) else '已停用或从当前目录移出'), 'providers', **details)
         add('provider.enabled', bool(provider and provider.enabled and rev), label + ('的供应商已启用' if provider and provider.enabled and rev else '的供应商缺失或停用'), 'providers', **details)
-        add('model.tools', model.get('supports_tools') is True, label + ('已验证可发起工具调用（工具由本机执行器提供）' if model.get('supports_tools') else '尚未验证能否发起工具调用；本机工具由 Agent Forge 执行'), 'providers', **details)
+        # Tool execution is owned by Agent Forge.  A provider capability probe is
+        # useful evidence, but it must not be a preflight gate: many compatible
+        # endpoints reject synthetic tool probes even though the real request
+        # path works.  If the upstream cannot accept tools, the actual call will
+        # return a concrete provider error and the run can be retried or routed.
+        add('model.tools', model.get('supports_tools') is True,
+            label + ('已记录工具能力（工具由本机执行器提供）' if model.get('supports_tools')
+                     else '未做工具能力探测；将由实际运行请求确认，本机工具由 Agent Forge 执行'),
+            'providers', warning=True, **details)
         if rev:
             try:
                 params = dict(model['parameters'])
                 if not frozen: params.update(config.get('model_parameters', {}))
                 providers.validate_parameters(rev.config['protocol'], model['allowed_parameters'], params, rev.config.get('protocol_config'))
+                providers.validate_output_limit(rev.config['protocol'], model.get('model_id', ''), model.get('context_window'), params)
                 add('model.parameters', True, label + '参数合法', 'providers', **details)
             except (ValueError, KeyError) as exc:
                 add('model.parameters', False, label + '参数需要修正：' + str(exc)[:400], 'providers', **details)

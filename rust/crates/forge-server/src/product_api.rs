@@ -1247,6 +1247,61 @@ pub(crate) fn validate_parameters(protocol: &str, allowed: &Value, p: &Value) ->
     }
     Ok(())
 }
+
+/// Known model ceilings are metadata, not a substitute for a provider error.
+/// Unknown models intentionally retain the 4096 safe default until an operator
+/// records a verified capability.
+fn model_output_limit(model_id: &str, context_window: Option<u64>) -> u64 {
+    let id = model_id.to_ascii_lowercase();
+    let published = if id == "gpt-5.6-sol" || id == "gpt-5.6" || id == "gpt-5" || id.starts_with("gpt-5.6-") {
+        128_000
+    } else {
+        4_096
+    };
+    context_window.map_or(published, |window| published.min(window))
+}
+
+fn validate_model_output_limit(protocol: &str, model_id: &str, context_window: Option<u64>, parameters: &Value) -> Result<()> {
+    let key = match protocol {
+        "openai_responses" => "max_output_tokens",
+        "google_gemini" => "maxOutputTokens",
+        "custom_http" => return Ok(()),
+        _ => "max_tokens",
+    };
+    if let Some(value) = parameters.get(key).and_then(Value::as_u64) {
+        let limit = model_output_limit(model_id, context_window);
+        if value > limit {
+            return Err(bad(format!("{key} exceeds known model limit {limit}; record a verified capability or lower the value")));
+        }
+    }
+    Ok(())
+}
+
+/// Defaults for a newly created model profile.  The output limit is deliberately
+/// protocol-specific: OpenAI Responses calls it `max_output_tokens`, while
+/// Chat Completions and Anthropic use `max_tokens` and Gemini uses
+/// `maxOutputTokens`.  Users can still replace or extend these values; this is
+/// only the safe starting point when a profile omits optional configuration.
+pub(crate) fn model_parameter_defaults(protocol: &str) -> Value {
+    match protocol {
+        "openai_responses" => json!({
+            "allowed_parameters": ["temperature", "top_p", "max_output_tokens"],
+            "parameters": {"max_output_tokens": 4096}
+        }),
+        "google_gemini" => json!({
+            "allowed_parameters": ["temperature", "topP", "maxOutputTokens"],
+            "parameters": {"maxOutputTokens": 4096}
+        }),
+        "anthropic_messages" => json!({
+            "allowed_parameters": ["temperature", "top_p", "max_tokens"],
+            "parameters": {"max_tokens": 4096}
+        }),
+        _ => json!({
+            "allowed_parameters": ["temperature", "top_p", "max_tokens"],
+            "parameters": {"max_tokens": 4096}
+        }),
+    }
+}
 pub(super) fn validate_model(c: &Connection, b: &Value) -> Result<Value> {
     fields(
         b,
@@ -1267,10 +1322,23 @@ pub(super) fn validate_model(c: &Connection, b: &Value) -> Result<Value> {
     string(b, "model_id", 1, 200)?;
     let pid = string(b, "provider_id", 1, 32)?;
     let connection=c.query_row("SELECT r.config FROM providers p JOIN provider_revisions r ON r.id=p.revision_id WHERE p.id=?1",[pid],|r|decode(r.get(0)?)).optional()?.ok_or_else(||bad("Provider does not exist"))?;
-    let v = defaults(
-        b,
-        json!({"enabled":true,"allowed_parameters":["temperature","top_p","max_tokens"],"parameters":{"max_tokens":4096},"supports_tools":true,"input_cost_per_million":null,"output_cost_per_million":null,"context_window":null}),
-    )?;
+    let mut profile_defaults = model_parameter_defaults(connection["protocol"].as_str().unwrap_or(""));
+    let known_limit = model_output_limit(b["model_id"].as_str().unwrap_or(""), b["context_window"].as_u64());
+    let parameter_key = match connection["protocol"].as_str().unwrap_or("") {
+        "openai_responses" => "max_output_tokens",
+        "google_gemini" => "maxOutputTokens",
+        "custom_http" => "",
+        _ => "max_tokens",
+    };
+    if !parameter_key.is_empty() {
+        profile_defaults["parameters"][parameter_key] = json!(known_limit);
+    }
+    profile_defaults["enabled"] = json!(true);
+    profile_defaults["supports_tools"] = json!(true);
+    profile_defaults["input_cost_per_million"] = Value::Null;
+    profile_defaults["output_cost_per_million"] = Value::Null;
+    profile_defaults["context_window"] = Value::Null;
+    let v = defaults(b, profile_defaults)?;
     bool_or(&v, "enabled", true)?;
     bool_or(&v, "supports_tools", true)?;
     for k in ["input_cost_per_million", "output_cost_per_million"] {
@@ -1281,6 +1349,12 @@ pub(super) fn validate_model(c: &Connection, b: &Value) -> Result<Value> {
     if !v["context_window"].is_null() {
         number(&v, "context_window", 1., 1e9)?
     }
+    validate_model_output_limit(
+        connection["protocol"].as_str().unwrap_or(""),
+        v["model_id"].as_str().unwrap_or(""),
+        v["context_window"].as_u64(),
+        &v["parameters"],
+    )?;
     if connection["protocol"] == "custom_http" {
         protocols::parameters(
             connection["protocol"].as_str().unwrap(),
@@ -1555,7 +1629,8 @@ fn validate_project(c: &Connection, b: &Value) -> Result<Value> {
 
 #[cfg(test)]
 mod attachment_tests {
-    use super::materialize_run_attachment;
+    use super::{materialize_run_attachment, model_parameter_defaults, validate_parameters};
+    use serde_json::json;
     use std::fs;
     use uuid::Uuid;
 
@@ -1573,6 +1648,27 @@ mod attachment_tests {
             assert_eq!(fs::read(workspace.join(&relative)).unwrap(), b"hello");
         }
         fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn model_defaults_follow_the_selected_provider_protocol() {
+        let responses = model_parameter_defaults("openai_responses");
+        assert_eq!(responses["parameters"]["max_output_tokens"], 4096);
+        assert!(validate_parameters(
+            "openai_responses",
+            &responses["allowed_parameters"],
+            &responses["parameters"]
+        )
+        .is_ok());
+        assert_eq!(model_parameter_defaults("openai_chat")["parameters"]["max_tokens"], 4096);
+        assert_eq!(model_parameter_defaults("anthropic_messages")["parameters"]["max_tokens"], 4096);
+        assert_eq!(model_parameter_defaults("google_gemini")["parameters"]["maxOutputTokens"], 4096);
+        assert!(validate_parameters(
+            "openai_responses",
+            &json!(["max_tokens"]),
+            &json!({"max_tokens": 4096})
+        )
+        .is_err());
     }
 
     #[cfg(unix)]

@@ -5,7 +5,7 @@ import {Activity,ChevronRight,X,Paperclip} from './Icons';
 import {Badge} from './UI';
 
 type Props={run:Run|null;events:ForgeEvent[];agents:Agent[];open:boolean;onClose:()=>void};
-type Stream={key:string;agentId:string;taskKey:string;agentName:string;taskTitle:string;status:string;text:string;events:ForgeEvent[];last:number};
+type Stream={key:string;agentId:string;taskKey:string;taskKeys:string[];agentName:string;taskTitle:string;status:string;text:string;events:ForgeEvent[];last:number};
 
 const runtimeKind=(e:ForgeEvent)=>e.kind.startsWith('runtime.')?String(e.data?.runtime_kind||e.kind.slice(8).replaceAll('.','/')):e.kind;
 const payload=(e:ForgeEvent):Json=>e.data?.payload&&typeof e.data.payload==='object'?e.data.payload as Json:{};
@@ -37,7 +37,8 @@ const eventDay=(e?:ForgeEvent)=>eventDate(e).slice(0,10);
 const eventClock=(e?:ForgeEvent)=>eventDate(e).slice(11);
 const eventMillis=(e?:ForgeEvent)=>{if(!e)return 0;const value=new Date(e.created_at).getTime();return Number.isFinite(value)?value:0;};
 
-/** Codex-style, task-isolated stream viewer. It never merges output across agents or tasks. */
+/** Codex-style stream viewer. One member owns one transcript window; task keys
+ * remain metadata so handoffs and retries do not split the same role into tabs. */
 export default function LiveOutputDock({run,events,agents,open,onClose}:Props){
  const [selected,setSelected]=useState('');
  const [input,setInput]=useState(''),[files,setFiles]=useState<File[]>([]),[sending,setSending]=useState(false),[notice,setNotice]=useState('');
@@ -47,14 +48,24 @@ export default function LiveOutputDock({run,events,agents,open,onClose}:Props){
   const names:Record<string,string>=Object.fromEntries(agents.map(a=>[a.id,a.name]));
   const map=new Map<string,Stream>();
   const ensure=(agentId:string,taskKey:string)=>{
-   const key=`${agentId}:${taskKey}`;
+  // One role/member gets one transcript window for the whole run.  Runtime
+  // events can carry different task keys during handoffs or retries; those are
+  // metadata inside the same role stream, not separate conversations.
+  const key=agentId;
    if(!map.has(key)){
     const task=tasks.find(t=>t.agent_id===agentId&&((t.key||t.id)===taskKey));
     const rawTitle=task?.title||'';
     const taskTitle=rawTitle&&rawTitle!==taskKey&&!rawTitle.endsWith(':codex')?rawTitle:run.title||'当前任务';
-    map.set(key,{key,agentId,taskKey,agentName:names[agentId]||run.snapshot?.agents?.[agentId]?.name||'成员',taskTitle,status:taskState(task),text:'',events:[],last:0});
+    map.set(key,{key,agentId,taskKey,taskKeys:taskKey?[taskKey]:[],agentName:names[agentId]||run.snapshot?.agents?.[agentId]?.name||'成员',taskTitle,status:taskState(task),text:'',events:[],last:0});
    }
-   return map.get(key)!;
+   const stream=map.get(key)!;
+   if(taskKey&&!stream.taskKeys.includes(taskKey)){
+    stream.taskKeys.push(taskKey);
+    stream.taskKey=taskKey;
+    const titles=stream.taskKeys.map(k=>tasks.find(t=>t.key===k)?.title||k).filter(Boolean);
+    stream.taskTitle=titles.length>1?`${titles[0]} · ${titles.length} 个阶段`:titles[0]||stream.taskTitle;
+   }
+   return stream;
   };
   // Keep every assigned task visible, including tasks that have not emitted output yet.
   for(const task of tasks){const aid=task.agent_id||run.snapshot?.entry_agent_id||'';if(aid)ensure(aid,task.key||task.id);}
@@ -87,7 +98,7 @@ export default function LiveOutputDock({run,events,agents,open,onClose}:Props){
   <header><div><Activity size={15}/><b>实时 Agent 输出</b><small>{run?run.title:'未选择任务'}</small></div><span className="live-output-count">{streams.filter(s=>s.status==='running').length} 个运行中</span><button aria-label="关闭实时输出" onClick={onClose}><X size={15}/></button></header>
   {!run?<p className="live-output-empty">选择一个任务后，这里会按成员和任务显示真实模型输出。</p>:<div className="live-output-body">
    <aside aria-label="成员任务列表">{streams.map(s=><button key={s.key} className={current?.key===s.key?'selected':''} onClick={()=>setSelected(s.key)}><span><i className={'live-dot '+s.status}/><b>{s.agentName}</b></span><small>{s.taskTitle}</small><em>{states[s.status]||s.status}{s.text?` · ${s.text.length} 字`:''}</em></button>)}{!streams.length&&<p>本次运行尚未分配任务。</p>}</aside>
-   <main aria-live="polite">{current?<><div className="live-output-task-head"><div><b>{current.agentName}</b><ChevronRight size={13}/><strong>{current.taskTitle}</strong></div><Badge state={current.status}/></div>{current.text?<article className="live-output-assistant"><header><b>{current.agentName}</b><small>{current.status==='running'?'正在生成':'模型回复'}</small>{current.events[0]&&<time className="live-output-message-time">{eventDate(current.events[0])}</time>}</header><p>{current.text}{current.status==='running'&&<i className="live-cursor" aria-label="正在输出"/>}</p></article>:<p className="live-output-empty compact">模型开始响应后会实时显示输出。</p>}<div className="live-output-events">{current.events.filter(isToolEvent).slice(-18).map((e,i,items)=>{const summary=eventText(e),detail=toolDetails(e),expanded=(summary.length<500&&detail.length<500)||i===items.length-1&&runtimeKind(e).includes('started'),previous=items[i-1],showTime=i===0||eventDay(e)!==eventDay(previous)||eventMillis(e)-eventMillis(previous)>=300000;return <details key={e.id} className="live-output-tool" defaultOpen={expanded}><summary><time className={showTime?'':'is-muted'}>{showTime?(i===0||eventDay(e)!==eventDay(previous)?eventDate(e):eventClock(e)):''}</time><div><b>{displayKind(e)}</b><span>{summary||'工具事件已记录'}</span></div></summary>{detail&&<pre>{detail}</pre>}</details>;})}{(()=>{const statusEvents=current.events.filter(e=>{const k=runtimeKind(e);return ['model.started','model.completed','turn/started','turn/completed','task.failed','error','agent.started'].includes(k)&&((eventText(e)||'').trim()||k==='task.failed'||k==='error');}).slice(-12);return statusEvents.length>0&&<><div className="live-output-date">{eventDate(statusEvents[0])}</div>{statusEvents.map((e,i)=>{const previous=statusEvents[i-1],showTime=i===0||eventDay(e)!==eventDay(previous)||eventMillis(e)-eventMillis(previous)>=300000;return <div key={'status-'+e.id} className={'live-output-status '+(runtimeKind(e)==='error'||runtimeKind(e)==='task.failed'?'error':'')}><time className={showTime?'':'is-muted'}>{showTime?(i===0||eventDay(e)!==eventDay(previous)?eventDate(e):eventClock(e)):''}</time><span>{displayKind(e)} · {eventText(e)||'状态已更新'}</span></div>;})}</>})()}</div>{!current.text&&!current.events.length&&<p className="live-output-empty">该任务已分配，模型开始响应后会实时显示。</p>}</>:<p className="live-output-empty">选择左侧成员任务查看输出。</p>}</main>
+   <main aria-live="polite">{current?<><div className="live-output-task-head"><div><b>{current.agentName}</b><ChevronRight size={13}/><strong>{current.taskTitle}</strong></div><Badge state={current.status}/></div>{current.text?<article className="live-output-assistant"><header><b>{current.agentName}</b><small>{current.status==='running'?'正在生成':'模型回复'}</small>{current.events[0]&&<time className="live-output-message-time">{eventDate(current.events[0])}</time>}</header><p>{current.text}{current.status==='running'&&<i className="live-cursor" aria-label="正在输出"/>}</p></article>:<p className="live-output-empty compact">模型开始响应后会实时显示输出。</p>}<div className="live-output-events">{current.events.filter(isToolEvent).map((e,i,items)=>{const summary=eventText(e),detail=toolDetails(e),expanded=(summary.length<500&&detail.length<500)||i===items.length-1&&runtimeKind(e).includes('started'),previous=items[i-1],showTime=i===0||eventDay(e)!==eventDay(previous)||eventMillis(e)-eventMillis(previous)>=300000;return <details key={e.id} className="live-output-tool" open={expanded}><summary><time className={showTime?'':'is-muted'}>{showTime?(i===0||eventDay(e)!==eventDay(previous)?eventDate(e):eventClock(e)):''}</time><div><b>{displayKind(e)}</b><span>{summary||'工具事件已记录'}</span></div></summary>{detail&&<pre>{detail}</pre>}</details>;})}{(()=>{const statusEvents=current.events.filter(e=>{const k=runtimeKind(e);return ['model.started','model.completed','turn/started','turn/completed','task.failed','error','agent.started'].includes(k)&&((eventText(e)||'').trim()||k==='task.failed'||k==='error');});return statusEvents.length>0&&<><div className="live-output-date">{eventDate(statusEvents[0])}</div>{statusEvents.map((e,i)=>{const previous=statusEvents[i-1],showTime=i===0||eventDay(e)!==eventDay(previous)||eventMillis(e)-eventMillis(previous)>=300000;return <div key={'status-'+e.id} className={'live-output-status '+(runtimeKind(e)==='error'||runtimeKind(e)==='task.failed'?'error':'')}><time className={showTime?'':'is-muted'}>{showTime?(i===0||eventDay(e)!==eventDay(previous)?eventDate(e):eventClock(e)):''}</time><span>{displayKind(e)} · {eventText(e)||'状态已更新'}</span></div>;})}</>})()}</div>{!current.text&&!current.events.length&&<p className="live-output-empty">该任务已分配，模型开始响应后会实时显示。</p>}</>:<p className="live-output-empty">选择左侧成员任务查看输出。</p>}</main>
   </div>}
   {run&&current&&<footer className="live-output-composer">
    <div className="live-output-compose-field"><input type="file" multiple hidden id="live-output-attachment" accept="image/*,.zip,.tar,.gz,.txt,.md,.json,.pdf,.doc,.docx" onChange={e=>{setFiles(old=>[...old,...Array.from(e.target.files||[])].slice(0,8));e.currentTarget.value='';}}/><label htmlFor="live-output-attachment" title="添加图片、文件或压缩包"><Paperclip size={15}/></label><textarea aria-label="补充指令" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();void send();}}} placeholder={`给 ${current.agentName} 补充说明，继续“${current.taskTitle}”…`} rows={2}/>{files.length>0&&<small className="live-output-files">{files.map(f=>f.name).join(' · ')}</small>}</div>
