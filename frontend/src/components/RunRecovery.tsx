@@ -34,9 +34,13 @@ export function runRecoverySeed(run:Run):Json{
 export default function RunRecovery({run,writer,onNewTask,onResume,onInspect,onConfigure}:{run:Run;writer:boolean;onNewTask:(seed:Json)=>void;onResume?:()=>void;onInspect?:()=>void;onConfigure?:()=>void}){
  if(run.status!=='needs_attention')return null;
  const info=summarizeRunFailure(run);
- const sameRunResume=run.status==='needs_attention' && (run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous');
+ const coordinatorTeam=Object.keys(run.snapshot?.agents||{}).length>1&&(run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous');
+ // A team run has product-side child activations that must be rehydrated as a
+ // group. Until that reset is complete, do not promise an unsafe one-click
+ // continuation that would collide with a stale child claim.
+ const sameRunResume=run.status==='needs_attention' && !coordinatorTeam && (run.execution_engine==='codex'||run.snapshot?.execution_engine==='codex'||run.mode==='autonomous'||run.execution_strategy==='autonomous'||run.snapshot?.execution_strategy==='autonomous');
  const pending=info.stage==='成果合并'?pendingIntegrationSubmissions(run):[];
  const heading=sameRunResume?'任务遇到问题 · 负责人已接管':info.title;
- const reason=sameRunResume?'现场与已完成成果已保留。负责人会先读取失败记录，在原任务中重试或改派，不会重复已完成步骤。':info.reason;
+ const reason=sameRunResume?'现场与已完成成果已保留。负责人会先读取失败记录，在原任务中继续或改派，不会重复已完成步骤。':info.reason;
  return <section className="run-recovery" role="status" aria-label="任务停止原因与处理"><header><span>{sameRunResume?'负责人处理中':'任务已停止 · 不是待审批'}</span><h3>{heading}</h3></header><p className="run-recovery-stage">停在：{info.stage}{info.member?' · '+info.member:''}</p><p>{reason}</p>{!!pending.length&&<details open className="run-recovery-submissions"><summary>尚未集成的成员提交</summary><p className="microcopy">待合并提交中的文件。</p>{pending.map(item=><article key={item.key}><b>{item.member}</b><ul>{item.files.map((file:string)=><li key={file}><code>{file}</code></li>)}</ul></article>)}</details>}<h4>接下来怎么做</h4><p>{sameRunResume?'点击继续，负责人将在原任务中处理剩余工作。':info.next}</p><div className="inline-actions">{writer&&sameRunResume&&onResume&&<button className="button primary" onClick={onResume}>继续此任务（负责人处理）</button>}{writer&&!sameRunResume&&<button className="button secondary" onClick={()=>onNewTask(runRecoverySeed(run))}>使用最新配置重新发起</button>}{onInspect&&<button className="button secondary" onClick={onInspect}>查看执行记录与已有产物</button>}{onConfigure&&info.stage!=='成果合并'&&<button className="button secondary" onClick={onConfigure}>检查成员与模型配置</button>}</div>{sameRunResume?<p className="microcopy">继续会复用本次运行的团队、工作区和权限快照。</p>:<p className="microcopy">需要改变目标或权限时，再新建任务。</p>}{run.error&&<details><summary>技术详情（排查时使用）</summary><pre>{run.error}</pre></details>}</section>;
 }

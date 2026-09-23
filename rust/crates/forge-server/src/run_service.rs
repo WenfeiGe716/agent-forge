@@ -1848,7 +1848,25 @@ impl RunService {
                     "item/commandExecution/requestApproval" => ApprovalKind::CommandExecution,
                     "item/fileChange/requestApproval" => ApprovalKind::FileChange,
                     "item/permissions/requestApproval" => ApprovalKind::Permissions,
-                    _ => return Err(BackendError::Unsupported),
+                    // A direct run can still receive a server request that is
+                    // not one of the three approval messages (for example a
+                    // tool callback emitted by a provider). Never turn that
+                    // protocol variation into a generic run failure. Reply
+                    // explicitly so the model can continue or explain the
+                    // unavailable capability, while preserving the run's
+                    // durable evidence for diagnosis.
+                    _ => {
+                        let response = if event.kind == "item/tool/requestUserInput" {
+                            json!({"answers":{}})
+                        } else {
+                            json!({"contentItems":[{"type":"inputText","text":"This capability is unavailable in a direct run."}],"success":false})
+                        };
+                        client
+                            .respond(request_id, response, deadline)
+                            .await
+                            .map_err(|_| BackendError::Unavailable)?;
+                        continue;
+                    }
                 };
                 let id = format!(
                     "{}:approval:{}:{}",
@@ -2355,7 +2373,7 @@ impl RunService {
                 download: Some(ProductDownload {
                     bytes,
                     filename: filename.to_string(),
-                    content_type: "application/octet-stream",
+                    content_type: queries::artifacts::content_type(filename),
                 }),
             }));
         }
@@ -2432,31 +2450,55 @@ impl RunController for RunService {
                 | ControlAction::Retry
                 | ControlAction::Reassign
         ) {
-            if !matches!(run.status, RunStatus::Pending | RunStatus::Paused) {
-                return Err(BackendError::Conflict);
-            }
-            let f = self.frozen(&run.id)?;
             let mut live = self.live.lock().map_err(|_| BackendError::Unavailable)?;
             if live.contains_key(&run.id) {
                 return Err(BackendError::Conflict);
             }
             let mut store = Store::open(&self.path).map_err(kernel)?;
-            let task_id = format!("{}:codex", run.id);
-            let task = store
-                .get_task(&task_id)
+            // An interrupted external call is deliberately marked
+            // OutcomeUnknown so we never replay it automatically. Once the
+            // user explicitly presses Continue/Retry, reconcile that durable
+            // state first; this turns the old “current state conflicts” dead
+            // end into a safe, auditable resume of the same workspace/thread.
+            let current = store
+                .get_run(&run.id)
                 .map_err(kernel)?
                 .ok_or(BackendError::NotFound)?;
-            if task.status == forge_core::TaskStatus::Submitted {
-                store
-                    .execute(
-                        &format!("{}:reopen-task:{}", run.id, task.version),
-                        Command::ReopenTask {
-                            task_id,
-                            expected_version: task.version,
-                            evidence_ref: format!("human:{}:resume-after-return", _actor.id),
-                        },
-                    )
-                    .map_err(kernel)?;
+            if current.status == RunStatus::OutcomeUnknown {
+                change(
+                    &mut store,
+                    &run.id,
+                    RunTransition::Reconcile {
+                        evidence_ref: format!("human:{}:reconcile-before-resume", _actor.id),
+                    },
+                )?;
+            }
+            let current = store
+                .get_run(&run.id)
+                .map_err(kernel)?
+                .ok_or(BackendError::NotFound)?;
+            if !matches!(current.status, RunStatus::Pending | RunStatus::Paused) {
+                return Err(BackendError::Conflict);
+            }
+            let f = self.frozen(&run.id)?;
+            if f.team.is_empty() {
+                let task_id = format!("{}:codex", run.id);
+                let task = store
+                    .get_task(&task_id)
+                    .map_err(kernel)?
+                    .ok_or(BackendError::NotFound)?;
+                if task.status == forge_core::TaskStatus::Submitted {
+                    store
+                        .execute(
+                            &format!("{}:reopen-task:{}", run.id, task.version),
+                            Command::ReopenTask {
+                                task_id,
+                                expected_version: task.version,
+                                evidence_ref: format!("human:{}:resume-after-return", _actor.id),
+                            },
+                        )
+                        .map_err(kernel)?;
+                }
             }
             if !input.reason.trim().is_empty() {
                 self.product.connect()?.execute("INSERT INTO human_instructions VALUES(?1,?2,?3,'[]',?4,strftime('%Y-%m-%dT%H:%M:%fZ','now'))", params![Uuid::new_v4().simple().to_string(),run.id,_actor.id,input.reason]).map_err(db)?;

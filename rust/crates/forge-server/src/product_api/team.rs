@@ -135,6 +135,52 @@ pub(crate) fn initialize_run(
     Ok(())
 }
 
+/// Record the end of a child activation after its runtime connection has been
+/// closed. This is deliberately separate from the task result: a child may
+/// have submitted useful evidence while its process still needs to be
+/// reclaimed, and an interrupted child must remain visibly uncertain.
+pub(crate) fn record_activation_reclaimed(
+    c: &mut Connection,
+    run_id: &str,
+    task_key: &str,
+    agent_id: &str,
+    activation_id: &str,
+    outcome: &str,
+    reason: &str,
+) -> Result<()> {
+    if run_id.trim().is_empty()
+        || task_key.trim().is_empty()
+        || agent_id.trim().is_empty()
+        || activation_id.trim().is_empty()
+        || !["completed", "uncertain", "cancelled"].contains(&outcome)
+        || reason.trim().is_empty()
+    {
+        return Err(bad("Invalid activation reclamation receipt"));
+    }
+    let tx = c.transaction_with_behavior(TransactionBehavior::Immediate)?;
+    let already: i64 = tx.query_row(
+        "SELECT count(*) FROM events WHERE run_id=?1 AND kind='team.activation.reclaimed' AND json_extract(data,'$.task_key')=?2 AND json_extract(data,'$.agent_id')=?3 AND json_extract(data,'$.activation_id')=?4",
+        params![run_id, task_key, agent_id, activation_id],
+        |row| row.get(0),
+    )?;
+    if already == 0 {
+        event(
+            &tx,
+            run_id,
+            "team.activation.reclaimed",
+            json!({
+                "task_key": task_key,
+                "agent_id": agent_id,
+                "activation_id": activation_id,
+                "outcome": outcome,
+                "reason": reason,
+            }),
+        )?;
+    }
+    tx.commit()?;
+    Ok(())
+}
+
 pub(crate) fn set_run_status(c: &mut Connection, run_id: &str, status: &str) -> Result<()> {
     if ![
         "running",
@@ -566,7 +612,7 @@ pub(crate) fn team_call(
                 args.get("member_id").and_then(Value::as_str),
             )?
         }
-        "assign_work" => assign(&tx, snapshot, actor, &id, args)?,
+        "assign_work" | "create_subagent" => assign(&tx, snapshot, actor, &id, args, name)?,
         "send_team_message" | "send_message" => send(&tx, snapshot, actor, &id, args)?,
         "pending_messages" | "read_inbox" => {
             fields(args, &["limit"])?;
@@ -668,6 +714,7 @@ fn assign(
     actor: &TeamActor,
     operation: &str,
     args: &Value,
+    tool_name: &str,
 ) -> Result<Value> {
     fields(
         args,
@@ -684,6 +731,11 @@ fn assign(
     let instruction = string(args, "instruction", 1, 20_000)?;
     let acceptance = string(args, "acceptance", 1, 20_000)?;
     let key = format!("auto_{}", &digest(&json!([operation, "task"]))[..24]);
+    let assignment_type = if tool_name == "create_subagent" {
+        "subagent"
+    } else {
+        "delegation"
+    };
     create_task(
         c,
         snapshot,
@@ -692,7 +744,7 @@ fn assign(
         &actor.agent_id,
         recipient,
         title,
-        json!({"assignment_type":"delegation","description":instruction,"acceptance":acceptance,"report_to":actor.agent_id,"source_task_key":actor.task_key}),
+        json!({"assignment_type":assignment_type,"description":instruction,"acceptance":acceptance,"report_to":actor.agent_id,"source_task_key":actor.task_key}),
     )
 }
 fn send(

@@ -66,11 +66,7 @@ impl RunService {
                     download: Some(ProductDownload {
                         bytes,
                         filename: filename.to_string(),
-                        content_type: if *filename == "source.zip" {
-                            "application/zip"
-                        } else {
-                            "application/octet-stream"
-                        },
+                        content_type: artifacts::content_type(filename),
                     }),
                 }
             }

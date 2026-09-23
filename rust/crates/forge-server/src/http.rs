@@ -351,6 +351,11 @@ async fn product_request(
                         header::CONTENT_TYPE,
                         HeaderValue::from_static(download.content_type),
                     ),
+                    (
+                        header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&download.bytes.len().to_string())
+                            .map_err(|_| BackendError::InvalidData)?,
+                    ),
                     (header::CONTENT_DISPOSITION, disposition),
                 ],
                 download.bytes,

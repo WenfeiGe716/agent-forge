@@ -3,6 +3,16 @@ use super::*;
 // Serialized artifacts reserve ZIP framing space beyond the 100 MiB source budget.
 pub(crate) const MAX_BYTES: u64 = 128 * 1024 * 1024;
 
+pub(crate) fn content_type(name: &str) -> &'static str {
+    match name {
+        "source.zip" => "application/zip",
+        "discussion.md" => "text/markdown; charset=utf-8",
+        "changes.patch" => "text/plain; charset=utf-8",
+        "report.json" | "discussion.json" => "application/json; charset=utf-8",
+        _ => "application/octet-stream",
+    }
+}
+
 pub(crate) fn read(root: &Path, name: &str) -> Result<Vec<u8>> {
     let relative = Path::new(name);
     if relative.components().count() != 1
@@ -61,4 +71,17 @@ pub(crate) fn read(root: &Path, name: &str) -> Result<Vec<u8>> {
         return Err(BackendError::Conflict);
     }
     Ok(bytes)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::content_type;
+
+    #[test]
+    fn published_artifacts_have_download_friendly_types() {
+        assert_eq!(content_type("discussion.md"), "text/markdown; charset=utf-8");
+        assert_eq!(content_type("report.json"), "application/json; charset=utf-8");
+        assert_eq!(content_type("source.zip"), "application/zip");
+        assert_eq!(content_type("unknown.bin"), "application/octet-stream");
+    }
 }

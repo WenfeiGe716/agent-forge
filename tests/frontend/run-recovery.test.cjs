@@ -118,6 +118,22 @@ test('unknown failure stays a generic explanation and viewers cannot invoke reco
  assert.equal(calls,0);
 });
 
+test('a codex-owned uncertain run offers same-run continuation even without autonomous mode',()=>{
+ const {default:Component}=recovery();
+ const original={...plain(run),execution_engine:'codex',execution_strategy:'standard',mode:'manual',snapshot:{...plain(run.snapshot),execution_engine:'codex',execution_strategy:'standard'}};
+ const tree=Component({run:original,writer:true,onNewTask(){},onResume(){},onInspect(){}});
+ assert.ok(nodes(tree).some(n=>n.type==='button'&&text(n).includes('继续此任务')));
+ assert.doesNotMatch(text(tree),/使用最新配置重新发起/);
+});
+
+test('an autonomous multi-member recovery does not promise continuation before child rehydration',()=>{
+ const {default:Component}=recovery();
+ const original={...plain(run),execution_engine:'codex',execution_strategy:'autonomous',snapshot:{...plain(run.snapshot),execution_engine:'codex',execution_strategy:'autonomous'}};
+ const tree=Component({run:original,writer:true,onNewTask(){},onResume(){},onInspect(){}});
+ assert.ok(nodes(tree).some(n=>n.type==='button'&&text(n).includes('使用最新配置重新发起')));
+ assert.doesNotMatch(text(tree),/继续此任务（负责人处理）/);
+});
+
 test('model timeout is explained before the generic uncertain-result fallback',()=>{
  const {summarizeRunFailure}=recovery();
  const info=summarizeRunFailure({...plain(run),error:'模型调用超时；结果不确定，不自动重放'});

@@ -113,7 +113,9 @@ fn tools(coordinator: bool, allowed: &[String]) -> Value {
         &["task_key"],
     );
     if coordinator {
-        add("assign_work", "Assign work to a frozen teammate. Different members run concurrently within max_parallel; yield with submit_result outcome waiting when awaiting their evidence.", json!({"recipient_id":{"type":"string"},"title":{"type":"string"},"instruction":{"type":"string"},"acceptance":{"type":"string"}}), &["recipient_id","title","instruction","acceptance"]);
+        let assignment = json!({"recipient_id":{"type":"string"},"title":{"type":"string"},"instruction":{"type":"string"},"acceptance":{"type":"string"}});
+        add("assign_work", "Assign bounded work to a frozen teammate. The coordinator remains responsible for the final decision and acceptance.", assignment.clone(), &["recipient_id","title","instruction","acceptance"]);
+        add("create_subagent", "Create one bounded child activation for a frozen teammate. It is reclaimed automatically after its turn and is never added to the permanent employee roster.", assignment, &["recipient_id","title","instruction","acceptance"]);
     }
     if allowed.iter().any(|name| name == "send_message") {
         add("send_team_message", "Send a direct teammate message. request_reply queues a separate bounded reply activation.", json!({"recipient_id":{"type":"string"},"body":{"type":"string"},"request_reply":{"type":"boolean"}}), &["recipient_id","body"]);
@@ -195,6 +197,17 @@ impl RunService {
             coordinator.client.close().await;
             if let Some(gateway) = coordinator.gateway {
                 gateway.close().await;
+            }
+            if let Ok(mut connection) = self.product.connect() {
+                let _ = team::record_activation_reclaimed(
+                    &mut connection,
+                    &f.id,
+                    "codex",
+                    &lead,
+                    &coordinator.execution.connection.connection_id,
+                    if outcome.is_ok() { "completed" } else { "uncertain" },
+                    "coordinator-session-closed",
+                );
             }
         }
         if outcome.is_err() {
@@ -497,6 +510,19 @@ impl RunService {
                         }
                     }
                 }
+                for (worker, (task_key, _)) in std::mem::take(&mut controls) {
+                    if let Ok(mut connection) = self.product.connect() {
+                        let _ = team::record_activation_reclaimed(
+                            &mut connection,
+                            &run.id,
+                            &task_key,
+                            &worker,
+                            &format!("aborted:{task_key}"),
+                            "uncertain",
+                            "worker-activation-aborted",
+                        );
+                    }
+                }
                 if let Some(command) = cancelled.take() {
                     let _ = command.reply.send(Err(BackendError::Unavailable));
                 }
@@ -600,7 +626,20 @@ impl RunService {
             Some(session) => session,
             None => match self.start_team_session(store, run, member, false).await {
                 Ok(session) => session,
-                Err(error) => return (Err(error), None),
+                Err(error) => {
+                    if let Ok(mut connection) = self.product.connect() {
+                        let _ = team::record_activation_reclaimed(
+                            &mut connection,
+                            &run.id,
+                            &actor.task_key,
+                            &actor.agent_id,
+                            &format!("start-failed:{}", actor.attempt_generation),
+                            "uncertain",
+                            "child-session-start-failed",
+                        );
+                    }
+                    return (Err(error), None);
+                }
             },
         };
         let result = self
@@ -624,6 +663,7 @@ impl RunService {
         if let Some(gateway) = session.gateway {
             gateway.close().await;
         }
+        let activation_id = session.execution.connection.connection_id.clone();
         let transition = if result.is_ok() {
             RunTransition::EndMember {
                 connection: session.execution.connection,
@@ -634,7 +674,19 @@ impl RunService {
                 connection: session.execution.connection,
             }
         };
-        if let Err(error) = store.change(&run.id, transition) {
+        let transition_result = store.change(&run.id, transition);
+        if let Ok(mut connection) = self.product.connect() {
+            let _ = team::record_activation_reclaimed(
+                &mut connection,
+                &run.id,
+                &actor.task_key,
+                &actor.agent_id,
+                &activation_id,
+                if result.is_ok() { "completed" } else { "uncertain" },
+                "child-session-closed",
+            );
+        }
+        if let Err(error) = transition_result {
             return (Err(error), None);
         }
         (result, None)

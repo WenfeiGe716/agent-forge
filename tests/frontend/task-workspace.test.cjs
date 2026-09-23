@@ -45,7 +45,7 @@ function harness(run=base,{handler,events=[]}={}){
 test('completed task lands on real deliverables rather than global metrics or an office',()=>{
  const h=harness(),tree=h.render();assert.match(text(tree),/任务已完成/);assert.match(text(tree),/完整成果包/);assert.match(text(tree),/独立审查通过/);
  assert.equal(nodes(tree).find(n=>n.type==='button'&&text(n)==='成果').props['aria-pressed'],true);
- const links=nodes(tree).filter(n=>n.type==='a');assert.equal(links.length,3);assert.ok(links.some(n=>n.props.href==='/api/runs/run-a/artifacts/source.zip'));
+ const links=nodes(tree).filter(n=>n.type==='a');assert.equal(links.length,4);assert.ok(links.some(n=>n.props.href==='/api/runs/run-a/artifacts/discussion.md'&&n.props.download==='discussion.md'));assert.ok(links.some(n=>n.props.href==='/api/runs/run-a/artifacts/source.zip'&&n.props.download==='source.zip'));
  assert.ok(!nodes(tree).some(n=>n.type==='approval'));assert.ok(!nodes(tree).some(n=>n.props?.role==='progressbar'));
  assert.ok(h.calls.every(c=>c.method==='GET'));
 });

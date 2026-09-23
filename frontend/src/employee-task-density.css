@@ -84,6 +84,23 @@
 .employee-live-output>.event-tool-started{color:#e4c896}.employee-live-output>.event-tool-completed{color:#9ed4bb}
 .employee-live-output time{flex:0 0 auto;color:#7890ad;font:10px/1.6 system-ui}
 .employee-live-output span{overflow-wrap:anywhere;white-space:pre-wrap}
+.employee-live-transcript{display:grid;gap:7px}
+.employee-live-transcript .transcript-markdown{font:12px/1.65 system-ui,SFMono-Regular,sans-serif;color:#e2edf8;overflow-wrap:anywhere}
+.employee-live-transcript .transcript-markdown p{margin:0 0 7px}.employee-live-transcript .transcript-markdown p:last-child{margin-bottom:0}
+.employee-live-transcript .transcript-markdown h3,.employee-live-transcript .transcript-markdown h4{margin:3px 0 6px;color:#fff;line-height:1.35}
+.employee-live-transcript .transcript-markdown ul,.employee-live-transcript .transcript-markdown ol{margin:4px 0 7px;padding-left:20px}
+.employee-live-transcript .transcript-markdown blockquote{margin:5px 0;padding:2px 9px;border-left:2px solid #8bd6e8;color:#b7cde2}
+.employee-live-transcript .transcript-markdown code{padding:1px 3px;border-radius:3px;background:#08121f;color:#cbe7ff;font:11px ui-monospace,SFMono-Regular,monospace}
+.employee-live-transcript .transcript-markdown .transcript-code{margin:6px 0;border:1px solid #ffffff18;border-radius:5px;overflow:hidden;background:#08121f}
+.employee-live-transcript .transcript-markdown .transcript-code small{display:block;padding:3px 6px;border-bottom:1px solid #ffffff18;color:#8da6c0;font:10px system-ui}
+.employee-live-transcript .transcript-markdown pre{margin:0;padding:7px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.employee-live-transcript .transcript-markdown pre code{padding:0;background:none}
+.employee-live-transcript .employee-live-event{display:block;padding:0;border:1px solid #ffffff16;border-radius:6px;background:#ffffff08;overflow:hidden}
+.employee-live-transcript .employee-live-event summary{display:flex;align-items:center;gap:7px;padding:6px 8px;cursor:pointer;list-style:none;color:#b8cbe0}
+.employee-live-transcript .employee-live-event summary::-webkit-details-marker{display:none}
+.employee-live-transcript .employee-live-event summary::before{content:'›';color:#8fb0d3;transition:transform .15s}.employee-live-transcript .employee-live-event[open] summary::before{transform:rotate(90deg)}
+.employee-live-transcript .employee-live-event summary b{color:#deebf8;white-space:nowrap}.employee-live-transcript .employee-live-event summary span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8fa9c4}
+.employee-live-transcript .employee-live-event pre{margin:0;padding:7px 8px;border-top:1px solid #ffffff12;color:#c9d9eb;font:10px/1.55 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.employee-live-transcript .employee-live-event.is-error{border-color:#d8797940}.employee-live-transcript .employee-live-event.is-error span{color:#ffb6b6}
 .employee-task-panel .run-issues{max-height:360px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;margin:10px 0 6px}
 .employee-task-panel .run-issue{padding:11px;font-size:11px;border-radius:9px}
 .employee-task-panel .run-issue header b{font-size:12px}.employee-task-panel .run-issue header span{font-size:10px}

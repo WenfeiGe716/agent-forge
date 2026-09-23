@@ -4,6 +4,8 @@ const source=fs.readFileSync(require.resolve('../../frontend/src/components/Empl
 const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
 const recoveryCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/components/RunRecovery.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
 const issuesCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/components/RunIssues.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+const transcriptCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/liveTranscript.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const markdownCode=ts.transpileModule(fs.readFileSync(require.resolve('../../frontend/src/components/TranscriptMarkdown.tsx'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
 const nodes=v=>Array.isArray(v)?v.flatMap(nodes):v&&typeof v==='object'?[v,...nodes(v.props?.children)]:[];
 const text=v=>Array.isArray(v)?v.map(text).join(''):v&&typeof v==='object'?text(v.props?.children):v==null||typeof v==='boolean'?'':String(v);
 const button=(tree,label)=>{const b=nodes(tree).find(n=>n.type==='button'&&text(n)===label);assert.ok(b,label);return b;};
@@ -17,6 +19,8 @@ function harness({handler,preview=false,runPatch={},propPatch={}}={}){
   if(id==='../types')return{terminal:['completed','cancelled','needs_attention'],states:{awaiting_decision:'待决定'}};
   if(id==='../api')return{jsonText:JSON.stringify,api:async(url,method='GET',body)=>{calls.push({url,method,body});if(handler)return handler(url,method,body);if(url.endsWith('/collaboration'))return{run_id:run.id,decisions:[]};if(url.includes('/trace?'))return{items:[]};return{...run,...runPatch};}};
   if(id==='../runEventStream')return{subscribeRunEvents:()=>()=>{}};
+  if(id==='../liveTranscript'){const transcript={};vm.runInNewContext(transcriptCode,{exports:transcript,console});return transcript;}
+  if(id==='./TranscriptMarkdown'){const markdown={};vm.runInNewContext(markdownCode,{exports:markdown,require:dep=>dep==='react/jsx-runtime'?{jsx,jsxs:jsx,Fragment:'fragment'}:{}});return markdown;}
   if(id==='./UI')return{Badge:props=>jsx('badge',props)};
   if(id==='./Icons')return new Proxy({},{get:(_,key)=>props=>jsx('icon-'+String(key),props)});
   if(id==='./TaskApprovals')return{__esModule:true,default:props=>jsx('approvals',props)};

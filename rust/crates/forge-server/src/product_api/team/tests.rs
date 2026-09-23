@@ -215,6 +215,79 @@ fn actor_forgery_conflicting_operations_and_non_coordinator_delegation_fail() {
 }
 
 #[test]
+fn coordinator_can_create_bounded_subagent_and_reclamation_is_idempotent() {
+    let mut f = Fixture::new();
+    let child = f
+        .call(
+            &f.lead.clone(),
+            "create-child",
+            "create_subagent",
+            json!({
+                "recipient_id":"dev",
+                "title":"Bounded implementation",
+                "instruction":"Implement only the requested change",
+                "acceptance":"Record the changed files and verification"
+            }),
+        )
+    .unwrap();
+    assert_eq!(child["recipient_id"], "dev");
+    let key = child["task_key"].as_str().unwrap();
+    let spec: String = f
+        .c
+        .query_row("SELECT spec FROM tasks WHERE run_id='run' AND key=?1", [key], |r| r.get(0))
+        .unwrap();
+    assert_eq!(decode(spec).unwrap()["assignment_type"], "subagent");
+    let spec: String = f
+        .c
+        .query_row(
+            "SELECT spec FROM tasks WHERE run_id='run' AND key=?1",
+            [key],
+            |r| r.get(0),
+        )
+        .unwrap();
+    let spec: Value = serde_json::from_str(&spec).unwrap();
+    assert_eq!(spec["assignment_type"], "subagent");
+    record_activation_reclaimed(
+        &mut f.c,
+        "run",
+        key,
+        "dev",
+        "activation-1",
+        "uncertain",
+        "test-runtime-closed",
+    )
+    .unwrap();
+    let before: i64 = f
+        .c
+        .query_row(
+            "SELECT count(*) FROM events WHERE kind='team.activation.reclaimed'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    record_activation_reclaimed(
+        &mut f.c,
+        "run",
+        key,
+        "dev",
+        "activation-1",
+        "uncertain",
+        "duplicate-receipt",
+    )
+    .unwrap();
+    let after: i64 = f
+        .c
+        .query_row(
+            "SELECT count(*) FROM events WHERE kind='team.activation.reclaimed'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(before, 1);
+    assert_eq!(after, before);
+}
+
+#[test]
 fn claims_reject_wrong_member_stale_version_expiry_and_generation() {
     let mut f = Fixture::new();
     let pending = f.delegate("dev", "delegation");

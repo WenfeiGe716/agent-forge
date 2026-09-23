@@ -10,7 +10,7 @@ function createOfficeReactFixture(){
  const cssFiles=build.match(/const combinedCSS=\[([^\]]+)\]/)[1].match(/'([^']+\.css)'/g).map(s=>s.slice(1,-1));
  const css=cssFiles.map(file=>fs.readFileSync(path.join(root,'frontend/src',file),'utf8')).join('\n');
  const sources={};
- for(const relative of ['components/StudioWorkspace.tsx','components/StudioNavigation.tsx','components/OfficeSessionWindow.tsx','components/LiveOutputDock.tsx','components/Icons.tsx','components/RunRecovery.tsx','types.ts','office/memberAssignment.ts','office/behavior.ts']){
+ for(const relative of ['components/StudioWorkspace.tsx','components/StudioNavigation.tsx','components/OfficeSessionWindow.tsx','components/LiveOutputDock.tsx','components/TranscriptMarkdown.tsx','liveTranscript.ts','components/Icons.tsx','components/RunRecovery.tsx','types.ts','office/memberAssignment.ts','office/behavior.ts']){
   sources['/'+relative.replace(/\.tsx?$/,'')]=ts.transpileModule(fs.readFileSync(path.join(root,'frontend/src',relative),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
  }
  const main=`import {React,ReactDOM,JSX} from '/vendor/react-runtime.js';

@@ -10,7 +10,7 @@ const build=fs.readFileSync(path.join(root,'scripts/build-offline.mjs'),'utf8'),
 assert.ok(cssFiles.includes('employee-task-density.css'),'density styles must be included in the production bundle');
 const css=cssFiles.map(file=>fs.readFileSync(path.join(root,'frontend/src',file),'utf8')).join('\n');
 const sources={};
-for(const relative of ['components/EmployeeTaskPanel.tsx','components/RunRecovery.tsx','components/RunIssues.tsx','components/Icons.tsx','types.ts'])sources['/'+relative.replace(/\.tsx?$/,'')]=ts.transpileModule(fs.readFileSync(path.join(root,'frontend/src',relative),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
+for(const relative of ['components/EmployeeTaskPanel.tsx','components/TranscriptMarkdown.tsx','liveTranscript.ts','components/RunRecovery.tsx','components/RunIssues.tsx','components/Icons.tsx','types.ts'])sources['/'+relative.replace(/\.tsx?$/,'')]=ts.transpileModule(fs.readFileSync(path.join(root,'frontend/src',relative),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
 const main=`import {React,ReactDOM,JSX} from '/vendor/react-runtime.js';
 const sources=${JSON.stringify(sources)},cache={};window.__calls=[];
 const long='包含连续长文件路径_/ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789。',title=long.repeat(8),request=long.repeat(150)+'END_OF_REQUEST';
