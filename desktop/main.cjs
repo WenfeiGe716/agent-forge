@@ -9,7 +9,12 @@ const { CSP, isTrustedURL, isTrustedUIURL, isDownloadURL, assertTrustedIPC, hard
 const { BackendSupervisor, runPreparation } = require('./supervisor.cjs');
 
 app.setName('Agent Forge');
-app.setPath('userData', path.join(app.getPath('appData'), 'Agent Forge'));
+// Keep the packaged app's workspace separate from the development workspace.
+// This prevents a locally configured provider, model, or task history from
+// being picked up when the distributable is opened on the build machine, while
+// still giving each packaged installation a persistent workspace of its own.
+const userDataName = app.isPackaged ? 'Agent Forge Packaged' : 'Agent Forge';
+app.setPath('userData', path.join(app.getPath('appData'), userDataName));
 
 let window = null;
 let backend = null;
@@ -172,25 +177,32 @@ async function prepareData() {
       return validateSecrets(JSON.parse(safeStorage.decryptString(await fs.readFile(keyFile))));
     } catch { throw new Error('无法从 macOS 钥匙串解密现有应用密钥。请解锁原登录钥匙串；应用不会覆盖或重建现有数据。'); }
   }
-  const choice = await dialog.showMessageBox(window, {
-    type: 'question', title: '欢迎使用 Agent Forge', message: '为桌面应用准备独立的工作空间',
-    detail: '可以复制现有本地配置与任务数据，或创建全新的工作空间。导入完成后，桌面应用使用自己的数据副本。',
-    buttons: ['导入现有本地配置', '全新开始', '取消'], defaultId: 0, cancelId: 2, noLink: true,
-  });
-  if (choice.response === 2) return null;
   let source;
-  if (choice.response === 0) {
-    const picked = await dialog.showOpenDialog(window, {
-      title: '选择现有 Agent Forge 项目目录', message: '请选择包含 .local/config.json 的项目目录。',
-      buttonLabel: '导入此工作空间', properties: ['openDirectory', 'dontAddToRecent'],
+  const seedFile = app.isPackaged
+    ? path.join(process.resourcesPath, 'backend', 'seed.json')
+    : path.join(__dirname, 'seed.json');
+  const bundledSeed = await fs.access(seedFile).then(() => true).catch(() => false);
+  if (!app.isPackaged || !bundledSeed) {
+    const choice = await dialog.showMessageBox(window, {
+      type: 'question', title: '欢迎使用 Agent Forge', message: '为桌面应用准备独立的工作空间',
+      detail: '可以复制现有本地配置与任务数据，或创建全新的工作空间。导入完成后，桌面应用使用自己的数据副本。',
+      buttons: ['导入现有本地配置', '全新开始', '取消'], defaultId: 0, cancelId: 2, noLink: true,
     });
-    if (picked.canceled || picked.filePaths.length !== 1) return null;
-    source = picked.filePaths[0];
+    if (choice.response === 2) return null;
+    if (choice.response === 0) {
+      const picked = await dialog.showOpenDialog(window, {
+        title: '选择现有 Agent Forge 项目目录', message: '请选择包含 .local/config.json 的项目目录。',
+        buttonLabel: '导入此工作空间', properties: ['openDirectory', 'dontAddToRecent'],
+      });
+      if (picked.canceled || picked.filePaths.length !== 1) return null;
+      source = picked.filePaths[0];
+    }
   }
   preparationAbort = new AbortController();
   let prepared;
   try {
-    prepared = await runPreparation(command(), { data_dir: dataDir, ...(source ? { import_from: source } : {}) }, { signal: preparationAbort.signal });
+    const seed = source ? {} : await fs.access(seedFile).then(() => ({ seed_file: seedFile })).catch(() => ({}));
+    prepared = await runPreparation(command(), { data_dir: dataDir, ...seed, ...(source ? { import_from: source } : {}) }, { signal: preparationAbort.signal });
   } finally { preparationAbort = null; }
   const staging = prepared.staging_dir;
   const expectedParent = await fs.realpath(path.dirname(dataDir));

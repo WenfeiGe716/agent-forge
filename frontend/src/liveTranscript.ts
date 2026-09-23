@@ -1,15 +1,15 @@
 import {ForgeEvent,Json} from './types';
 
 export type TranscriptEntry={
- key:string;kind:'assistant'|'tool'|'notice';text:string;time:string;taskKey:string;
+ key:string;kind:'assistant'|'thinking'|'tool'|'message'|'notice';text:string;time:string;taskKey:string;
  state:'running'|'done'|'failed'|'interrupted'|'recorded';title?:string;command?:string;
- output?:string;arguments?:string;exitCode?:number;durationMs?:number;
+ output?:string;arguments?:string;exitCode?:number;durationMs?:number;fromAgentId?:string;toAgentId?:string;messageStatus?:string;
 };
 const object=(value:any):Json=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};
 const string=(value:any):string=>typeof value==='string'?value:'';
 const printable=(value:any)=>value==null?'':typeof value==='string'?value:JSON.stringify(value,null,2);
 export const runtimeKind=(event:ForgeEvent)=>event.kind.startsWith('runtime.')?String(event.data?.runtime_kind||event.kind.slice(8).replaceAll('.','/')):event.kind;
-export function eventMember(event:ForgeEvent){return String(event.data?.agent_id||event.data?.worker_id||event.data?.from_agent_id||event.data?.connection?.worker_id||'');}
+export function eventMember(event:ForgeEvent){return String(event.data?.agent_id||event.data?.worker_id||event.data?.from_agent_id||event.data?.sender_id||event.data?.connection?.worker_id||'');}
 export function eventTask(event:ForgeEvent){return String(event.data?.task_key||event.data?.payload?._forge_task_key||event.data?.payload?.task_key||'');}
 function commandText(value:any){return Array.isArray(value)?value.join(' '):string(value);}
 function toolTitle(item:Json,d:Json,args:Json,command:string){
@@ -30,8 +30,11 @@ export function buildTranscript(events:ForgeEvent[],runId:string,agentId:string)
   const pendingTools=new Map<string,TranscriptEntry[]>();
   const completedTools=new Map<string,TranscriptEntry>();
  for(const event of [...events].sort((a,b)=>a.id-b.id)){
-  if(event.run_id!==runId||eventMember(event)!==agentId||seen.has(event.id))continue;seen.add(event.id);
+  if(event.run_id!==runId||seen.has(event.id))continue;seen.add(event.id);
   const d=object(event.data),p=object(d.payload),item=object(p.item),kind=runtimeKind(event),taskKey=eventTask(event);
+  const messageKind=['agent.message','agent.message.delivered','team.message.sent','team.message.delivered'].includes(kind);
+  const fromAgentId=string(d.from_agent_id||d.sender_id||d.agent_id||p.from_agent_id||p.sender_id||p.agent_id),toAgentId=string(d.to_agent_id||d.recipient_id||p.to_agent_id||p.recipient_id);
+  if(messageKind ? fromAgentId!==agentId&&toAgentId!==agentId : eventMember(event)!==agentId)continue;
   const base=JSON.stringify([taskKey,d.connection?.connection_id||p.threadId||p.thread_id||'']);
   if(kind==='turn/started'||kind==='model.started'){generations.set(base,(generations.get(base)||0)+1);legacyMessages.delete(base);continue;}
   const scope=JSON.stringify([base,p.turnId||p.turn_id||p.turn?.id||generations.get(base)||0]);
@@ -41,6 +44,34 @@ export function buildTranscript(events:ForgeEvent[],runId:string,agentId:string)
   const create=(entryKind:TranscriptEntry['kind'],key:string):TranscriptEntry=>{
    const entry:TranscriptEntry={key,kind:entryKind,text:'',time:event.created_at,taskKey,state:'running'};entries.push(entry);return entry;
   };
+  if(messageKind){
+   const body=string(d.body||d.summary||p.body||p.summary||p.text);
+   const messageId=string(d.message_id||d.id||p.message_id||p.id||event.id);
+   const key=`message:${messageId}`;
+   const prior=entries.find(entry=>entry.key===key);
+   if(prior){
+    if(kind==='agent.message.delivered'||kind==='team.message.delivered')prior.messageStatus='已送达';
+    if(body&&!prior.text)prior.text=body;
+    continue;
+   }
+   const entry=create('message',key);
+   entry.text=body||'成员之间已发送一条消息';
+   entry.fromAgentId=fromAgentId;entry.toAgentId=toAgentId;
+   entry.messageStatus=kind.endsWith('delivered')?'已送达':'已发送';
+   entry.state='done';
+   continue;
+  }
+  const thinking=kind==='item/reasoning/summaryTextDelta'||kind==='reasoning/summaryTextDelta'||kind==='model.reasoning'||kind==='model.reasoning.delta';
+  if(thinking){
+   const key=itemId?scope+':thinking:'+itemId:scope+':thinking';
+   let entry=items.get(key);
+   const body=text||string(d.summary)||string(d.summary_text)||string(p.summaryText);
+   if(!entry&&!body)continue;
+   if(!entry){entry=create('thinking',key);items.set(key,entry);}
+   entry.text+=body;
+   if(kind==='model.reasoning')entry.state='done';
+   continue;
+  }
   const assistant=kind==='item/agentMessage/delta'||(type==='agentmessage'&&['item/started','item/completed'].includes(kind))||['model.delta','model.completed'].includes(kind);
   if(assistant){
    const key=itemId?scope+':message:'+itemId:'';

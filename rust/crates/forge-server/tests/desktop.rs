@@ -67,6 +67,25 @@ fn preparation_is_staged_private_and_never_replaces_existing_workspace() {
     );
 }
 
+#[test]
+fn seeded_desktop_workspace_keeps_roles_and_layout_without_models_or_runs() {
+    let ws = Workspace::new();
+    let destination = ws.root.join("workspace");
+    let seed = ws.root.join("seed.json");
+    fs::write(&seed, json!({
+        "schema": 1,
+        "agents": [{"id":"atlas","version":1,"config":{"name":"Atlas","role":"planner"}}],
+        "platform_config": [{"id":"organization_layout","value":{"config":{"positions":{}}}}]
+    }).to_string()).unwrap();
+    let prepared = prepare(&input(json!({"action":"prepare","data_dir":destination,"seed_file":seed}))).unwrap();
+    let staging = PathBuf::from(prepared["staging_dir"].as_str().unwrap());
+    let db = rusqlite::Connection::open(staging.join("product.sqlite3")).unwrap();
+    assert_eq!(db.query_row("SELECT count(*) FROM agents", [], |r| r.get::<_, i64>(0)).unwrap(), 1);
+    assert_eq!(db.query_row("SELECT count(*) FROM providers", [], |r| r.get::<_, i64>(0)).unwrap(), 0);
+    assert_eq!(db.query_row("SELECT count(*) FROM runs", [], |r| r.get::<_, i64>(0)).unwrap(), 0);
+    assert_eq!(db.query_row("SELECT count(*) FROM platform_config WHERE id='organization_layout'", [], |r| r.get::<_, i64>(0)).unwrap(), 1);
+}
+
 #[tokio::test]
 async fn native_process_authenticates_identity_session_and_directory_tickets() {
     let mut ws = Workspace::new();

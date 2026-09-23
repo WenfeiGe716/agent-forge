@@ -478,9 +478,15 @@ impl ProductApi {
                 fields(b, &["recipient_id", "body"])?;
                 let recipient = string(b, "recipient_id", 1, 64)?;
                 let body = string(b, "body", 1, 20_000)?;
+                let terminal = ["completed", "cancelled", "canceled", "failed", "needs_attention", "paused"]
+                    .contains(&run["status"].as_str().unwrap_or_default());
                 (
                     202,
-                    team::send_user_message(c, &snapshot, u, run_id, recipient, body)?,
+                    if terminal {
+                        team::send_user_message_after_run(c, &snapshot, u, run_id, recipient, body)?
+                    } else {
+                        team::send_user_message(c, &snapshot, u, run_id, recipient, body)?
+                    },
                 )
             }
             ("POST", ["runs", run_id, "attachments"]) => {

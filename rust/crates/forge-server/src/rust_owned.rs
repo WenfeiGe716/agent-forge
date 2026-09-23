@@ -341,6 +341,8 @@ impl Backend for RustOwnedBackend {
                         event.kind.as_str(),
                         "agent.message"
                             | "agent.message.delivered"
+                            | "team.message.sent"
+                            | "team.message.delivered"
                             | "team.attachment.uploaded"
                             | "task.handoff"
                             | "task.delegated"

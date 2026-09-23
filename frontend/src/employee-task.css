@@ -575,3 +575,11 @@
  .studio-workspace .studio-scene-tools-popover{max-height:calc(100vh - 342px)}
  .studio-workspace .studio-scene-tools .ambient-settings{max-height:145px;overflow:auto}
 }
+
+.live-output-thinking,.live-output-message{padding:11px 13px;border-radius:10px;overflow-wrap:anywhere}
+.live-output-thinking{border:1px solid #d6b66c66;background:#fbf7ec;color:#6d5a31}
+.live-output-message{border:1px solid #9bc9df;background:#eef8fc;color:#254a5b}
+.live-output-thinking header,.live-output-message header{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px}
+.live-output-thinking header small,.live-output-message header small{color:#8a7b58;font-weight:500}.live-output-message header small{color:#6b8d9c}
+.live-output-thinking header time,.live-output-message header time{margin-left:auto;color:#9aa1ad;font-size:9px;font-weight:400}
+.live-output-thinking p,.live-output-message p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}

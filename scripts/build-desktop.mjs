@@ -29,6 +29,8 @@ fs.mkdirSync(backend);
 fs.copyFileSync(path.join(root,'rust/target/release/forge-server'),path.join(backend,'forge-server'));
 fs.chmodSync(path.join(backend,'forge-server'),0o755);
 fs.cpSync(path.join(root,'frontend/dist-desktop'),path.join(backend,'frontend'),{recursive:true});
+const seedFile=path.join(desktop,'seed.json');
+if(fs.existsSync(seedFile))fs.copyFileSync(seedFile,path.join(backend,'seed.json'));
 const codex=path.join(root,'.local/runtimes/codex/bin/codex');
 if(!fs.existsSync(codex))throw new Error('缺少项目固定版本的 Codex，请先运行 scripts/build-upstreams.sh。');
 fs.copyFileSync(fs.realpathSync(codex),path.join(backend,'codex'));fs.chmodSync(path.join(backend,'codex'),0o755);

@@ -43,4 +43,15 @@ test('empty member streams explain that output is still pending and name the rec
  const content=text(tree);assert.match(content,/等待模型输出/);assert.match(content,/Nova/);
  assert.ok(nodes(tree).some(n=>n.type==='span'&&n.props.className==='live-output-recipient'));
 });
+test('reasoning summaries and member messages are visible in the selected conversation',()=>{
+ const reasoning=event(9,'item/reasoning/summaryTextDelta',{itemId:'r1',delta:'先分析验收条件，再决定修改顺序。'});
+ const message=event(10,'team.message.sent',{message_id:'msg-1',sender_id:'a',recipient_id:'b',body:'请成员复核静态资源。'});
+ message.data.agent_id=undefined;
+ const twoMemberRun={...run,snapshot:{agents:{a:{name:'Nova'},b:{name:'Atlas'}}},tasks:[...run.tasks,{id:'task-b',key:'task-b',title:'复核',agent_id:'b',status:'running'}]};
+ const tree=render([...events,reasoning,message],twoMemberRun,[{id:'a',name:'Nova'},{id:'b',name:'Atlas'}]);
+ const content=text(nodes(tree).find(n=>n.type==='main'));
+ assert.match(content,/先分析验收条件/);assert.match(content,/请成员复核静态资源/);
+ assert.ok(nodes(tree).some(n=>n.props?.className==='live-output-thinking'));
+ assert.ok(nodes(tree).some(n=>n.props?.className==='live-output-message'));
+});
 module.exports={harness,nodes,text,event,events,run,render};

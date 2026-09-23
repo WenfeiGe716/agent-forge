@@ -1,0 +1,400 @@
+{
+  "schema": 1,
+  "agents": [
+    {
+      "id": "01530a5bb12744cb91388ed9f9bef566",
+      "config": {
+        "communication": {
+          "recipients": [],
+          "scope": "run"
+        },
+        "department": "研发部",
+        "design_ref": null,
+        "enabled": true,
+        "instructions": "制定可验证的计划，减少并行文件冲突。",
+        "job_title": "",
+        "name": "Atlas",
+        "office_position": {
+          "floor": 1,
+          "x": -9.9,
+          "z": -6.3,
+          "zone": "development_atlas"
+        },
+        "peer_reception": "sit",
+        "reports_to": null,
+        "role": "planner",
+        "role_template_ref": null,
+        "runtime": {},
+        "skills": [],
+        "tool_permissions": null
+      },
+      "version": 9
+    },
+    {
+      "id": "fdd64ec00d234dd9a00da73eb9af1e2d",
+      "config": {
+        "communication": {
+          "recipients": [],
+          "scope": "run"
+        },
+        "department": "研发部",
+        "design_ref": null,
+        "enabled": true,
+        "instructions": "先检查项目，再做最小必要修改。",
+        "job_title": "",
+        "name": "Nova",
+        "office_position": {
+          "floor": 1,
+          "x": -5,
+          "z": -1.9,
+          "zone": "development_nova"
+        },
+        "peer_reception": "sit",
+        "reports_to": null,
+        "role": "developer",
+        "role_template_ref": null,
+        "runtime": {},
+        "skills": [],
+        "tool_permissions": null
+      },
+      "version": 6
+    },
+    {
+      "id": "eb106137b8674feb9340e891b3d65705",
+      "config": {
+        "communication": {
+          "recipients": [],
+          "scope": "run"
+        },
+        "department": "研发部",
+        "design_ref": null,
+        "enabled": true,
+        "instructions": "为变更补充可重复运行的测试。",
+        "job_title": "",
+        "name": "Echo",
+        "office_position": {
+          "floor": 1,
+          "x": 3.1,
+          "z": -6.2,
+          "zone": "development_echo"
+        },
+        "peer_reception": "sit",
+        "reports_to": null,
+        "role": "tester",
+        "role_template_ref": null,
+        "runtime": {},
+        "skills": [],
+        "tool_permissions": null
+      },
+      "version": 6
+    },
+    {
+      "id": "3316173364084b87bafeba8fd8e2da3d",
+      "config": {
+        "communication": {
+          "recipients": [],
+          "scope": "run"
+        },
+        "department": "研发部",
+        "design_ref": null,
+        "enabled": true,
+        "instructions": "根据真实代码和测试证据审查。",
+        "job_title": "",
+        "name": "Sage",
+        "office_position": {
+          "floor": 1,
+          "x": 6.4,
+          "z": -6.2,
+          "zone": "development_echo"
+        },
+        "peer_reception": "sit",
+        "reports_to": null,
+        "role": "reviewer",
+        "role_template_ref": null,
+        "runtime": {},
+        "skills": [],
+        "tool_permissions": null
+      },
+      "version": 6
+    }
+  ],
+  "platform_config": [
+    {
+      "id": "runtime",
+      "value": {
+        "max_steps": 24,
+        "max_agent_messages": 200,
+        "max_model_calls": 100,
+        "task_timeout_s": 3600,
+        "call_timeout_s": 120,
+        "command_timeout_s": 120,
+        "max_parallel": 3,
+        "max_tasks": 20,
+        "max_rework_rounds": 2,
+        "cpu": 1,
+        "memory_mb": 1024,
+        "max_file_bytes": 200000,
+        "max_context_chars": 120000
+      }
+    },
+    {
+      "id": "roles",
+      "value": {
+        "planner": {
+          "max_steps": 8
+        },
+        "developer": {},
+        "tester": {},
+        "reviewer": {
+          "max_steps": 12
+        }
+      }
+    },
+    {
+      "id": "office_visual",
+      "value": {
+        "idle_enabled": true,
+        "idle_grace_s": 35,
+        "idle_stagger_s": 25,
+        "idle_cooldown_s": 30,
+        "walk_speed": 2.3,
+        "activities": [
+          "drink",
+          "phone",
+          "restroom",
+          "nap",
+          "stretch"
+        ],
+        "durations_s": {
+          "drink": 9,
+          "phone": 13,
+          "restroom": 14,
+          "nap": 16,
+          "stretch": 7
+        },
+        "epoch": "2026-09-09T07:15:46.131903+00:00",
+        "revision": 1
+      }
+    },
+    {
+      "id": "organization_layout",
+      "value": {
+        "ref": {
+          "id": "c226b8f03f684b07b87d766017e2bd81",
+          "version": 8,
+          "digest": "ca869b0fb917e65c27b8618f615091388533f866ee640cb51c8e4bbc2def5a2c"
+        },
+        "config": {
+          "layout_version": 2,
+          "positions": {
+            "01530a5bb12744cb91388ed9f9bef566": {
+              "x": -9.9,
+              "z": -6.3,
+              "floor": 1,
+              "zone": "development_atlas"
+            },
+            "fdd64ec00d234dd9a00da73eb9af1e2d": {
+              "x": -5,
+              "z": -1.9,
+              "floor": 1,
+              "zone": "development_nova"
+            },
+            "eb106137b8674feb9340e891b3d65705": {
+              "x": 3.1,
+              "z": -6.2,
+              "floor": 1,
+              "zone": "development_echo"
+            },
+            "3316173364084b87bafeba8fd8e2da3d": {
+              "x": 6.4,
+              "z": -6.2,
+              "floor": 1,
+              "zone": "development_echo"
+            }
+          },
+          "floors": [
+            {
+              "floor": 1,
+              "name": "研发楼层",
+              "department": "研发部",
+              "zones": [
+                {
+                  "id": "development_atlas",
+                  "name": "代码规划与架构",
+                  "kind": "work",
+                  "x": -7.65,
+                  "z": -5.75,
+                  "width": 7.8999999999999995,
+                  "depth": 3.5,
+                  "color": "#9c8cde"
+                },
+                {
+                  "id": "development_echo",
+                  "name": "测试质量",
+                  "kind": "work",
+                  "x": 6.5,
+                  "z": -5.65,
+                  "width": 10,
+                  "depth": 3.5,
+                  "color": "#e0b65d"
+                },
+                {
+                  "id": "development_nova",
+                  "name": "开发工位",
+                  "kind": "work",
+                  "x": -3.45,
+                  "z": 0.19999999999999998,
+                  "width": 8.299999999999999,
+                  "depth": 6.5,
+                  "color": "#54b2cc"
+                },
+                {
+                  "id": "development_sage",
+                  "name": "需求分析",
+                  "kind": "work",
+                  "x": 6.5,
+                  "z": 0.2,
+                  "width": 10,
+                  "depth": 6.300000000000001,
+                  "color": "#da91b0"
+                },
+                {
+                  "id": "development_restroom",
+                  "name": "卫生间",
+                  "kind": "restroom",
+                  "x": -9.85,
+                  "z": -1.6,
+                  "width": 3.5,
+                  "depth": 3,
+                  "color": "#8ea5b8"
+                },
+                {
+                  "id": "development_pantry",
+                  "name": "饮水间",
+                  "kind": "pantry",
+                  "x": -9.85,
+                  "z": 2,
+                  "width": 3.5,
+                  "depth": 3,
+                  "color": "#83aaa2"
+                },
+                {
+                  "id": "development_lounge",
+                  "name": "休息区",
+                  "kind": "lounge",
+                  "x": -5.4,
+                  "z": 5.8,
+                  "width": 12.2,
+                  "depth": 3.6,
+                  "color": "#86b3a5"
+                },
+                {
+                  "id": "development_meeting",
+                  "name": "协作会议室",
+                  "kind": "meeting",
+                  "x": 6.5,
+                  "z": 5.8,
+                  "width": 10,
+                  "depth": 3.6000000000000005,
+                  "color": "#969fcf"
+                },
+                {
+                  "id": "zone_1",
+                  "name": "新休息区",
+                  "kind": "lounge",
+                  "x": -1.3,
+                  "z": -5.75,
+                  "width": 4,
+                  "depth": 3.5,
+                  "color": "#83a184"
+                }
+              ]
+            }
+          ],
+          "teams": [
+            {
+              "id": "development_team",
+              "name": "开发团队",
+              "floor": 1,
+              "zone_ids": [
+                "development_atlas",
+                "development_echo",
+                "development_nova",
+                "development_sage"
+              ],
+              "headcount": 4,
+              "member_ids": [
+                "01530a5bb12744cb91388ed9f9bef566",
+                "fdd64ec00d234dd9a00da73eb9af1e2d",
+                "eb106137b8674feb9340e891b3d65705",
+                "3316173364084b87bafeba8fd8e2da3d"
+              ]
+            }
+          ],
+          "desks": [
+            {
+              "x": -9.9,
+              "z": -6.3,
+              "floor": 1,
+              "zone": "development_atlas",
+              "id": "desk_atlas",
+              "name": "Atlas 工位",
+              "team_id": "development_team",
+              "agent_id": "01530a5bb12744cb91388ed9f9bef566"
+            },
+            {
+              "x": -5,
+              "z": -1.9,
+              "floor": 1,
+              "zone": "development_nova",
+              "id": "desk_nova",
+              "name": "Nova 工位",
+              "team_id": "development_team",
+              "agent_id": "fdd64ec00d234dd9a00da73eb9af1e2d"
+            },
+            {
+              "x": 3.1,
+              "z": -6.2,
+              "floor": 1,
+              "zone": "development_echo",
+              "id": "desk_echo",
+              "name": "Echo 工位",
+              "team_id": "development_team",
+              "agent_id": "eb106137b8674feb9340e891b3d65705"
+            },
+            {
+              "x": 6.4,
+              "z": -6.2,
+              "floor": 1,
+              "zone": "development_echo",
+              "id": "desk_sage",
+              "name": "Sage 工位",
+              "team_id": "development_team",
+              "agent_id": "3316173364084b87bafeba8fd8e2da3d"
+            }
+          ],
+          "description": "内置人工预置：研发部与开发团队；12张桌位、4名编制，空桌不创建Agent。每层保留会议室、卫生间和饮水间；编辑后需人工发布并应用。"
+        },
+        "applied_at": "2026-09-11T06:09:45.928558+00:00"
+      }
+    },
+    {
+      "id": "organization_default_bootstrap",
+      "value": {
+        "preset_id": "development-office-v2",
+        "ref": {
+          "id": "c226b8f03f684b07b87d766017e2bd81",
+          "version": 2,
+          "digest": "b68c4887ab35da214351783829e9ade98df4d1c63bf6f39d65c328e03da23dfb"
+        },
+        "initialized_at": "2026-09-10T07:07:12.032041+00:00",
+        "upgraded_from": {
+          "id": "c226b8f03f684b07b87d766017e2bd81",
+          "version": 1,
+          "digest": "7584f4b7ae40f7fe238e274bedad0c77a7a2e690f62bd8629459d064162335d3"
+        },
+        "updated_at": "2026-09-10T07:27:27.507765+00:00"
+      }
+    }
+  ]
+}

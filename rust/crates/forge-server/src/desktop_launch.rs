@@ -20,6 +20,7 @@ pub struct DesktopInput {
     pub action: String,
     pub data_dir: PathBuf,
     pub import_from: Option<PathBuf>,
+    pub seed_file: Option<PathBuf>,
     pub port: Option<u16>,
     pub desktop_token: Option<String>,
     pub control_token: Option<String>,
@@ -114,6 +115,14 @@ pub fn prepare(input: &DesktopInput) -> Result<Value, &'static str> {
         .as_ref()
         .map(|p| plain_path(p))
         .transpose()?;
+    let seed = input
+        .seed_file
+        .as_ref()
+        .map(|p| plain_path(p))
+        .transpose()?;
+    if source.is_some() && seed.is_some() {
+        return Err("desktop preparation cannot combine import and seed data");
+    }
     if source
         .as_ref()
         .is_some_and(|p| p.starts_with(&destination) || destination.starts_with(p))
@@ -125,14 +134,18 @@ pub fn prepare(input: &DesktopInput) -> Result<Value, &'static str> {
         .ok_or("invalid destination")?
         .join(format!(".forge-prepare-{}", Uuid::new_v4().simple()));
     private_dir(&staging)?;
-    let result = prepare_into(&staging, source.as_deref());
+    let result = prepare_into(&staging, source.as_deref(), seed.as_deref());
     if result.is_err() {
         let _ = fs::remove_dir_all(&staging);
     }
     result.map(|(secrets, counts)| json!({"ok":true,"staging_dir":staging,"secrets":secrets,"migrated":source.is_some(),"counts":counts}))
 }
 
-fn prepare_into(staging: &Path, source: Option<&Path>) -> Result<(Value, Value), &'static str> {
+fn prepare_into(
+    staging: &Path,
+    source: Option<&Path>,
+    seed: Option<&Path>,
+) -> Result<(Value, Value), &'static str> {
     let mut key = Vec::new();
     key.extend_from_slice(Uuid::new_v4().as_bytes());
     key.extend_from_slice(Uuid::new_v4().as_bytes());
@@ -249,12 +262,18 @@ fn prepare_into(staging: &Path, source: Option<&Path>) -> Result<(Value, Value),
     } else {
         private_dir(&staging.join("data"))?;
         private_dir(&staging.join("imports"))?;
-        ProductStore::open(
+        let product = ProductStore::open(
             staging.join("product.sqlite3"),
             None,
             secrets["ADMIN_PASSWORD"].as_str(),
         )
         .map_err(|_| "cannot initialize Rust product database")?;
+        if let Some(seed) = seed {
+            let db = product
+                .connect()
+                .map_err(|_| "cannot initialize Rust product database")?;
+            apply_seed(&db, seed)?;
+        }
     }
     write_json(
         &staging.join("config.json"),
@@ -265,6 +284,44 @@ fn prepare_into(staging: &Path, source: Option<&Path>) -> Result<(Value, Value),
         &json!({"schema":2,"backend":"rust","migrated":source.is_some(),"counts":counts,"source_untouched":true}),
     )?;
     Ok((secrets, counts))
+}
+
+fn apply_seed(db: &rusqlite::Connection, path: &Path) -> Result<(), &'static str> {
+    let metadata = fs::metadata(path).map_err(|_| "desktop seed data is unavailable")?;
+    if !metadata.is_file() || metadata.len() > 2 * 1024 * 1024 {
+        return Err("desktop seed data is invalid");
+    }
+    let value: Value = serde_json::from_slice(&fs::read(path).map_err(|_| "desktop seed data is unavailable")?)
+        .map_err(|_| "desktop seed data is invalid")?;
+    let agents = value["agents"].as_array().ok_or("desktop seed agents are invalid")?;
+    if agents.len() > 100 {
+        return Err("desktop seed contains too many agents");
+    }
+    let configs = value["platform_config"].as_array().ok_or("desktop seed platform config is invalid")?;
+    if configs.len() > 32 {
+        return Err("desktop seed contains too many platform settings");
+    }
+    let transaction = db
+        .unchecked_transaction()
+        .map_err(|_| "desktop seed data is invalid")?;
+    for agent in agents {
+        let id = agent["id"].as_str().filter(|v| !v.is_empty() && v.len() <= 32).ok_or("desktop seed agent id is invalid")?;
+        let version = agent["version"].as_i64().filter(|v| *v > 0).ok_or("desktop seed agent version is invalid")?;
+        let config = &agent["config"];
+        if !config.is_object() || serde_json::to_string(config).map_err(|_| "desktop seed agent is invalid")?.len() > 100_000 {
+            return Err("desktop seed agent is invalid");
+        }
+        transaction.execute("INSERT INTO agents(id,config,version) VALUES(?1,?2,?3)", rusqlite::params![id, config.to_string(), version]).map_err(|_| "desktop seed agent is invalid")?;
+    }
+    for config in configs {
+        let id = config["id"].as_str().filter(|v| !v.is_empty() && v.len() <= 64).ok_or("desktop seed platform id is invalid")?;
+        let setting = &config["value"];
+        if !setting.is_object() && !setting.is_array() {
+            return Err("desktop seed platform setting is invalid");
+        }
+        transaction.execute("INSERT INTO platform_config(id,value) VALUES(?1,?2)", rusqlite::params![id, setting.to_string()]).map_err(|_| "desktop seed platform setting is invalid")?;
+    }
+    transaction.commit().map_err(|_| "desktop seed data is invalid")
 }
 
 fn contained(root: &Path, value: &Path) -> Result<PathBuf, &'static str> {

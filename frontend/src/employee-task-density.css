@@ -84,6 +84,15 @@
 .employee-live-output>.event-tool-started{color:#e4c896}.employee-live-output>.event-tool-completed{color:#9ed4bb}
 .employee-live-output time{flex:0 0 auto;color:#7890ad;font:10px/1.6 system-ui}
 .employee-live-output span{overflow-wrap:anywhere;white-space:pre-wrap}
+.employee-live-output>.employee-live-transcript{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:8px;width:100%;min-width:0}
+.employee-live-output>.employee-live-transcript>*{min-width:0;max-width:100%;box-sizing:border-box}
+.employee-live-output>.employee-live-transcript .employee-live-bubble{display:block;width:100%;margin:0;padding:9px 10px}
+.employee-live-thinking,.employee-live-message{display:block;width:100%;padding:8px 10px;border-radius:8px;box-sizing:border-box;overflow-wrap:anywhere}
+.employee-live-thinking{border:1px solid #c9a96a55;background:#2b2b2655;color:#d8c99e}
+.employee-live-message{border:1px solid #79b9d855;background:#153044;color:#d4ecf8}
+.employee-live-thinking header,.employee-live-message header{display:flex;gap:8px;align-items:center;margin:0 0 4px;font:10px/1.4 system-ui;color:#b8cbe0}
+.employee-live-thinking header small,.employee-live-message header small{color:#91a8c0}
+.employee-live-thinking p,.employee-live-message p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.65 system-ui}
 .employee-live-transcript{display:grid;gap:7px}
 .employee-live-transcript .transcript-markdown{font:12px/1.65 system-ui,SFMono-Regular,sans-serif;color:#e2edf8;overflow-wrap:anywhere}
 .employee-live-transcript .transcript-markdown p{margin:0 0 7px}.employee-live-transcript .transcript-markdown p:last-child{margin-bottom:0}

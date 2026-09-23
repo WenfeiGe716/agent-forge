@@ -183,6 +183,26 @@ fn authenticated_user_message_targets_frozen_member_and_is_durable() {
 }
 
 #[test]
+fn authenticated_user_follow_up_is_recorded_after_runtime_end_without_waking_worker() {
+    let f = Fixture::new();
+    let user = User { id: "human-2".into(), username: "operator".into(), role: "developer".into(), enabled: true };
+    let sent = send_user_message_after_run(
+        &f.c,
+        &f.snapshot,
+        &user,
+        "run",
+        "dev",
+        "Please include the missing acceptance evidence next time",
+    )
+    .unwrap();
+    assert_eq!(sent["recorded"], true);
+    assert_eq!(sent["delivered"], false);
+    assert_eq!(f.count("outbox"), 1, "the initial coordinator activation remains, no follow-up wake is queued");
+    let body: String = f.c.query_row("SELECT body FROM agent_messages WHERE id=?1", [&sent["message_id"].as_str().unwrap()], |r| r.get(0)).unwrap();
+    assert!(body.contains("missing acceptance evidence"));
+}
+
+#[test]
 fn actor_forgery_conflicting_operations_and_non_coordinator_delegation_fail() {
     let mut f = Fixture::new();
     let dev = f.worker("dev", "assign-dev");

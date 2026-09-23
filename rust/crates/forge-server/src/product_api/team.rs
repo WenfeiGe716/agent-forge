@@ -776,7 +776,7 @@ fn send(
         c,
         &actor.run_id,
         "team.message.sent",
-        json!({"message_id":id,"sender_id":actor.agent_id,"recipient_id":recipient,"task_key":actor.task_key,"request_reply":reply}),
+        json!({"message_id":id,"sender_id":actor.agent_id,"recipient_id":recipient,"task_key":actor.task_key,"request_reply":reply,"body":body}),
     )?;
     outbox(c, &actor.run_id, "team_message", response.clone())?;
     Ok(response)
@@ -831,10 +831,66 @@ pub(crate) fn send_user_message(
             "recipient_id": recipient,
             "task_key": Value::Null,
             "request_reply": false,
+            "body": body,
         }),
     )?;
     outbox(c, run, "team_message", response.clone())?;
     Ok(response)
+}
+
+/// Record a human follow-up after the runtime has ended. There is no live
+/// worker to wake, so this intentionally omits the outbox entry; the message
+/// remains in the run's durable collaboration history for the next activation.
+pub(crate) fn send_user_message_after_run(
+    c: &Connection,
+    snapshot: &Value,
+    user: &User,
+    run: &str,
+    recipient: &str,
+    body: &str,
+) -> Result<Value> {
+    if !user.enabled || user.role == "viewer" {
+        return Err(denied("A writable account is required"));
+    }
+    let frozen: Option<String> = c
+        .query_row("SELECT snapshot_digest FROM forge_team_runs WHERE run_id=?1", [run], |r| r.get(0))
+        .optional()?;
+    if frozen.as_deref() != Some(digest(snapshot).as_str()) {
+        return Err(conflict());
+    }
+    if !members(snapshot)?.contains_key(recipient) {
+        return Err(missing());
+    }
+    if recipient.is_empty() || recipient.len() > 64 {
+        return Err(bad("Invalid recipient_id"));
+    }
+    if body.trim().is_empty() || body.chars().count() > 20_000 || body.contains('\0') {
+        return Err(bad("Invalid message body"));
+    }
+    let id = uid();
+    c.execute(
+        "INSERT INTO agent_messages(id,run_id,task_key,sender_id,recipient_id,body,created_at,delivered_at) VALUES(?1,?2,'human',?3,?4,?5,?6,'')",
+        params![id, run, user.id, recipient, body, now(c)?],
+    )?;
+    event(c, run, "team.message.sent", json!({
+        "message_id": id,
+        "sender_id": user.id,
+        "sender_kind": "user",
+        "recipient_id": recipient,
+        "task_key": Value::Null,
+        "request_reply": false,
+        "body": body,
+        "terminal_follow_up": true,
+    }))?;
+    Ok(json!({
+        "message_id": id,
+        "run_id": run,
+        "sender_id": user.id,
+        "recipient_id": recipient,
+        "task_key": Value::Null,
+        "delivered": false,
+        "recorded": true,
+    }))
 }
 fn inbox(c: &Connection, run: &str, recipient: &str, limit: i64) -> Result<Value> {
     let mut query=c.prepare("SELECT id,task_key,sender_id,body,created_at FROM agent_messages WHERE run_id=?1 AND recipient_id=?2 AND delivered_at='' ORDER BY created_at,id LIMIT ?3")?;
