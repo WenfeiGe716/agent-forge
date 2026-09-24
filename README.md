@@ -4,11 +4,15 @@
 
 Agent Forge 是一个面向开发团队的 AI 协作工作台。你可以像搭建一支真实团队一样，为不同成员安排职责、模型、技能和权限，再把一个目标交给负责人。成员会分工、沟通、执行和提交成果；你始终掌握审批权、修改权和最终验收权。
 
+[![Agent Forge 协作办公室](docs/assets/agent-forge-demo-poster.jpg)](docs/assets/agent-forge-demo.mp4)
+
 <video controls muted loop playsinline poster="docs/assets/agent-forge-demo-poster.jpg" width="100%">
   <source src="docs/assets/agent-forge-demo.mp4" type="video/mp4">
 </video>
 
 [▶ 播放完整演示视频](docs/assets/agent-forge-demo.mp4)
+
+![任务协作与成果展示](docs/assets/agent-forge-demo-task.jpg)
 
 ## 为什么选择 Agent Forge
 
