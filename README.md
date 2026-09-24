@@ -6,11 +6,13 @@ Agent Forge 是一个面向开发团队的 AI 协作工作台。你可以像搭�
 
 [![Agent Forge 协作办公室演示封面](docs/assets/agent-forge-demo-poster.jpg)](docs/assets/agent-forge-demo.mp4)
 
-<video controls muted loop playsinline poster="https://github.com/WenfeiGe716/agent-forge/raw/refs/heads/dev-2.1/docs/assets/agent-forge-demo-poster.jpg" width="100%">
-  <source src="https://github.com/WenfeiGe716/agent-forge/raw/refs/heads/dev-2.1/docs/assets/agent-forge-demo.mp4" type="video/mp4">
-</video>
+<p align="center">
+  <a href="docs/assets/agent-forge-demo.mp4">
+    <img src="docs/assets/agent-forge-demo-preview.gif" alt="Agent Forge 协作演示预览" width="100%">
+  </a>
+</p>
 
-<p align="center"><a href="docs/assets/agent-forge-demo.mp4">▶ 播放完整演示视频</a></p>
+<p align="center"><a href="docs/assets/agent-forge-demo.mp4">▶ 播放完整演示视频（MP4）</a></p>
 
 ![任务协作与成果展示](docs/assets/agent-forge-demo-task.jpg)
 
